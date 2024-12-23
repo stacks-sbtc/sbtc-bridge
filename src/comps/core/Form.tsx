@@ -72,9 +72,10 @@ export const FlowForm = ({
           </PrimaryButton>
         ) : (
           <button
+            disabled={disabled}
             type="button"
             onClick={() => setShowConnectWallet(true)}
-            className="bg-orange px-4 py-2 rounded-md font-Matter text-xs font-semibold tracking-wide"
+            className="bg-orange px-4 py-2 rounded-md font-Matter text-xs font-semibold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
           >
             CONNECT WALLET
           </button>
