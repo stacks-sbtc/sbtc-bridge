@@ -91,6 +91,7 @@ const DepositFlowAmount = ({
     useMintCaps();
   const maxDepositAmount = currentCap / 1e8;
   const minDepositAmount = perDepositMinimum / 1e8;
+  const isMintCapReached = currentCap <= 0;
 
   const validationSchema = useMemo(
     () =>
@@ -146,11 +147,11 @@ const DepositFlowAmount = ({
           nameKey="amount"
           type="number"
           placeholder={
-            currentCap <= 0
+            isMintCapReached
               ? "Mint cap reached!"
               : "BTC amount to transfer (e.g. 0.01)"
           }
-          disabled={isLoading || currentCap <= 0}
+          disabled={isLoading || isMintCapReached}
           handleSubmit={(value) => handleSubmit(value)}
           validationSchema={validationSchema}
         />

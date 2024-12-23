@@ -19,6 +19,7 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationStatusType } from "./Notifications";
 import SBTCBalance from "./ui/sbtc-balance";
 import TOS from "./tos";
+import useMintCaps from "@/hooks/use-mint-caps";
 
 // converting to lower case to avoid case sensitive issue
 
@@ -50,6 +51,10 @@ const Header = ({ config }: { config: BridgeConfig }) => {
     showConnectWalletAtom,
   );
 
+  const { currentCap } = useMintCaps();
+
+  const isMintCapReached = currentCap <= 0;
+
   const renderUserWalletInfo = () => {
     return (
       <>
@@ -69,9 +74,10 @@ const Header = ({ config }: { config: BridgeConfig }) => {
   return (
     <>
       {config.BANNER_CONTENT && (
-        <div className="w-full bg-[#F26969] text-white text-center py-2">
-          {config.BANNER_CONTENT}
-        </div>
+        <div
+          className="w-full bg-[#F26969] text-white text-center py-2"
+          dangerouslySetInnerHTML={{ __html: config.BANNER_CONTENT }}
+        />
       )}
       <header className="w-full py-6 flex items-center justify-center">
         <div
@@ -102,7 +108,8 @@ const Header = ({ config }: { config: BridgeConfig }) => {
             ) : (
               <button
                 onClick={() => setShowConnectWallet(true)}
-                className=" bg-orange  px-4 py-2 rounded-md"
+                disabled={isMintCapReached}
+                className=" bg-orange  px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <h3 className="font-Matter text-xs font-semibold tracking-wide">
                   CONNECT WALLET
