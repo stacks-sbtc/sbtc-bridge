@@ -31,9 +31,9 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <LayoutClient config={sBTCBridgeConfig}>{children}</LayoutClient>
-        {sBTCBridgeConfig.LIVECHAT_ID && (
+        {sBTCBridgeConfig.SUPPORT_LINK && (
           <a
-            href={`https://direct.lc.chat/${sBTCBridgeConfig.LIVECHAT_ID}/`}
+            href={sBTCBridgeConfig.SUPPORT_LINK}
             target="_blank"
             title="Support"
             className={

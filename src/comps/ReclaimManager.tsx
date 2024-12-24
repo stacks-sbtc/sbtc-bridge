@@ -330,7 +330,7 @@ const ReclaimDeposit = ({
   const setShowWallet = useSetAtom(showConnectWalletAtom);
   const router = useRouter();
 
-  const { WALLET_NETWORK: walletNetwork, LIVECHAT_ID } =
+  const { WALLET_NETWORK: walletNetwork, SUPPORT_LINK } =
     useAtomValue(bridgeConfigAtom);
 
   const buildReclaimTransaction = async () => {
@@ -454,7 +454,7 @@ const ReclaimDeposit = ({
               {useShortAddress(getWalletAddress() || "")}
             </p>
           </div>
-          {LIVECHAT_ID && (
+          {SUPPORT_LINK && (
             <div className="flex flex-1 items-end">
               <SubText>
                 Please note that we have received reports of errors with Ledgers
@@ -464,7 +464,7 @@ const ReclaimDeposit = ({
                   target="_blank"
                   rel="noreferrer"
                   className="text-blue-500 underline"
-                  href={`https://direct.lc.chat/${LIVECHAT_ID}/`}
+                  href={SUPPORT_LINK}
                 >
                   support team here
                 </a>

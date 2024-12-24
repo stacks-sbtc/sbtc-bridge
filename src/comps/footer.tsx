@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Footer({ liveChatId }: { liveChatId?: string }) {
+export default function Footer({ supportLink }: { supportLink?: string }) {
   return (
     <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-white font-Matter">
       <div
@@ -18,10 +18,10 @@ export default function Footer({ liveChatId }: { liveChatId?: string }) {
           />
         </div>
         <div className="flex flex-row gap-4">
-          {liveChatId && (
+          {supportLink && (
             <a
               suppressHydrationWarning
-              href={`https://direct.lc.chat/${liveChatId}/`}
+              href={supportLink}
               target="_blank"
               rel="noreferrer"
               className="text-black font-light text-sm"

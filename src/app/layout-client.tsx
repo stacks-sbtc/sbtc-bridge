@@ -32,7 +32,7 @@ export default function LayoutClient({
           <Suspense fallback={<div>Loading...</div>}>
             <Header config={config} />
             {children}
-            <Footer liveChatId={config.LIVECHAT_ID} />
+            <Footer supportLink={config.SUPPORT_LINK} />
           </Suspense>
         </main>
       </QueryClientProvider>

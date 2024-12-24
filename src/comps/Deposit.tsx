@@ -499,7 +499,7 @@ const DepositFlowReview = ({ txId }: DepositFlowReviewProps) => {
             To avoid losing your progress, please keep this page open.
           </SubText>
         </div>
-        {bridgeConfig.LIVECHAT_ID && showDepositWarning && (
+        {bridgeConfig.SUPPORT_LINK && showDepositWarning && (
           <div className="flex flex-1 items-end">
             <SubText>
               There is a delay in processing your deposit, but signers are still
@@ -508,7 +508,7 @@ const DepositFlowReview = ({ txId }: DepositFlowReviewProps) => {
                 target="_blank"
                 rel="noreferrer"
                 className="text-blue-500 underline"
-                href={`https://direct.lc.chat/${bridgeConfig.LIVECHAT_ID}/`}
+                href={bridgeConfig.SUPPORT_LINK}
               >
                 support team here
               </a>{" "}

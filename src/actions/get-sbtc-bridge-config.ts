@@ -13,7 +13,7 @@ export default cache(async function getSbtcBridgeConfig() {
   const BANNER_CONTENT = env.BANNER_CONTENT;
   const RECLAIM_LOCK_TIME = env.RECLAIM_LOCK_TIME;
   const PUBLIC_MEMPOOL_URL = env.PUBLIC_MEMPOOL_URL;
-  const LIVECHAT_ID = env.LIVECHAT_ID;
+  const SUPPORT_LINK = env.SUPPORT_LINK;
   const POLLING_INTERVAL = env.POLLING_INTERVAL;
 
   return {
@@ -23,7 +23,7 @@ export default cache(async function getSbtcBridgeConfig() {
     BANNER_CONTENT,
     RECLAIM_LOCK_TIME,
     PUBLIC_MEMPOOL_URL,
-    LIVECHAT_ID,
+    SUPPORT_LINK,
     POLLING_INTERVAL,
   };
 });
