@@ -13,12 +13,20 @@ type AccountCaps = {};
 
 export default async function getEmilyLimits() {
   const res = await fetch(`${env.EMILY_URL}/limits`);
+  if (!res.ok) {
+    return {
+      pegCap: 0,
+      perDepositCap: 0,
+      perWithdrawalCap: 0,
+      perDepositMinimum: Infinity,
+    };
+  }
   const json = (await res.json()) as EmilyLimits;
   // exclude account caps
   return {
-    pegCap: json.pegCap || 0,
-    perDepositCap: json.perDepositCap || 0,
-    perWithdrawalCap: json.perWithdrawalCap || 0,
-    perDepositMinimum: json.perDepositMinimum || Infinity,
+    pegCap: json.pegCap || Infinity,
+    perDepositCap: json.perDepositCap || Infinity,
+    perWithdrawalCap: json.perWithdrawalCap || Infinity,
+    perDepositMinimum: json.perDepositMinimum || 0,
   };
 }
