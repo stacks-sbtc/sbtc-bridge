@@ -13,6 +13,14 @@ type AccountCaps = {};
 
 export default async function getEmilyLimits() {
   const res = await fetch(`${env.EMILY_URL}/limits`);
+  if (!res.ok) {
+    return {
+      pegCap: 0,
+      perDepositCap: 0,
+      perWithdrawalCap: 0,
+      perDepositMinimum: Infinity,
+    };
+  }
   const json = (await res.json()) as EmilyLimits;
   // exclude account caps
   return {
