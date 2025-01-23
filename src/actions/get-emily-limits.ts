@@ -16,10 +16,9 @@ export default async function getEmilyLimits() {
   const json = (await res.json()) as EmilyLimits;
   // exclude account caps
   return {
-    // if null, it means unlimited
-    pegCap: json.pegCap || Infinity,
-    perDepositCap: json.perDepositCap || Infinity,
-    perWithdrawalCap: json.perWithdrawalCap || Infinity,
-    perDepositMinimum: json.perDepositMinimum || 0,
+    pegCap: json.pegCap || 0,
+    perDepositCap: json.perDepositCap || 0,
+    perWithdrawalCap: json.perWithdrawalCap || 0,
+    perDepositMinimum: json.perDepositMinimum || Infinity,
   };
 }
