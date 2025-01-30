@@ -13,6 +13,9 @@ import getBtcBalance from "@/actions/get-btc-balance";
 import { useAtomValue } from "jotai";
 import { walletInfoAtom } from "@/util/atoms";
 import { DepositStatus, useDepositStatus } from "@/hooks/use-deposit-status";
+import { Form, Formik } from "formik";
+import * as yup from "yup";
+import useMintCaps from "@/hooks/use-mint-caps";
 
 /*
   deposit flow has 3 steps
@@ -43,14 +46,10 @@ export enum DEPOSIT_STEP {
   3) form to collect data or the final step which is usually reviewing all data before submitting (or even revewing post submission)
   4) buttons to navigate between steps
 */
-type DepositFlowStepProps = {
+export type DepositFlowStepProps = {
   setStep: (step: DEPOSIT_STEP) => void;
 };
 
-export type DepositFlowAmountProps = DepositFlowStepProps & {
-  setAmount: (amount: number) => void;
-  btcBalance: number;
-};
 export type DepositFlowAddressProps = DepositFlowStepProps & {
   setStxAddress: (address: string) => void;
   stxAddress: string;
@@ -58,8 +57,6 @@ export type DepositFlowAddressProps = DepositFlowStepProps & {
 };
 
 export type DepositFlowConfirmProps = DepositFlowStepProps & {
-  amount: number;
-  stxAddress: string;
   handleUpdatingTransactionInfo: (info: TransactionInfo) => void;
 };
 
@@ -79,24 +76,21 @@ const DepositFlow = () => {
   const searchParams = useSearchParams();
 
   const [step, _setStep] = useState(DEPOSIT_STEP.AMOUNT);
+  const [txId, setTxId] = useState("");
 
-  const [stxAddress, _setStxAddress] = useState(
-    searchParams.get("stxAddress") ?? "",
-  );
-  const [amount, _setAmount] = useState(
-    Number(searchParams.get("amount") ?? 0),
-  );
-  const [txId, _setTxId] = useState("");
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (step === DEPOSIT_STEP.REVIEW) {
-      params.set("txId", txId);
-      params.set("step", String(step));
-      params.set("amount", String(amount));
-      router.push(pathname + "?" + params.toString());
+  const initialValues = useMemo(() => {
+    const currentStep = Number(searchParams.get("step"));
+    if (!currentStep) {
+      return {
+        amount: "",
+        stxAddress: "",
+      };
     }
-  }, [amount, txId, step, router, pathname]);
+    return {
+      amount: searchParams.get("amount") ?? "",
+      stxAddress: searchParams.get("stxAddress") ?? "",
+    };
+  }, [searchParams]);
 
   useEffect(() => {
     const currentStep = Number(searchParams.get("step"));
@@ -105,38 +99,28 @@ const DepositFlow = () => {
     }
     if (currentStep === DEPOSIT_STEP.REVIEW) {
       _setStep(currentStep);
-      _setTxId(searchParams.get("txId") || "");
-      _setAmount(Number(searchParams.get("amount") || 0));
+      setTxId(searchParams.get("txId") || "");
     }
   }, [searchParams]);
 
-  const setTxId = useCallback((info: TransactionInfo) => {
-    _setTxId(info.txId);
-  }, []);
   const setStep = useCallback((newStep: DEPOSIT_STEP) => {
     _setStep(newStep);
   }, []);
 
-  const handleUpdateStep = useCallback(
-    (newStep: DEPOSIT_STEP) => {
-      setStep(newStep);
-    },
-    [setStep],
-  );
-
-  const setStxAddress = useCallback((address: string) => {
-    _setStxAddress(address);
-  }, []);
-
-  const setAmount = useCallback((amount: number) => {
-    _setAmount(amount);
-  }, []);
-
   const handleUpdatingTransactionInfo = useCallback(
-    (info: TransactionInfo) => {
-      setTxId(info);
+    (
+      info: TransactionInfo,
+      values: { amount?: string; stxAddress?: string },
+    ) => {
+      setTxId(info.txId);
+      const params = new URLSearchParams();
+      params.set("txId", info.txId);
+      params.set("step", String(DEPOSIT_STEP.REVIEW));
+      params.set("stxAddress", String(values.stxAddress));
+      params.set("amount", values.amount ?? "");
+      router.push(pathname + "?" + params.toString());
     },
-    [setTxId],
+    [pathname, router],
   );
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
@@ -148,6 +132,7 @@ const DepositFlow = () => {
       }
       return await getBtcBalance(btcAddress);
     },
+    initialData: 0,
     enabled: !!btcAddress,
   });
 
@@ -178,33 +163,47 @@ const DepositFlow = () => {
   //     return elapsedBlocks >= 6;
   //   }
   // }, [confirmedBlockHeight, currentBlockHeight]);
-  const renderStep = () => {
+  const { currentCap, perDepositMinimum } = useMintCaps();
+
+  const maxDepositAmount = currentCap / 1e8;
+  const minDepositAmount = perDepositMinimum / 1e8;
+  const validationSchema = useMemo(
+    () =>
+      yup.object({
+        amount: yup
+          .number()
+          // dust amount is in sats
+          .min(
+            minDepositAmount,
+            `Minimum deposit amount is ${minDepositAmount} BTC`,
+          )
+          .max(
+            Math.min(btcBalance, maxDepositAmount),
+            btcBalance < maxDepositAmount
+              ? `The deposit amount exceeds your current balance of ${btcBalance} BTC`
+              : `Current deposit cap is ${maxDepositAmount} BTC`,
+          )
+          .required(),
+      }),
+    [btcBalance, maxDepositAmount, minDepositAmount],
+  );
+  const renderStep = (values: { amount?: string; stxAddress?: string }) => {
+    const handleUpdateStep = (newStep: DEPOSIT_STEP) => {
+      setStep(newStep);
+    };
+
     switch (step) {
       case DEPOSIT_STEP.AMOUNT:
-        return (
-          <DepositAmount
-            amount={amount}
-            btcBalance={btcBalance || Infinity}
-            setAmount={setAmount}
-            setStep={handleUpdateStep}
-          />
-        );
+        return <DepositAmount setStep={handleUpdateStep} />;
       case DEPOSIT_STEP.ADDRESS:
-        return (
-          <DepositAddress
-            stxAddress={stxAddress}
-            setStxAddress={setStxAddress}
-            setStep={handleUpdateStep}
-            amount={amount}
-          />
-        );
+        return <DepositAddress setStep={handleUpdateStep} />;
       case DEPOSIT_STEP.CONFIRM:
         return (
           <ConfirmDeposit
-            amount={amount}
-            stxAddress={stxAddress}
             setStep={handleUpdateStep}
-            handleUpdatingTransactionInfo={handleUpdatingTransactionInfo}
+            handleUpdatingTransactionInfo={(info: TransactionInfo) =>
+              handleUpdatingTransactionInfo(info, values)
+            }
           />
         );
       case DEPOSIT_STEP.REVIEW:
@@ -222,28 +221,36 @@ const DepositFlow = () => {
   };
 
   return (
-    <>
-      <div
-        style={{
-          maxWidth: "1152px",
-        }}
-        className="w-full flex flex-row gap-4 mt-16"
-      >
-        {renderStep()}
-        <DepositTimeline
-          stacksTxId={stacksTxId}
-          status={status}
-          txId={txId}
-          activeStep={step}
-        />
-      </div>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={() => {}}
+    >
+      {({ values }) => (
+        <Form>
+          <div
+            style={{
+              maxWidth: "1152px",
+            }}
+            className="w-full flex flex-row gap-4 mt-16"
+          >
+            {renderStep(values)}
+            <DepositTimeline
+              stacksTxId={stacksTxId}
+              status={status}
+              txId={txId}
+              activeStep={step}
+            />
+          </div>
 
-      <div
-        style={{
-          margin: "16px 0",
-        }}
-      />
-    </>
+          <div
+            style={{
+              margin: "16px 0",
+            }}
+          />
+        </Form>
+      )}
+    </Formik>
   );
 };
 

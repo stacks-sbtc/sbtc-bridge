@@ -1,119 +1,43 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Image from "next/image";
-import { DEPOSIT_STEP, DepositFlowAmountProps } from "../Deposit";
+import { DEPOSIT_STEP, DepositFlowStepProps } from "../Deposit";
 import useMintCaps from "@/hooks/use-mint-caps";
-
-import * as yup from "yup";
 import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationStatusType } from "../Notifications";
 import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useField, useFormikContext } from "formik";
 
-type DepositFlowAmounExtendedtProps = DepositFlowAmountProps & {
-  amount: number;
-  btcBalance: number;
-};
-const DepositAmount = ({
-  setStep,
-  setAmount,
-  amount,
-  btcBalance,
-}: DepositFlowAmounExtendedtProps) => {
-  const { currentCap, isWithinDepositLimits, perDepositMinimum } =
-    useMintCaps();
+const DepositAmount = ({ setStep }: DepositFlowStepProps) => {
+  const { currentCap, isWithinDepositLimits } = useMintCaps();
 
-  const maxDepositAmount = currentCap / 1e8;
-  const minDepositAmount = perDepositMinimum / 1e8;
   const isMintCapReached = currentCap <= 0;
 
-  const validationSchema = useMemo(
-    () =>
-      yup.object({
-        amount: yup
-          .number()
-          // dust amount is in sats
-          .min(
-            minDepositAmount,
-            `Minimum deposit amount is ${minDepositAmount} BTC`,
-          )
-          .max(
-            Math.min(btcBalance, maxDepositAmount),
-            btcBalance < maxDepositAmount
-              ? `The deposit amount exceeds your current balance of ${btcBalance} BTC`
-              : `Current deposit cap is ${maxDepositAmount} BTC`,
-          )
-          .required(),
-      }),
-    [btcBalance, maxDepositAmount, minDepositAmount],
-  );
-
-  const [stringAmount, setStringAmount] = useState(String(amount / 1e8));
+  const { resetForm } = useFormikContext();
+  const [field, meta] = useField({
+    name: "amount",
+  });
 
   const { notify } = useNotifications();
 
   // const walletInfo = useAtomValue(walletInfoAtom);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // ensure that the value is a number
-    // remove any non-numeric characters
-    // but keep white spaces
-
-    const value = e.target.value;
-    setStringAmount(value);
-    setAmount(parseFloat(value));
-
-    // allow for white space empty value
-
-    if (isNaN(parseInt(value))) {
-      notify({
-        type: NotificationStatusType.ERROR,
-        message: "Please enter a valid amount",
-      });
-    } else {
-      const parsedAmount = parseFloat(value);
-      try {
-        const validation = await validationSchema.validate({
-          amount: parsedAmount,
-        });
-        console.log("validation", validation);
-
-        setAmount(parseFloat(value));
-      } catch (err: any) {
-        notify({
-          type: NotificationStatusType.ERROR,
-          message: err.message || "Invalid input",
-        });
-      }
-    }
-  };
-
   // Handle form submission
   const handleSubmit = async () => {
-    try {
-      // Validate the amount using Yup
-      const validation = await validationSchema.validate({ amount });
-
-      console.log("validation", validation);
-      const sats = Math.floor(Number(amount) * 1e8);
-      if (await isWithinDepositLimits(sats)) {
-        setAmount(Number(sats));
-        setStep(DEPOSIT_STEP.ADDRESS); // Proceed to the next step
-      } else {
-        notify({
-          type: NotificationStatusType.ERROR,
-          message: "Amount exceeds deposit limits",
-        });
-      }
-    } catch (error: any) {
+    // Validate the amount using Yup
+    const sats = Math.floor(Number(field.value) * 1e8);
+    if (await isWithinDepositLimits(sats)) {
+      setStep(DEPOSIT_STEP.ADDRESS); // Proceed to the next step
+    } else {
       notify({
         type: NotificationStatusType.ERROR,
-        message: error.message || "Invalid input",
+        message: "Amount exceeds deposit limits",
       });
     }
   };
 
   const inputWidth = useMemo(() => {
-    const stringAmount = amount.toString();
+    const stringAmount = field.value ?? "";
 
     const width = stringAmount.length * 50;
 
@@ -121,8 +45,12 @@ const DepositAmount = ({
       return 120;
     }
 
-    return amount.toString().length * 40;
-  }, [amount]);
+    return stringAmount.length * 40;
+  }, [field.value]);
+
+  // don't need to do it more than once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(resetForm, []);
   return (
     <div className="w-full flex flex-col  ">
       <div className="flex  flex-row w-full gap-4 h-40">
@@ -158,14 +86,13 @@ const DepositAmount = ({
           className="w-full gap-2 flex flex-row items-center justify-center rounded-tl-2xl rounded-tr-2xl h-full"
         >
           <input
-            onChange={handleChange}
-            className="bg-transparent placeholder:text-3xl text-right focus:outline-none  h-full text-6xl rounded-tl-2xl rounded-tr-2xl text-white "
+            {...field}
+            className="bg-transparent  text-right focus:outline-none  h-full text-6xl rounded-tl-2xl rounded-tr-2xl text-white "
             type="text"
-            value={stringAmount}
             style={{
               width: `${inputWidth}px`,
             }}
-            placeholder={isMintCapReached ? "Mint cap reached!" : "0.00"}
+            placeholder={isMintCapReached ? "Mint cap reached!" : "0"}
           />
           <div className=" flex flex-row mt-4 items-end">
             <p className=" text-4xl "> BTC</p>
@@ -193,27 +120,35 @@ const DepositAmount = ({
         >
           <input
             disabled={true}
-            className="bg-transparent placeholder:text-3xl text-right focus:outline-none  h-full text-6xl rounded-tl-2xl rounded-tr-2xl text-white "
+            className="bg-transparent text-right focus:outline-none  h-full text-6xl rounded-tl-2xl rounded-tr-2xl text-white "
             type="text"
-            value={stringAmount || 0}
+            value={field.value}
             style={{
               width: `${inputWidth}px`,
             }}
-            placeholder={
-              isMintCapReached ? "Mint cap reached!" : "Enter Amount"
-            }
+            placeholder={isMintCapReached ? "Mint cap reached!" : "0"}
           />
           <div className=" flex flex-row mt-4 items-end">
             <p className=" text-4xl ">sBTC</p>
           </div>
         </div>
       </div>
+      {/* Error message */}
+      {meta.error && (
+        <div className="flex flex-row w-full mt-4 ">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full" />
+          <div className="w-full gap-2 flex flex-row items-center justify-center rounded-bl-2xl rounded-br-2xl h-full">
+            <p className="text-red-500 text-sm">{meta.error}</p>
+          </div>
+        </div>
+      )}
       <div className="flex flex-row w-full mt-28 gap-10 ">
         <div className="w-1/6  relative flex flex-col items-center justify-center h-full" />
         <ConnectWalletAction disabled={isMintCapReached}>
           <button
-            disabled={isMintCapReached}
-            onClick={() => handleSubmit()}
+            disabled={!!meta.error}
+            onClick={handleSubmit}
+            type="button"
             className="bg-darkOrange w-full h-14 flex flex-row items-center justify-center rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             NEXT

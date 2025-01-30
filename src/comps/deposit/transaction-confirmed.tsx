@@ -4,6 +4,7 @@ import { DepositFlowReviewProps } from "../Deposit";
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";
+import Link from "next/link";
 
 const TransactionConfirmed = ({
   txId,
@@ -102,8 +103,14 @@ const TransactionConfirmed = ({
       </div>
 
       <div className="flex flex-row w-full mt-6  gap-4 ">
-        <div className="w-1/6  relative flex flex-col items-center justify-center h-full" />
-        <div className="flex w-full flex-row gap-2"></div>
+        <div className="flex w-full flex-row gap-2">
+          <Link
+            href="/"
+            className="bg-darkOrange w-full h-14 flex flex-row items-center justify-center rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+          >
+            Go home
+          </Link>
+        </div>
       </div>
     </div>
   );

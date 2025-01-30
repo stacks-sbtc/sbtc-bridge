@@ -31,11 +31,10 @@ import { ConnectWalletAction } from "./deposit-amount";
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
 import { getStacksNetwork } from "@/util/get-stacks-network";
 import { useQuery } from "@tanstack/react-query";
+import { useFormikContext } from "formik";
 
 const ConfirmDeposit = ({
   setStep,
-  amount,
-  stxAddress,
   handleUpdatingTransactionInfo,
 }: DepositFlowConfirmProps) => {
   const { notify } = useNotifications();
@@ -99,6 +98,12 @@ const ConfirmDeposit = ({
     enabled: !!emilyUrl,
   });
 
+  const {
+    values: { amount, stxAddress },
+  } = useFormikContext<{
+    amount: string;
+    stxAddress: string;
+  }>();
   const handleNextClick = async () => {
     try {
       const signersAggregatePubKey = (await getAggregateKey()).slice(2);
@@ -144,10 +149,11 @@ const ConfirmDeposit = ({
       try {
         const params = {
           recipient: p2trAddress,
-          amountInSats: amount,
+          amountInSats: Number(amount) * 1e8,
           network: walletNetwork,
         };
 
+        // eslint-disable-next-line no-console
         console.log({
           preSendParams: {
             bitcoinTxid: txId,
@@ -242,9 +248,7 @@ const ConfirmDeposit = ({
             onClick={() => setStep(DEPOSIT_STEP.AMOUNT)}
             className="bg-[#1E1E1E] px-6 gap-4 cursor-pointer flex flex-row items-center justify-center h-10"
           >
-            <p className="text-white font-bold text-sm ">
-              {amount !== 0 ? amount / 1e8 : 0} BTC
-            </p>
+            <p className="text-white font-bold text-sm ">{amount} BTC</p>
             <PencilIcon className="w-4 h-4 flex flex-row items-center justify-center rounded-full text-[#FD9D41] " />
           </div>
         </div>
@@ -294,8 +298,9 @@ const ConfirmDeposit = ({
           <ConnectWalletAction>
             {isEmilySyncWNetwork ? (
               <button
+                type="button"
                 disabled={isPendingNotifyEmily}
-                onClick={() => handleNextClick()}
+                onClick={handleNextClick}
                 className="bg-darkOrange w-full h-14 flex flex-row items-center justify-center rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 CONFIRM TRANSACTION
