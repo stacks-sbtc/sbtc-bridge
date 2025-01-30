@@ -14,6 +14,9 @@ const DepositAddress = ({ setStep }: DepositFlowStepProps) => {
 
     try {
       // check length
+      if (!addressOrContract) {
+        return "Address is required";
+      }
       const isContractAddress = addressOrContract.includes(".");
       const [address, contractName] = addressOrContract.split(".");
       if (address.length < 38 || address.length > 41) {
@@ -39,7 +42,7 @@ const DepositAddress = ({ setStep }: DepositFlowStepProps) => {
       // check if valid for network
       createAddress(address);
     } catch (err) {
-      return String(err);
+      return "Address is invalid please use a valid STX address";
     }
   };
 

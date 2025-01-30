@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import { DEPOSIT_STEP, DepositFlowStepProps } from "../Deposit";
 import useMintCaps from "@/hooks/use-mint-caps";
@@ -6,14 +6,13 @@ import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationStatusType } from "../Notifications";
 import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useField, useFormikContext } from "formik";
+import { useField } from "formik";
 
 const DepositAmount = ({ setStep }: DepositFlowStepProps) => {
   const { currentCap, isWithinDepositLimits } = useMintCaps();
 
   const isMintCapReached = currentCap <= 0;
 
-  const { resetForm } = useFormikContext();
   const [field, meta] = useField({
     name: "amount",
   });
@@ -50,7 +49,6 @@ const DepositAmount = ({ setStep }: DepositFlowStepProps) => {
 
   // don't need to do it more than once
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(resetForm, []);
   return (
     <div className="w-full flex flex-col  ">
       <div className="flex  flex-row w-full gap-4 h-40">
@@ -87,16 +85,21 @@ const DepositAmount = ({ setStep }: DepositFlowStepProps) => {
         >
           <input
             {...field}
-            className="bg-transparent  text-right focus:outline-none  h-full text-6xl rounded-tl-2xl rounded-tr-2xl text-white "
+            className={`bg-transparent focus:outline-none  h-full rounded-tl-2xl rounded-tr-2xl text-white ${
+              isMintCapReached ? "text-md text-center" : "text-6xl text-right"
+            }`}
+            disabled={isMintCapReached}
             type="text"
             style={{
-              width: `${inputWidth}px`,
+              width: `${isMintCapReached ? "100%" : inputWidth + "px"}`,
             }}
             placeholder={isMintCapReached ? "Mint cap reached!" : "0"}
           />
-          <div className=" flex flex-row mt-4 items-end">
-            <p className=" text-4xl "> BTC</p>
-          </div>
+          {!isMintCapReached && (
+            <div className=" flex flex-row mt-4 items-end">
+              <p className=" text-4xl "> BTC</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -120,21 +123,25 @@ const DepositAmount = ({ setStep }: DepositFlowStepProps) => {
         >
           <input
             disabled={true}
-            className="bg-transparent text-right focus:outline-none  h-full text-6xl rounded-tl-2xl rounded-tr-2xl text-white "
+            className={`bg-transparent focus:outline-none h-full rounded-tl-2xl rounded-tr-2xl text-white ${
+              isMintCapReached ? "text-md text-center" : "text-6xl text-right"
+            }`}
             type="text"
             value={field.value}
             style={{
-              width: `${inputWidth}px`,
+              width: `${isMintCapReached ? "100%" : inputWidth + "px"}`,
             }}
             placeholder={isMintCapReached ? "Mint cap reached!" : "0"}
           />
-          <div className=" flex flex-row mt-4 items-end">
-            <p className=" text-4xl ">sBTC</p>
-          </div>
+          {!isMintCapReached && (
+            <div className=" flex flex-row mt-4 items-end">
+              <p className=" text-4xl ">sBTC</p>
+            </div>
+          )}
         </div>
       </div>
       {/* Error message */}
-      {meta.error && (
+      {!isMintCapReached && meta.error && (
         <div className="flex flex-row w-full mt-4 ">
           <div className="w-1/6  relative flex flex-col items-center justify-center h-full" />
           <div className="w-full gap-2 flex flex-row items-center justify-center rounded-bl-2xl rounded-br-2xl h-full">

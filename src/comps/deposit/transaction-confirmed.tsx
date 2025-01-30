@@ -4,7 +4,8 @@ import { DepositFlowReviewProps } from "../Deposit";
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";
-import Link from "next/link";
+import { useFormikContext } from "formik";
+import { useRouter } from "next/navigation";
 
 const TransactionConfirmed = ({
   txId,
@@ -16,6 +17,15 @@ const TransactionConfirmed = ({
   const mempoolUrl = useMemo(() => {
     return `${PUBLIC_MEMPOOL_URL}/tx/${txId}`;
   }, [PUBLIC_MEMPOOL_URL, txId]);
+
+  const { resetForm } = useFormikContext();
+
+  const router = useRouter();
+
+  const goHome = () => {
+    resetForm();
+    router.push("/");
+  };
 
   return (
     <div className="w-full flex flex-col  gap-4 ">
@@ -104,12 +114,12 @@ const TransactionConfirmed = ({
 
       <div className="flex flex-row w-full mt-6  gap-4 ">
         <div className="flex w-full flex-row gap-2">
-          <Link
-            href="/"
+          <button
+            onClick={goHome}
             className="bg-darkOrange w-full h-14 flex flex-row items-center justify-center rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase"
           >
             Go home
-          </Link>
+          </button>
         </div>
       </div>
     </div>

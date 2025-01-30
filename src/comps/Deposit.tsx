@@ -224,6 +224,7 @@ const DepositFlow = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
+      enableReinitialize={true}
       onSubmit={() => {}}
     >
       {({ values }) => (
