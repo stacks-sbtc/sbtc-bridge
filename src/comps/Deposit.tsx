@@ -173,10 +173,10 @@ const DepositFlow = () => {
         amount: yup
           .number()
           // dust amount is in sats
-          .min(
-            minDepositAmount,
-            `Minimum deposit amount is ${minDepositAmount} BTC`,
-          )
+          // .min(
+          //   minDepositAmount,
+          //   `Minimum deposit amount is ${minDepositAmount} BTC`,
+          // )
           .max(
             Math.min(btcBalance, maxDepositAmount),
             btcBalance < maxDepositAmount

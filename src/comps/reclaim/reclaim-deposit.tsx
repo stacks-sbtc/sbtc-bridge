@@ -1,6 +1,6 @@
 import { useNotifications } from "@/hooks/use-notifications";
 import { ConnectWalletAction } from "../deposit/deposit-amount";
-import { ReclaimDepositProps } from "../ReclaimManager";
+import { ReclaimDepositProps } from "./reclaim-manager";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   bridgeConfigAtom,
@@ -22,13 +22,13 @@ import { NotificationStatusType } from "../Notifications";
 import { transmitRawTransaction } from "@/actions/bitcoinClient";
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useMemo } from "react";
+import Link from "next/link";
+import { CheckIcon } from "@heroicons/react/20/solid";
 
 const ReclaimDeposit = ({
   amount,
   depositTransaction,
 }: ReclaimDepositProps) => {
-  console.log("ReclaimDeposit", amount, depositTransaction);
-
   const { notify } = useNotifications();
   const walletInfo = useAtomValue(walletInfoAtom);
   const setShowWallet = useSetAtom(showConnectWalletAtom);
@@ -52,7 +52,6 @@ const ReclaimDeposit = ({
         return setShowWallet(true);
       }
 
-      // FIXME: move to util or its own file
       const unsignedTxHex = constructPsbtForReclaim({
         depositAmount: Math.floor(amount * 1e8),
         feeAmount: maxReclaimFee,
@@ -72,17 +71,6 @@ const ReclaimDeposit = ({
   };
 
   const signPSBT = async (psbtHex: string) => {
-    // const signPsbtRequestParams: SignPsbtRequestParams = {
-    //   hex: psbtHex,
-    //   network: walletNetwork,
-
-    //   broadcast: false,
-    // };
-
-    // const response = await window.LeatherProvider?.request(
-    //   "signPsbt",
-    //   signPsbtRequestParams,
-    // );
     const params = {
       hex: psbtHex,
       address: walletInfo.addresses.payment!.address,
@@ -140,82 +128,51 @@ const ReclaimDeposit = ({
 
   return (
     <div className="w-full flex flex-col  gap-4 ">
-      <div className="flex  flex-row w-full gap-4 h-20">
-        <div className="w-1/6  relative flex flex-col items-center justify-center h-full"></div>
-        <div
-          style={{
-            border: "2px solid #FC6432",
-          }}
-          className="w-full py-4 px-6  gap-2 flex flex-row items-center justify-between rounded-2xl  h-full"
-        >
-          <p className="text-white font-semibold  text-sm">Reclaim Amount</p>
-
-          <div
-            style={{
-              borderRadius: "44px",
-            }}
-            className="bg-[#1E1E1E] px-6 gap-4  flex flex-row items-center justify-center h-10"
-          >
-            <p className="text-white font-bold text-sm ">{amount} BTC</p>
+      <div className="w-full flex flex-col gap-3">
+        <div className="flex  flex-row w-full gap-4 h-20">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full">
+            <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
           </div>
+          <ReclaimDataItem title="Reclaim Amount" value={`${amount} BTC`} />
         </div>
-      </div>
-      <div className="flex  flex-row w-full gap-4 h-20">
-        <div className="w-1/6  relative flex flex-col items-center justify-center h-full"></div>
-        <div
-          style={{
-            border: "2px solid #FC6432",
-          }}
-          className="w-full py-4 px-6  gap-2 flex flex-row items-center justify-between rounded-2xl  h-full"
-        >
-          <p className="text-white font-semibold  text-sm">Locktime</p>
-
-          <div
-            style={{
-              borderRadius: "44px",
-            }}
-            className="bg-[#1E1E1E] px-6 gap-4  flex flex-row items-center justify-center h-10"
-          >
-            <p className="text-white font-bold text-sm ">
-              {depositTransaction.parameters.lockTime} blocks
-            </p>
+        <div className="flex  flex-row w-full gap-4 h-20">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full">
+            <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
           </div>
+          <ReclaimDataItem
+            title="Locktime"
+            value={`${depositTransaction.parameters.lockTime} blocks`}
+          />
         </div>
-      </div>
-      <div className="flex  flex-row w-full gap-4 h-20">
-        <div className="w-1/6  relative flex flex-col items-center justify-center h-full"></div>
-        <div
-          style={{
-            border: "2px solid #FC6432",
-          }}
-          className="w-full py-4 px-6  gap-2 flex flex-row items-center justify-between rounded-2xl  h-full"
-        >
-          <p className="text-white font-semibold  text-sm">
-            Deposit Transaction
-          </p>
-          <a href={mempoolUrl} target="_blank" rel="noreferrer">
-            <div
-              style={{
-                borderRadius: "44px",
-              }}
-              className="bg-[#1E1E1E] px-6 gap-4 cursor-pointer flex flex-row items-center justify-center h-10"
-            >
-              <p className="text-white font-bold text-sm ">
-                {useShortAddress(depositTransaction.bitcoinTxid)}
-              </p>
-            </div>
-          </a>
+        <div className="flex  flex-row w-full gap-4 h-20">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full">
+            <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
+          </div>
+          <ReclaimDataItem
+            title="Deposit Transaction"
+            value={useShortAddress(depositTransaction.bitcoinTxid)}
+            link={mempoolUrl}
+          />
         </div>
       </div>
       <div className="flex flex-row w-full mt-6  gap-4 ">
-        <div className="w-1/6  relative flex flex-col items-center justify-center h-full" />
+        <div className="w-1/6  relative flex flex-col items-center justify-center h-full"></div>
         <div className="flex w-full flex-row gap-2">
+          <button
+            onClick={() => router.back()}
+            style={{
+              border: "2px solid rgba(255, 255, 255, 0.2)",
+            }}
+            className=" w-2/6 h-14 flex flex-row items-center justify-center rounded-lg "
+          >
+            BACK
+          </button>
           <ConnectWalletAction>
             <button
               onClick={() => buildReclaimTransaction()}
               className="bg-darkOrange w-full h-14 flex flex-row items-center justify-center rounded-lg "
             >
-              RECLAIM
+              CONFIRM RECLAIM
             </button>
           </ConnectWalletAction>
         </div>
@@ -225,3 +182,49 @@ const ReclaimDeposit = ({
 };
 
 export default ReclaimDeposit;
+
+export const ReclaimDataItem = ({
+  title,
+  value,
+  link,
+}: {
+  title: string;
+  value: string;
+  link?: string;
+}) => {
+  return (
+    <div className="flex  flex-row w-full gap-4 h-20">
+      <div
+        style={{
+          border: ".5px solid #FC6432",
+        }}
+        className="w-full py-4 px-6  gap-2 flex flex-row items-center justify-between rounded-3xl  h-full"
+      >
+        <p className="text-white font-light  text-md">{title}</p>
+        {link ? (
+          <Link target="_blank" rel="noreferrer" href={link}>
+            <div
+              style={{
+                borderRadius: "44px",
+              }}
+              className="bg-[#1E1E1E] px-8 py-2 gap-4 cursor-pointer flex flex-row items-center justify-center h-10"
+            >
+              <p className="text-white font-Matter font-thin text-lg ">
+                {value}
+              </p>
+            </div>
+          </Link>
+        ) : (
+          <div
+            style={{
+              borderRadius: "44px",
+            }}
+            className="bg-[#1E1E1E] px-6 gap-4  flex flex-row items-center justify-center h-10"
+          >
+            <p className="text-white font-Matter font-thin text-lg">{value}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

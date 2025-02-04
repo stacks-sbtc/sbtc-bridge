@@ -19,6 +19,7 @@ export default function LayoutClient({
   config: BridgeConfig;
 }>) {
   useEffect(() => {
+    console.log("config,", config);
     store.set(bridgeConfigAtom, config);
     // this is a setup step no need to run it twice
     // eslint-disable-next-line react-hooks/exhaustive-deps

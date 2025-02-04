@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { RECLAIM_STEP } from "../ReclaimManager";
+import { RECLAIM_STEP } from "./reclaim-manager";
 import {
   CurrentDepositTimelineStep,
   TimelineStep,
@@ -26,13 +26,14 @@ const ReclaimTimeline = ({
       return 0;
     } else if (activeStep === RECLAIM_STEP.CURRENT_STATUS) {
       return 2;
-    } else if (activeStep === RECLAIM_STEP.RECLAIM) {
+    } else if (activeStep === RECLAIM_STEP.REVIEW) {
       return 1;
     } else {
       return 0;
     }
   }, [activeStep]);
 
+  const showCurrentStatus = activeStepNumber !== 1 && activeStepNumber !== 0;
   return (
     <div
       style={{
@@ -40,36 +41,36 @@ const ReclaimTimeline = ({
       }}
       className="w-2/5 h-min p-5 px-10 pb-10 flex flex-col gap-6 rounded-2xl"
     >
-      <h3 className="font-Matter text-wthite text-lg font-thin tracking-wide">
+      <h3 className="font-Matter text-wthite text-2xl font-thin tracking-wide">
         TIMELINE
       </h3>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <TimelineStep<RECLAIM_STEP>
           activeStep={activeStep}
           stepNumber={1}
-          step={RECLAIM_STEP.RECLAIM}
+          step={RECLAIM_STEP.REVIEW}
           activeStepNumber={activeStepNumber}
-          title="Confirm Reclaim"
-          description="Confirm the information and reclaim your BTC"
+          title="Review Reclaim"
+          description="Confirm the information of the reclaim before submitting the transaction."
         />
-        {activeStep === RECLAIM_STEP.CURRENT_STATUS ? (
+
+        <TimelineStep<RECLAIM_STEP>
+          activeStep={activeStep}
+          stepNumber={2}
+          step={RECLAIM_STEP.CURRENT_STATUS}
+          activeStepNumber={activeStepNumber}
+          title="Submit Reclaim Transaction:"
+          description="Submit the reclaim transaction to the network."
+        />
+        {showCurrentStatus && (
           <CurrentDepositTimelineStep<RECLAIM_STEP>
             txId={txId}
             activeStep={activeStep}
             status={status}
-            stepNumber={2}
+            stepNumber={3}
             step={RECLAIM_STEP.CURRENT_STATUS}
             activeStepNumber={activeStepNumber}
-            title="Operation Status:"
-            description="We will confirm the transaction status once the transaction is confirmed."
-          />
-        ) : (
-          <TimelineStep<RECLAIM_STEP>
-            activeStep={activeStep}
-            stepNumber={2}
-            step={RECLAIM_STEP.CURRENT_STATUS}
-            activeStepNumber={activeStepNumber}
-            title="Operation Status:"
+            title="Current Reclaim Request Status:"
             description="We will confirm the transaction status once the transaction is confirmed."
           />
         )}
