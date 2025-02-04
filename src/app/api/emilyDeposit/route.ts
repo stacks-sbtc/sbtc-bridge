@@ -1,3 +1,4 @@
+import { getTransactionHex } from "@/actions/bitcoinClient";
 import { env } from "@/env";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,19 +7,22 @@ interface CreateDepositRequestBody {
   bitcoinTxOutputIndex: number;
   reclaimScript: string;
   depositScript: string;
-  transactionHex: string;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body: CreateDepositRequestBody = await req.json();
+    const transactionHex = await getTransactionHex(body.bitcoinTxid);
 
+    console.log({
+      emilyReqPayloadInitialServer: JSON.stringify(body),
+    });
     const paramsBody = {
       bitcoinTxid: body.bitcoinTxid,
       bitcoinTxOutputIndex: body.bitcoinTxOutputIndex,
       reclaimScript: body.reclaimScript,
       depositScript: body.depositScript,
-      transactionHex: body.transactionHex,
+      transactionHex,
     };
     console.log({ emilyReqPayloadServer: JSON.stringify(paramsBody) });
 

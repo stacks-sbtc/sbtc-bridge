@@ -1,4 +1,3 @@
-import { getTransactionHex } from "@/actions/bitcoinClient";
 import { NotificationStatusType } from "@/comps/Notifications";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useMutation } from "@tanstack/react-query";
@@ -13,18 +12,13 @@ export const useEmilyDeposit = () => {
       reclaimScript: string;
       depositScript: string;
     }) => {
-      const transactionHex = await getTransactionHex(params.bitcoinTxid);
-      const payload = {
-        ...params,
-        transactionHex,
-      };
-      console.log({ emilyReqPayloadClient: JSON.stringify(payload) });
+      console.log({ emilyReqPayloadClient: JSON.stringify(params) });
       const res = await fetch("/api/emilyDeposit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(params),
       });
       if (!res.ok) {
         if (failureCount > 2) {
