@@ -2,90 +2,123 @@ import { ReclaimStatus } from "@/hooks/use-reclaim-status";
 import { bridgeConfigAtom } from "@/util/atoms";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
-import { Heading, SubText } from "../core/Heading";
-import { FlowLoaderContainer } from "../core/FlowContainer";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
-import { Step } from "../deposit-stepper";
+
+import Image from "next/image";
+
+import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { ReclaimDataItem } from "./reclaim-deposit";
+import { useShortAddress } from "@/hooks/use-short-address";
 
 const ReclaimStepper = ({
-  txId,
   amount,
+  lockTime,
   status,
+  reclaimTxId,
 }: {
-  txId: string;
   amount: number;
+  lockTime: string;
   status: ReclaimStatus;
+  reclaimTxId: string;
 }) => {
   const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
 
-  const showLoader = status === ReclaimStatus.Pending;
+  const mempoolUrl = useMemo(() => {
+    return `${PUBLIC_MEMPOOL_URL}/tx/${reclaimTxId}`;
+  }, [PUBLIC_MEMPOOL_URL, reclaimTxId]);
 
-  const currentStep = useMemo(() => {
-    const steps = [ReclaimStatus.Pending, 0, ReclaimStatus.Completed];
-    return steps.findIndex((step) => step === status);
+  const currentStatusTitle = useMemo(() => {
+    switch (status) {
+      case ReclaimStatus.PendingConfirmation:
+        return "Pending Transaction Pending Confirmation";
+      case ReclaimStatus.PendingMint:
+        return "Reclaim Transaction Pending Submission";
+      case ReclaimStatus.Completed:
+        return "Reclaim Transaction Confirmed";
+      case ReclaimStatus.Failed:
+        return "Failed";
+    }
   }, [status]);
 
-  const mempoolUrl = useMemo(() => {
-    return `${PUBLIC_MEMPOOL_URL}/tx/${txId}`;
-  }, [PUBLIC_MEMPOOL_URL, txId]);
-
-  const renderCurrenStatusText = () => {
-    if (status === ReclaimStatus.Pending) {
-      return (
-        <SubText>Reclaim transaction is pending confirmation on chain</SubText>
-      );
-    } else if (status === ReclaimStatus.Completed) {
-      return <SubText>Reclaim transaction has been confirmed on chain</SubText>;
-    } else {
-      return (
-        <SubText>
-          Something went wrong getting the status, please reach out for help
-        </SubText>
-      );
+  const currentStatusText = useMemo(() => {
+    switch (status) {
+      case ReclaimStatus.PendingConfirmation:
+        return "Your reclaim transaction is waiting for confirmation. Please ensure that the transaction is confirmed on your selected wallet provider.";
+      case ReclaimStatus.PendingMint:
+        return "Your reclaim transaction has been submitted and we are waiting on It's confirmation.";
+      case ReclaimStatus.Completed:
+        return "Your reclaim transaction has been processed and you should now see funds back in your wallet.";
+      case ReclaimStatus.Failed:
+        return "Your reclaim transaction has failed, please contact us for further assistance.";
     }
-  };
+  }, [status]);
   return (
-    <FlowLoaderContainer showLoader={showLoader}>
-      <>
-        <div className="w-full flex flex-row items-center justify-between">
-          <Heading>Reclaim Status</Heading>
-        </div>
-        {renderCurrenStatusText()}
-        <div className="flex flex-col  gap-2">
-          <div className="flex flex-col gap-1">
-            <SubText>Amount To Reclaim</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {amount} BTC
-            </p>
+    <div className="w-full flex flex-col  gap-4 ">
+      <div className="w-full flex flex-col gap-3">
+        <div className="flex  flex-row w-full gap-4 h-20">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full">
+            <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-orange underline underline-offset-1 font-Matter font-semibold text-sm ">
-              <a href={mempoolUrl} target="_blank" rel="noreferrer">
-                View in mempool
-                <ArrowTopRightOnSquareIcon className="inline-block w-4 h-4 ml-1" />
-              </a>
-            </p>
-          </div>
+          <ReclaimDataItem title="Reclaim Amount" value={`${amount} BTC`} />
         </div>
+        <div className="flex  flex-row w-full gap-4 h-20">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full">
+            <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
+          </div>
+          <ReclaimDataItem title="Locktime" value={`${lockTime} blocks`} />
+        </div>
+        <div className="flex  flex-row w-full gap-4 h-20">
+          <div className="w-1/6  relative flex flex-col items-center justify-center h-full">
+            <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
+          </div>
+          <ReclaimDataItem
+            title="Reclaim Transaction"
+            value={useShortAddress(reclaimTxId)}
+            link={mempoolUrl}
+          />
+        </div>
+        <div className="flex  flex-row w-full justify-start gap-4 h-40">
+          <div className="w-1/6  relative flex flex-col pt-6 items-center justify-start h-full">
+            {status === ReclaimStatus.Completed && (
+              <CheckIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
+            )}
+            {status === ReclaimStatus.Failed && (
+              <XMarkIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
+            )}
+            {(status === ReclaimStatus.PendingConfirmation ||
+              status === ReclaimStatus.PendingMint) && (
+              <div
+                className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-darkOrange"
+                role="status"
+              ></div>
+            )}
+          </div>
+          <div
+            style={{
+              border: ".5px solid #FC6432",
+            }}
+            className="w-full pt-8 px-6  gap-2 flex flex-row items-start justify-between rounded-2xl  h-full"
+          >
+            <div className="flex flex-col max-w-[50%] gap-2">
+              <p className="text-white font-light  text-md">
+                {currentStatusTitle}
+              </p>
+              <p className="text-midGray font-light  text-sm">
+                {currentStatusText}
+              </p>
+            </div>
 
-        <div className="flex flex-col mt-2 gap-4 w-full ">
-          <ol className="flex items-center w-full text-xs text-gray-900 font-medium sm:text-base text-black">
-            <Step
-              currentStep={currentStep}
-              index={0}
-              name="Pending"
-              lastStep={1}
-            />
-            <Step
-              currentStep={currentStep}
-              index={1}
-              name="Completed"
-              lastStep={1}
-            />
-          </ol>
+            <a href={mempoolUrl} target="_blank" rel="noreferrer">
+              <Image
+                src="/images/sBTCWhite.png"
+                alt="Icon"
+                width={100}
+                height={100}
+              />
+            </a>
+          </div>
         </div>
-      </>
-    </FlowLoaderContainer>
+      </div>
+    </div>
   );
 };
 

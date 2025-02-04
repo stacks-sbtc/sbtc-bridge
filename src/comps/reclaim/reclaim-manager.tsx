@@ -4,13 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
 
 import { useNotifications } from "@/hooks/use-notifications";
-import { NotificationStatusType } from "./Notifications";
+import { NotificationStatusType } from "../Notifications";
 import { getRawTransaction } from "@/actions/bitcoinClient";
-import ReclaimStepper from "./reclaim/reclaim-stepper";
-import ReclaimDeposit from "./reclaim/reclaim-deposit";
-import ReclaimTimeline from "./reclaim/reclaim-timeline";
-import { NavTile } from "./core/app-nav";
-import { SECTION } from "./HomeApp";
+import ReclaimStepper from "./reclaim-stepper";
+import ReclaimDeposit from "./reclaim-deposit";
+import ReclaimTimeline from "./reclaim-timeline";
+import { NavTile } from "../core/app-nav";
+import { SECTION } from "../HomeApp";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";
 import { useReclaimStatus } from "@/hooks/use-reclaim-status";
@@ -22,12 +22,14 @@ import { useReclaimStatus } from "@/hooks/use-reclaim-status";
 export enum RECLAIM_STEP {
   LOADING = "LOADING",
   NOT_FOUND = "NOT_FOUND",
-  RECLAIM = "RECLAIM",
   CANT_RECLAIM = "CANT_RECLAIM",
+
+  REVIEW = "REVIEW",
+  SUBMISSION = "SUBMISSION",
   CURRENT_STATUS = "CURRENT_STATUS",
 }
 
-type EmilyDepositTransactionType = {
+export type EmilyDepositTransactionType = {
   bitcoinTxid: string;
   bitcoinTxOutputIndex: number;
   recipient: string;
@@ -54,9 +56,14 @@ type EmilyDepositTransactionType = {
 
 const ReclaimManager = () => {
   const searchParams = useSearchParams();
+
   const depositTxId = searchParams.get("depositTxId");
   const outputIndex = searchParams.get("vout") || 0;
   const reclaimTxId = searchParams.get("reclaimTxId");
+
+  const reclaimAmount = searchParams.get("reclaimAmount") || "N/A";
+  const lockTime = searchParams.get("lockTime") || "N/A";
+
   const status = useReclaimStatus(reclaimTxId || "");
 
   const { notify } = useNotifications();
@@ -77,10 +84,9 @@ const ReclaimManager = () => {
 
     if (reclaimTxId) {
       fetchReclaimTransactionStatus();
-      return;
-    } else if (depositTxId) {
+    }
+    if (depositTxId) {
       fetchDepositInfoFromEmily();
-      return;
     }
     // no need to include the fetch fns
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,7 +98,8 @@ const ReclaimManager = () => {
 
   const renderStep = () => {
     switch (step) {
-      case RECLAIM_STEP.RECLAIM:
+      // Confirm data with user before creating reclaim tx
+      case RECLAIM_STEP.REVIEW:
         // ensure we have the deposit transaction
         if (!emilyDepositTransaction) {
           notify({
@@ -108,6 +115,8 @@ const ReclaimManager = () => {
             depositTransaction={emilyDepositTransaction}
           />
         );
+      // show the current status of submitted reclaim tx
+      case RECLAIM_STEP.SUBMISSION:
       case RECLAIM_STEP.CURRENT_STATUS:
         // get reclaimTxId from the query params
         const reclaimTxId = searchParams.get("reclaimTxId") || "";
@@ -121,8 +130,14 @@ const ReclaimManager = () => {
         }
 
         return (
-          <ReclaimStepper status={status} amount={amount} txId={reclaimTxId} />
+          <ReclaimStepper
+            reclaimTxId={reclaimTxId}
+            lockTime={lockTime}
+            status={status}
+            amount={amount}
+          />
         );
+        break;
       case RECLAIM_STEP.LOADING:
         return <LoadingInfo />;
       case RECLAIM_STEP.NOT_FOUND:
@@ -145,8 +160,6 @@ const ReclaimManager = () => {
       }
 
       const reclaimTransaction = (await getRawTransaction(reclaimTxId))!;
-
-      console.log("reclaimTransaction", reclaimTransaction);
 
       if (reclaimTransaction) {
         setStep(RECLAIM_STEP.CURRENT_STATUS);
@@ -235,7 +248,7 @@ const ReclaimManager = () => {
 
       const emilyRes = responseData as EmilyDepositTransactionType;
 
-      if (emilyRes.status === "pending") setStep(RECLAIM_STEP.RECLAIM);
+      if (emilyRes.status === "pending") setStep(RECLAIM_STEP.REVIEW);
       if (emilyRes.status === "confirmed") setStep(RECLAIM_STEP.CANT_RECLAIM);
 
       fetchDepositAmount();
@@ -258,9 +271,9 @@ const ReclaimManager = () => {
       "
       >
         <NavTile
-          section={SECTION.DEPOSIT}
-          activeSection={SECTION.DEPOSIT}
-          text="DEPOSIT"
+          section={SECTION.RECLAIM}
+          activeSection={SECTION.RECLAIM}
+          text="RECLAIM"
           onClickSection={handleClickSection}
         />
       </div>
@@ -286,6 +299,19 @@ const ReclaimManager = () => {
 export default ReclaimManager;
 
 const LoadingInfo = () => {
+  const [showError, setShowError] = useState(false);
+
+  // useEffect to show error message if it take more than 10 seconds to load info
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowError(true);
+    }, 10000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
     <div className="w-full flex flex-col  gap-4 ">
       <div className="flex  flex-row w-full gap-4 h-40">
@@ -296,13 +322,23 @@ const LoadingInfo = () => {
           }}
           className="w-full h-min p-5 px-10 items-center justify-center pb-10 flex flex-col gap-6 rounded-2xl"
         >
-          <div
-            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-            role="status"
-          ></div>
-          <h3 className="font-Matter text-white text-lg font-thin tracking-wide">
-            LOADING
-          </h3>
+          {showError ? (
+            <div className="w-full bg-red-500 p-4 rounded-lg">
+              <p className="text-white text-center font-Matter font-semibold text-sm">
+                Error loading information. Please try again.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div
+                className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                role="status"
+              ></div>
+              <h3 className="font-Matter text-white text-lg font-thin tracking-wide">
+                LOADING
+              </h3>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -364,175 +400,3 @@ export type ReclaimDepositProps = {
   amount: number;
   depositTransaction: EmilyDepositTransactionType;
 };
-
-/*
-const ReclaimDeposit = ({
-  amount,
-  depositTransaction,
-}: ReclaimDepositProps) => {
-  const { notify } = useNotifications();
-  const walletInfo = useAtomValue(walletInfoAtom);
-  const setShowWallet = useSetAtom(showConnectWalletAtom);
-  const router = useRouter();
-
-  const { WALLET_NETWORK: walletNetwork, SUPPORT_LINK } =
-    useAtomValue(bridgeConfigAtom);
-
-  const buildReclaimTransaction = async () => {
-    try {
-      // FIXME: move to env
-      const maxReclaimFee = 5000;
-
-      const btcAddress = getWalletAddress();
-
-      if (!btcAddress) {
-        return setShowWallet(true);
-      }
-
-      // FIXME: move to util or its own file
-      const unsignedTxHex = constructPsbtForReclaim({
-        depositAmount: Math.floor(amount * 1e8),
-        feeAmount: maxReclaimFee,
-        lockTime: depositTransaction.parameters.lockTime,
-        depositScript: depositTransaction.depositScript,
-        reclaimScript: depositTransaction.reclaimScript,
-        txId: depositTransaction.bitcoinTxid,
-        vout: depositTransaction.bitcoinTxOutputIndex,
-        bitcoinReturnAddress: btcAddress,
-        walletNetwork,
-      });
-
-      await signPSBT(unsignedTxHex);
-    } catch (err) {
-      console.error("Error building reclaim transaction", err);
-    }
-  };
-
-  const signPSBT = async (psbtHex: string) => {
-    // const signPsbtRequestParams: SignPsbtRequestParams = {
-    //   hex: psbtHex,
-    //   network: walletNetwork,
-
-    //   broadcast: false,
-    // };
-
-    // const response = await window.LeatherProvider?.request(
-    //   "signPsbt",
-    //   signPsbtRequestParams,
-    // );
-    const params = {
-      hex: psbtHex,
-      address: walletInfo.addresses.payment!.address,
-      network: walletNetwork,
-    };
-    let signedPsbt = "";
-    if (walletInfo.selectedWallet === WalletProvider.LEATHER) {
-      signedPsbt = await signPSBTLeather(params);
-    }
-    if (walletInfo.selectedWallet === WalletProvider.XVERSE) {
-      signedPsbt = await signPSBTXverse(params);
-    }
-
-    if (signedPsbt) {
-      const finalizedTxHex = finalizePsbt(signedPsbt, walletNetwork);
-
-      await broadcastTransaction(finalizedTxHex);
-    } else {
-      notify({
-        type: NotificationStatusType.ERROR,
-        message: "Error signing PSBT",
-      });
-    }
-  };
-
-  const broadcastTransaction = async (finalizedTxHex: string) => {
-    try {
-      const broadcastTransaction = await transmitRawTransaction(finalizedTxHex);
-
-      if (!broadcastTransaction) {
-        notify({
-          type: NotificationStatusType.ERROR,
-          message: "Error broadcasting transaction",
-        });
-        return;
-      }
-      notify({
-        type: NotificationStatusType.SUCCESS,
-        message: "Reclaim transaction broadcast",
-      });
-
-      const transactionId = createTransactionFromHex(finalizedTxHex);
-
-      // set a query params to the transaction id as reclaimTxId and updated the status
-
-      router.push(`/reclaim?reclaimTxId=${transactionId}`);
-    } catch (err) {
-      console.warn("Error broadcasting transaction", err);
-    }
-  };
-
-  const getWalletAddress = () => {
-    return walletInfo?.addresses.payment?.address;
-  };
-  return (
-    <FlowContainer>
-      <>
-        <div className="w-full flex flex-row items-center justify-between">
-          <Heading>Reclaim Your Deposit</Heading>
-        </div>
-        <div className="flex flex-col  gap-2">
-          <div className="flex flex-col gap-1">
-            <SubText>Amount To Reclaim</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {amount} BTC
-            </p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <SubText>Lock Time</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {depositTransaction.parameters.lockTime} blocks
-            </p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <SubText>Bitcoin address to reclaim to</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {useShortAddress(getWalletAddress() || "")}
-            </p>
-          </div>
-          {SUPPORT_LINK && (
-            <div className="flex flex-1 items-end">
-              <SubText>
-                Please note that we have received reports of errors with Ledgers
-                running the reclaim function - if you are using a ledger and
-                experience this please contact our{" "}
-                <a
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-500 underline"
-                  href={SUPPORT_LINK}
-                >
-                  support team here
-                </a>
-              </SubText>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-1 ">
-          <div className="w-full p-4 bg-lightOrange h-20 rounded-lg flex flex-row items-center justify-center gap-2">
-            <InformationCircleIcon className="h-10 w-10 text-orange" />
-            <p className="text-orange font-Matter font-semibold text-sm break-keep">
-              Please note that deposit will not be available for reclaiming
-              until after enough blocks have passed from its locktime
-            </p>
-          </div>
-        </div>
-        <div className="w-full flex-row flex justify-between items-center">
-          <PrimaryButton onClick={buildReclaimTransaction}>
-            RECLAIM
-          </PrimaryButton>
-        </div>
-      </>
-    </FlowContainer>
-  );
-};
-*/

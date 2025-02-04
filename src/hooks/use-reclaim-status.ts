@@ -4,16 +4,17 @@ import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
 export enum ReclaimStatus {
-  Pending = "pending",
-  Completed = "completed",
-  Failed = "failed",
+  PendingConfirmation = "pending",
+  PendingMint = "accepted",
+  Completed = "confirmed",
+  Failed = "Failed",
 }
 
 export const useReclaimStatus = (txId?: string) => {
   const { POLLING_INTERVAL } = useAtomValue(bridgeConfigAtom);
   // we'll need to fetch this from the bitcoin rpc to get the current status of the tx
   const [reclaimStatus, setReclaimStatus] = useState<ReclaimStatus>(
-    ReclaimStatus.Pending,
+    ReclaimStatus.PendingConfirmation,
   );
 
   useEffect(() => {
@@ -21,8 +22,9 @@ export const useReclaimStatus = (txId?: string) => {
       // fetch the status of the reclaim tx from the bitcoin rpc
       // and update the reclaimStatus
       const check = async () => {
+        let status = ReclaimStatus.PendingMint;
+
         const reclaimTx = (await getRawTransaction(txId))!;
-        let status = ReclaimStatus.Pending;
 
         if (reclaimTx.status.confirmed) {
           status = ReclaimStatus.Completed;

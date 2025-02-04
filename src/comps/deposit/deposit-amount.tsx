@@ -25,6 +25,9 @@ const DepositAmount = ({ setStep }: DepositFlowStepProps) => {
   const handleSubmit = async () => {
     // Validate the amount using Yup
     const sats = Math.floor(Number(field.value) * 1e8);
+    setStep(DEPOSIT_STEP.ADDRESS);
+    return;
+
     if (await isWithinDepositLimits(sats)) {
       setStep(DEPOSIT_STEP.ADDRESS); // Proceed to the next step
     } else {

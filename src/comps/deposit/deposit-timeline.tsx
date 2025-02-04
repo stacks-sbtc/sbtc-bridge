@@ -23,8 +23,13 @@ export const TimelineStep = <T extends string | number>({
   step,
   activeStep,
 }: TimelineStepProps<T>) => {
-  const isActive = step === activeStep;
+  const isActive = useMemo(() => {
+    return step === activeStep || step > activeStep;
+  }, [activeStep, step]);
 
+  console.log(
+    `isActive: ${isActive}, activeStep: ${activeStep}, step: ${step}`,
+  );
   return (
     <div className="flex flex-row gap-4 w-96 h-fit">
       <div className="flex flex-col items-center h-min">
@@ -33,8 +38,7 @@ export const TimelineStep = <T extends string | number>({
             width: "35px",
             height: "35px",
             borderRadius: "50%",
-            backgroundColor:
-              isActive || activeStep > step ? "#FC6432" : "#525153",
+            backgroundColor: isActive ? "#FC6432" : "#525153",
           }}
           className=" text-black flex flex-row items-center justify-center "
         >
@@ -42,8 +46,7 @@ export const TimelineStep = <T extends string | number>({
         </div>
         <div
           style={{
-            backgroundColor:
-              isActive || activeStep > step ? "#FC6432" : "#525153",
+            backgroundColor: isActive ? "#FC6432" : "#525153",
           }}
           className="bg-white h-14  w-[2px]"
         />
@@ -72,8 +75,9 @@ export const CurrentDepositTimelineStep = <T extends string | number>({
   stacksTxId?: string;
   status: DepositStatus | ReclaimStatus;
 }) => {
-  const isActive = step === activeStep;
-
+  const isActive = useMemo(() => {
+    return step === activeStep || step > activeStep;
+  }, [activeStep, step]);
   const { PUBLIC_MEMPOOL_URL, WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
 
   const mempoolUrl = useMemo(() => {
@@ -96,6 +100,7 @@ export const CurrentDepositTimelineStep = <T extends string | number>({
   }, [stacksTxId, WALLET_NETWORK]);
 
   const renderCurrentStatus = () => {
+    console.log("status", status);
     if (
       status === DepositStatus.PendingConfirmation ||
       status === DepositStatus.PendingMint
@@ -105,7 +110,8 @@ export const CurrentDepositTimelineStep = <T extends string | number>({
           <div
             className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
             role="status"
-          ></div>
+          />
+
           <h3 className="font-Matter text-white text-lg font-thin tracking-wide">
             PROCESSING
           </h3>
@@ -151,14 +157,18 @@ export const CurrentDepositTimelineStep = <T extends string | number>({
             width: "35px",
             height: "35px",
             borderRadius: "50%",
-            backgroundColor:
-              isActive || activeStep > step ? "#FC6432" : "#525153",
+            backgroundColor: isActive ? "#FC6432" : "#525153",
           }}
           className=" text-black flex flex-row items-center justify-center "
         >
           <p className="text-black font-semibold  text-xs">{stepNumber}</p>
         </div>
-        <div className="bg-white h-40  w-[2px]" />
+        <div
+          style={{
+            backgroundColor: isActive ? "#FC6432" : "#525153",
+          }}
+          className="bg-white h-40  w-[2px]"
+        />
       </div>
       <div className="flex flex-col h-auto w-64 gap-2">
         <p className="text-white m-0 text-sm font-semibold ">{title}</p>
