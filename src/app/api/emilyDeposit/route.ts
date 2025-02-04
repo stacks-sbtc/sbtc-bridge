@@ -6,6 +6,7 @@ interface CreateDepositRequestBody {
   bitcoinTxOutputIndex: number;
   reclaimScript: string;
   depositScript: string;
+  transactionHex: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -17,6 +18,7 @@ export async function POST(req: NextRequest) {
       bitcoinTxOutputIndex: body.bitcoinTxOutputIndex,
       reclaimScript: body.reclaimScript,
       depositScript: body.depositScript,
+      transactionHex: body.transactionHex,
     };
     console.log({ emilyReqPayloadServer: JSON.stringify(paramsBody) });
 
