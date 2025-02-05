@@ -12,11 +12,11 @@ interface CreateDepositRequestBody {
 export async function POST(req: NextRequest) {
   try {
     const body: CreateDepositRequestBody = await req.json();
-    const transactionHex = await getTransactionHex(body.bitcoinTxid);
-
     console.log({
       emilyReqPayloadInitialServer: JSON.stringify(body),
     });
+    const transactionHex = await getTransactionHex(body.bitcoinTxid);
+
     const paramsBody = {
       bitcoinTxid: body.bitcoinTxid,
       bitcoinTxOutputIndex: body.bitcoinTxOutputIndex,
