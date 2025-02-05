@@ -352,8 +352,6 @@ const DepositFlowConfirm = ({
         depositScript: depositScriptHexPreHash,
       };
 
-      console.log({ emilyReqPayloadClient: JSON.stringify(emilyReqPayload) });
-
       // make emily post request
       const response = await notifyEmily(emilyReqPayload);
 

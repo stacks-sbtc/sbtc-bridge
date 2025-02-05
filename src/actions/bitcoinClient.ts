@@ -88,6 +88,18 @@ export const getRawTransaction = async (
   return await result.json();
 };
 
+export const getTransactionHex = async (txid: string): Promise<string> => {
+  const result = await fetch(`${env.MEMPOOL_API_URL}/tx/${txid}/hex`);
+  if (result.status === 404) {
+    throw new Error("Transaction not found");
+  }
+
+  if (!result.ok) {
+    throw new Error("Error fetching transaction hex");
+  }
+  return await result.text();
+};
+
 export const getTxRbf = async (txid: string): Promise<boolean> => {
   const result = await fetch(`${env.MEMPOOL_API_URL}/v1/tx/${txid}/rbf`);
   return await result.json();
