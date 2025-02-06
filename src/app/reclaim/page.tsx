@@ -1,7 +1,7 @@
 "use server";
 import Faqs from "@/comps/Faqs";
 
-import ReclaimManager from "@/comps/reclaim/reclaim-manager";
+import ReclaimManager from "@/comps/ReclaimManager";
 
 export default async function Home() {
   return (
