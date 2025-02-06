@@ -63,7 +63,6 @@ const ReclaimManager = () => {
   const outputIndex = searchParams.get("vout") || 0;
   const reclaimTxId = searchParams.get("reclaimTxId");
 
-  const reclaimAmount = searchParams.get("reclaimAmount") || "N/A";
   const lockTime = searchParams.get("lockTime") || "N/A";
 
   const status = useReclaimStatus(reclaimTxId || "");
