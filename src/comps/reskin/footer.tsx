@@ -2,14 +2,14 @@ import Image from "next/image";
 
 export default function Footer({ supportLink }: { supportLink?: string }) {
   return (
-    <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-white font-Matter">
+    <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-[#272628] font-Matter">
       <div
         style={{
           maxWidth: "1200px",
         }}
-        className="flex-1 w-full px-4 flex-row flex items-center justify-between"
+        className="w-full flex flex-row items-center justify-between"
       >
-        <div>
+        <div className="flex flex-col gap-2">
           <Image
             src="/images/l2LabsLogo.svg"
             alt="Stacks Logo"
@@ -24,7 +24,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
               href={supportLink}
               target="_blank"
               rel="noreferrer"
-              className="text-black font-light text-sm"
+              className="text-midGray font-light text-sm"
             >
               Live support
             </a>
@@ -34,7 +34,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
             href="https://docs.stacks.co/guides-and-tutorials/sbtc/how-to-use-the-sbtc-bridge"
             target="_blank"
             rel="noreferrer"
-            className="text-black font-light text-sm"
+            className="text-midGray font-light text-sm"
           >
             How to use this bridge
           </a>
@@ -43,7 +43,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
             href="https://docs.stacks.co/concepts/sbtc"
             target="_blank"
             rel="noreferrer"
-            className="text-black font-light text-sm"
+            className="text-midGray font-light text-sm"
           >
             Docs
           </a>
@@ -52,7 +52,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
             href="https://github.com/stacks-network/sbtc"
             target="_blank"
             rel="noreferrer"
-            className="text-black font-light text-sm"
+            className="text-midGray font-light text-sm"
           >
             Github
           </a>

@@ -78,7 +78,7 @@ const Header = ({ config }: { config: BridgeConfig }) => {
           <Link href="/">
             <div className="">
               <Image
-                src="/images/StacksNav.svg"
+                src="/images/StacksNavWhite.svg"
                 alt="Stacks Logo"
                 width={100}
                 height={100}

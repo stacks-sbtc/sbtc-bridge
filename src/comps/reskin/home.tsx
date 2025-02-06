@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Faqs from "../Faqs";
+import Faqs from "./faqs";
 import { TransferAction } from "../TransferHome";
 import LandingAnimation from "./core/LandingAnimation";
 import { usePathname, useRouter } from "next/navigation";
