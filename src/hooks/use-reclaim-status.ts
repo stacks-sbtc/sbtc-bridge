@@ -4,17 +4,17 @@ import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
 export enum ReclaimStatus {
-  PendingConfirmation = "pending",
+  Pending = "pending",
   PendingMint = "accepted",
-  Completed = "confirmed",
-  Failed = "Failed",
+  Completed = "completed",
+  Failed = "failed",
 }
 
 export const useReclaimStatus = (txId?: string) => {
   const { POLLING_INTERVAL } = useAtomValue(bridgeConfigAtom);
   // we'll need to fetch this from the bitcoin rpc to get the current status of the tx
   const [reclaimStatus, setReclaimStatus] = useState<ReclaimStatus>(
-    ReclaimStatus.PendingConfirmation,
+    ReclaimStatus.Pending,
   );
 
   useEffect(() => {

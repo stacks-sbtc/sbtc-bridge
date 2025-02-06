@@ -33,7 +33,7 @@ const ReclaimStepper = ({
 
   const currentStatusTitle = useMemo(() => {
     switch (status) {
-      case ReclaimStatus.PendingConfirmation:
+      case ReclaimStatus.Pending:
         return "Pending Transaction Pending Confirmation";
       case ReclaimStatus.PendingMint:
         return "Reclaim Transaction Pending Submission";
@@ -46,7 +46,7 @@ const ReclaimStepper = ({
 
   const currentStatusText = useMemo(() => {
     switch (status) {
-      case ReclaimStatus.PendingConfirmation:
+      case ReclaimStatus.Pending:
         return "Your reclaim transaction is waiting for confirmation. Please ensure that the transaction is confirmed on your selected wallet provider.";
       case ReclaimStatus.PendingMint:
         return "Your reclaim transaction has been submitted and we are waiting on It's confirmation.";
@@ -89,7 +89,7 @@ const ReclaimStepper = ({
             {status === ReclaimStatus.Failed && (
               <XMarkIcon className="w-10 h-10 flex flex-row items-center justify-center rounded-full text-darkOrange " />
             )}
-            {(status === ReclaimStatus.PendingConfirmation ||
+            {(status === ReclaimStatus.Pending ||
               status === ReclaimStatus.PendingMint) && (
               <div
                 className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-darkOrange"
