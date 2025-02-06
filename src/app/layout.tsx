@@ -14,7 +14,6 @@ export default async function RootLayout({
 }>) {
   const sBTCBridgeConfig = await getSbtcBridgeConfig();
 
-  console.log("sBTCBridgeConfig", sBTCBridgeConfig);
   return (
     <html lang="en">
       <head>
