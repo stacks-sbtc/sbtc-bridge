@@ -1,5 +1,5 @@
 import { CheckIcon, PencilIcon } from "@heroicons/react/20/solid";
-import { DEPOSIT_STEP, DepositFlowConfirmProps } from "../Deposit";
+import { DEPOSIT_STEP, DepositFlowConfirmProps } from "./deposit-manager";
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useAtomValue } from "jotai";
@@ -12,7 +12,7 @@ import {
 
 import { STACKS_TESTNET, STACKS_MAINNET, STACKS_DEVNET } from "@stacks/network";
 
-import { NotificationStatusType } from "../Notifications";
+import { NotificationStatusType } from "../../Notifications";
 import { getAggregateKey } from "@/util/get-aggregate-key";
 import { principalCV, serializeCVBytes } from "@stacks/transactions";
 import {

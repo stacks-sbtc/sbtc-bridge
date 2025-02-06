@@ -4,13 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
 
 import { useNotifications } from "@/hooks/use-notifications";
-import { NotificationStatusType } from "../Notifications";
+
+import { NotificationStatusType } from "../../Notifications";
 import { getRawTransaction } from "@/actions/bitcoinClient";
 import ReclaimStepper from "./reclaim-stepper";
 import ReclaimDeposit from "./reclaim-deposit";
 import ReclaimTimeline from "./reclaim-timeline";
 import { NavTile } from "../core/app-nav";
-import { SECTION } from "../HomeApp";
+
+import { SECTION } from "../home";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";
 import { useReclaimStatus } from "@/hooks/use-reclaim-status";

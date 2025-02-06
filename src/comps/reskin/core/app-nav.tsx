@@ -1,6 +1,6 @@
 import { classNames } from "@/util";
-import { SECTION } from "../HomeApp";
-import { SectionActionProps, SectionSelection } from "../HomeSelectedHeader";
+import { SECTION } from "../../HomeApp";
+import { SectionActionProps, SectionSelection } from "../../HomeSelectedHeader";
 
 export const NavTile = ({
   section,

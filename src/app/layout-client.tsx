@@ -9,7 +9,7 @@ import { queryClient } from "@/query/client";
 import { Suspense, useEffect } from "react";
 import { bridgeConfigAtom } from "@/util/atoms";
 import Footer from "@/comps/footer";
-import Header from "@/comps/core/header-v2";
+import Header from "@/comps/reskin/core/header-v2";
 
 export default function LayoutClient({
   children,

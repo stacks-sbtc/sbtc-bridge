@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { DEPOSIT_STEP } from "../Deposit";
+import { DEPOSIT_STEP } from "./deposit-manager";
 import { DepositStatus } from "@/hooks/use-deposit-status";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { useAtomValue } from "jotai";

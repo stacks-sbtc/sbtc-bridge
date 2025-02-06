@@ -12,9 +12,9 @@ import {
   walletInfoAtom,
 } from "@/util/atoms";
 
-import { NotificationStatusType } from "../Notifications";
+import { NotificationStatusType } from "../../Notifications";
 import { useNotifications } from "@/hooks/use-notifications";
-import ConnectWallet from "../ConnectWallet";
+import ConnectWallet from "../../ConnectWallet";
 
 const Header = ({ config }: { config: BridgeConfig }) => {
   // const isTestnet =

@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import Image from "next/image";
-import { DEPOSIT_STEP, DepositFlowStepProps } from "../Deposit";
+import { DEPOSIT_STEP, DepositFlowStepProps } from "./deposit-manager";
 import useMintCaps from "@/hooks/use-mint-caps";
 import { useNotifications } from "@/hooks/use-notifications";
-import { NotificationStatusType } from "../Notifications";
+import { NotificationStatusType } from "../../Notifications";
 import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useField } from "formik";

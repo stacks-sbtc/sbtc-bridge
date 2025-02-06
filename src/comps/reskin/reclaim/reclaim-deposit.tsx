@@ -18,7 +18,7 @@ import {
   signPSBTLeather,
   signPSBTXverse,
 } from "@/util/wallet-utils/src/sign-psbt";
-import { NotificationStatusType } from "../Notifications";
+import { NotificationStatusType } from "../../Notifications";
 import { transmitRawTransaction } from "@/actions/bitcoinClient";
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useMemo } from "react";

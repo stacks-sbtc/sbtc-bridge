@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import Faqs from "./Faqs";
-import DepositFlow from "./Deposit";
-import { TransferAction } from "./TransferHome";
-import LandingAnimation from "./reskin/core/LandingAnimation";
+import Faqs from "../Faqs";
+import { TransferAction } from "../TransferHome";
+import LandingAnimation from "./core/LandingAnimation";
 import { usePathname, useRouter } from "next/navigation";
-import AppNav from "./reskin/core/app-nav";
-import HistoryView from "./HistoryView";
+import AppNav from "./core/app-nav";
+import HistoryView from "./history/history-manager";
+import DepositFlow from "./deposit/deposit-manager";
 
 export enum SECTION {
   DEPOSIT = "DEPOSIT",

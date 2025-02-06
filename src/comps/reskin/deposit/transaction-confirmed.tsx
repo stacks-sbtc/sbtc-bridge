@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { DepositFlowReviewProps } from "../Deposit";
+import { DepositFlowReviewProps } from "./deposit-manager";
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";

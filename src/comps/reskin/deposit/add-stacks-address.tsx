@@ -1,5 +1,5 @@
 import { CheckIcon, PencilIcon } from "@heroicons/react/20/solid";
-import { DEPOSIT_STEP, DepositFlowStepProps } from "../Deposit";
+import { DEPOSIT_STEP, DepositFlowStepProps } from "./deposit-manager";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";
 import { createAddress } from "@stacks/transactions";

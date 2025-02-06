@@ -9,6 +9,11 @@ import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ReclaimDataItem } from "./reclaim-deposit";
 import { useShortAddress } from "@/hooks/use-short-address";
 
+import { Heading, SubText } from "../core/Heading";
+import { FlowLoaderContainer } from "../../core/FlowContainer";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
+import { Step } from "../deposit/deposit-stepper";
+
 const ReclaimStepper = ({
   amount,
   lockTime,
