@@ -9,7 +9,7 @@ const sectionTextStyle = (isActive: boolean) =>
 const sectionStyle = (isActive: boolean) =>
   isActive ? " border-orange" : " border-gray";
 
-export type SectionActionProps = {
+type SectionActionProps = {
   section: SECTION;
   onClickSection?: (section: SECTION) => void;
   activeSection: SECTION;
@@ -41,48 +41,52 @@ export const SectionAction = ({
   );
 };
 
-export type SectionSelection = {
-  section: SECTION;
-  onClickSection: (section: SECTION) => void;
-};
-const SelectedSection = ({ section, onClickSection }: SectionSelection) => {
-  const handleClickSection = (section: SECTION) => {
-    onClickSection(section);
-  };
-  return (
-    <div className="flex  flex-row items-center justify-center">
-      <SectionAction
+// type SectionSelection = {
+//   section: SECTION;
+//   onClickSection: (section: SECTION) => void;
+// };
+const SelectedSection = () =>
+  // {
+  // section, onClickSection
+  // }: SectionSelection,
+  {
+    // const handleClickSection = (section: SECTION) => {
+    //   onClickSection(section);
+    // };
+    return (
+      <div className="flex  flex-row items-center justify-center">
+        {/* <SectionAction
         section={SECTION.DEPOSIT}
         activeSection={section}
         text="Deposit"
         onClickSection={handleClickSection}
-      />
-      {/* <SectionAction
+      /> */}
+        {/* <SectionAction
         section={SECTION.WITHDRAW}
         activeSection={section}
         text="Withdraw"
         onClickSection={handleClickSection}
       /> */}
-      {/* <SectionAction
+        {/* <SectionAction
         section={SECTION.HISTORY}
         activeSection={section}
         text="History"
         onClickSection={handleClickSection}
       /> */}
-      {/* <SectionAction
+        {/* <SectionAction
         section={SECTION.TRANSFER}
         activeSection={section}
         text="Transfer"
         onClickSection={handleClickSection}
       /> */}
-      {/* <SectionAction
+        {/* <SectionAction
         section={SECTION.SETTINGS}
         activeSection={section}
         text="Settings"
         onClickSection={handleClickSection}
       /> */}
-    </div>
-  );
-};
+      </div>
+    );
+  };
 
 export default SelectedSection;
