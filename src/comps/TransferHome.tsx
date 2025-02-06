@@ -1,8 +1,8 @@
 "use client";
 
-import { FlowContainer } from "./reskin/core/FlowContainer";
-import { FlowFormDynamic, NameKeysInfo } from "./reskin/core/Form";
-import { Heading, SubText } from "./reskin/core/Heading";
+import { FlowContainer } from "./core/FlowContainer";
+import { FlowFormDynamic, NameKeysInfo } from "./core/Form";
+import { Heading, SubText } from "./core/Heading";
 import { devenvFaucetTransfer } from "@/actions/devenv-faucet-transfer";
 
 const TransferApp = () => {

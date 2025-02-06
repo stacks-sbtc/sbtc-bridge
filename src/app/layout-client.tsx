@@ -8,6 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/query/client";
 import { Suspense, useEffect } from "react";
 import { bridgeConfigAtom } from "@/util/atoms";
+
 import Footer from "@/comps/footer";
 import ReskinHeader from "@/comps/reskin/core/header-v2";
 import Header from "@/comps/Header";

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { SubText } from "./reskin/core/Heading";
+import { SubText } from "./core/Heading";
 import { useRef, useState } from "react";
 import { classNames } from "@/util";
 import { useSetAtom } from "jotai";

@@ -34,7 +34,7 @@ import {
 
 import { useShortAddress } from "@/hooks/use-short-address";
 import { useNotifications } from "@/hooks/use-notifications";
-import { DepositStepper } from "./reskin/deposit/deposit-stepper";
+import { DepositStepper } from "./deposit-stepper";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { sendBTCLeather, sendBTCXverse } from "@/util/wallet-utils";
 import useMintCaps from "@/hooks/use-mint-caps";
@@ -99,10 +99,10 @@ const DepositFlowAmount = ({
         amount: yup
           .number()
           // dust amount is in sats
-          // .min(
-          //   minDepositAmount,
-          //   `Minimum deposit amount is ${minDepositAmount} BTC`,
-          // )
+          .min(
+            minDepositAmount,
+            `Minimum deposit amount is ${minDepositAmount} BTC`,
+          )
           .max(
             Math.min(btcBalance, maxDepositAmount),
             btcBalance < maxDepositAmount

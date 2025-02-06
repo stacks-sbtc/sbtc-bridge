@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { StatusContainer } from "./reskin/core/FlowContainer";
-import { Heading, SubText } from "./reskin/core/Heading";
-import { PrimaryButton } from "./reskin/core/FlowButtons";
+import { StatusContainer } from "./core/FlowContainer";
+import { Heading, SubText } from "./core/Heading";
+import { PrimaryButton } from "./core/FlowButtons";
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
