@@ -17,8 +17,11 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationStatusType } from "./Notifications";
 import { useEffect, useState } from "react";
-import { getAddresses, getAddressesAsigna } from "@/util/wallet-utils/src/getAddress";
-import { useAsignaConnect } from '@asigna/btc-connect'
+import {
+  getAddresses,
+  getAddressesAsigna,
+} from "@/util/wallet-utils/src/getAddress";
+import { useAsignaConnect } from "@asigna/btc-connect";
 
 const WALLET_PROVIDERS = [
   {
@@ -73,8 +76,9 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
           break;
         case WalletProvider.XVERSE:
           addresses = await getAddressesXverse();
+          break;
         case WalletProvider.ASIGNA:
-          addresses = await getAddressesAsigna(asignaConnect);
+          addresses = await getAddressesAsigna({ action: asignaConnect });
       }
       const isMainnetAddress =
         addresses.payment.address.startsWith("bc1") ||
@@ -165,13 +169,16 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
                     alt={provider.name}
                   />
                   <p className="ml-4 text-black">
-                    {provider.walletProvider === WalletProvider.ASIGNA && !available
-                      ? 'Open as an embedded app in Asigna' 
-                      : <>
-                        {provider.name}{""}
+                    {provider.walletProvider === WalletProvider.ASIGNA &&
+                    !available ? (
+                      "Open as an embedded app in Asigna"
+                    ) : (
+                      <>
+                        {provider.name}
+                        {""}
                         {!available && " is not available click to install"}
                       </>
-                    }
+                    )}
                   </p>
                 </div>
                 {available ? (

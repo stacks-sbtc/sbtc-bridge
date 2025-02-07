@@ -281,14 +281,25 @@ const DepositFlowConfirm = ({
       // user cannot continue if they're not connected
       const paymentAddress = walletInfo.addresses.payment!;
 
-      const reclaimPublicKey = paymentAddress.publicKey;
+      let reclaimPublicKeys = [paymentAddress.publicKey];
+      let signatureThreshold = 1;
+
+      if (walletInfo.selectedWallet === WalletProvider.ASIGNA) {
+        const { threshold, users } = walletInfo.addresses.musig!;
+        signatureThreshold = threshold;
+        reclaimPublicKeys = users.map((user) => user.publicKey);
+      }
 
       // Parse lockTime from env variable
       const parsedLockTime = parseInt(lockTime || "144");
 
       // Create the reclaim script and convert to Buffer
       const reclaimScript = Buffer.from(
-        createReclaimScript(parsedLockTime, reclaimPublicKey),
+        createReclaimScript(
+          parsedLockTime,
+          reclaimPublicKeys,
+          signatureThreshold,
+        ),
       );
 
       const reclaimScriptHex = uint8ArrayToHexString(reclaimScript);
@@ -306,7 +317,8 @@ const DepositFlowConfirm = ({
         maxFee,
         parsedLockTime,
         getBitcoinNetwork(config.WALLET_NETWORK),
-        reclaimPublicKey,
+        reclaimPublicKeys,
+        signatureThreshold,
       );
 
       let txId = "";
