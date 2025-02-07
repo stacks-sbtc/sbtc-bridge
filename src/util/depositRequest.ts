@@ -8,7 +8,7 @@ import * as bip341 from "bitcoinjs-lib/src/payments/bip341";
 
 import ecc from "@bitcoinerlab/secp256k1";
 import { toXOnly } from "bitcoinjs-lib/src/psbt/bip371";
-import { bytesToHex, hexToBytes } from "@stacks/common";
+import { hexToBytes } from "@stacks/common";
 
 bitcoin.initEccLib(ecc);
 
@@ -58,7 +58,6 @@ export const createDepositScript = (
     bitcoin.opcodes.OP_CHECKSIG,
   ]);
 };
-
 
 export const createReclaimScript = (
   lockTime: number,
