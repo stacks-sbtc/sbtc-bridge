@@ -11,7 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@asigna/btc-connect": "0.0.21",
+    "@asigna/btc-connect": "0.0.22",
     "@bitcoinerlab/secp256k1": "1.1.1",
     "@heroicons/react": "2.1.5",
     "@scure/bip32": "1.3.3",
