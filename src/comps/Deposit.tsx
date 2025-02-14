@@ -347,7 +347,7 @@ const DepositFlowConfirm = ({
             txId = await sendBTCXverse(params);
             break;
           case WalletProvider.ASIGNA:
-            txId = await openSignBtcAmount(params, true);
+            txId = (await openSignBtcAmount(params, true)) as string;
             break;
         }
       } catch (error) {

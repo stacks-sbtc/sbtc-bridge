@@ -11,7 +11,6 @@ export async function signPSBTLeather({ hex, network }: SignPSBTParams) {
   const response = await window.LeatherProvider?.request("signPsbt", {
     network,
     hex,
-    broadcast: false,
   });
   if (!response) {
     throw new Error(`Error signing PSBT`);
@@ -25,7 +24,6 @@ export async function signPSBTXverse({ hex, address }: SignPSBTParams) {
 
   const response = await request("signPsbt", {
     psbt: base64,
-    broadcast: false,
     signInputs: {
       [address]: [0],
     },
@@ -34,7 +32,9 @@ export async function signPSBTXverse({ hex, address }: SignPSBTParams) {
     throw new Error(`Error signing PSBT`);
   }
 
-  return bytesToHex(
-    Uint8Array.from(atob(response.result.psbt), (c) => c.charCodeAt(0)),
-  );
+  return base64ToHex(response.result.psbt);
+}
+
+export function base64ToHex(base64: string) {
+  return bytesToHex(Uint8Array.from(atob(base64), (c) => c.charCodeAt(0)));
 }

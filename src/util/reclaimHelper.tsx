@@ -10,13 +10,10 @@ import { NUMS_X_COORDINATE } from "./depositRequest";
 import getBitcoinNetwork from "./get-bitcoin-network";
 
 export const finalizePsbt = (
-  psbtHex: string,
+  psbt: bitcoin.Psbt,
   walletNetwork?: DefaultNetworkConfigurations,
 ) => {
   try {
-    const network = getBitcoinNetwork(walletNetwork);
-
-    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network });
     psbt.finalizeAllInputs();
 
     return psbt.extractTransaction().toHex();

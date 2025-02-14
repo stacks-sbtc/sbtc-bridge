@@ -383,18 +383,18 @@ const ReclaimDeposit = ({
       address: walletInfo.addresses.payment!.address,
       network: walletNetwork,
     };
-    let signedPsbt = "";
+    let signedPsbt: Psbt | undefined = undefined;
     if (walletInfo.selectedWallet === WalletProvider.LEATHER) {
-      signedPsbt = await signPSBTLeather(params);
+      signedPsbt = Psbt.fromHex(await signPSBTLeather(params));
     }
     if (walletInfo.selectedWallet === WalletProvider.XVERSE) {
-      signedPsbt = await signPSBTXverse(params);
+      signedPsbt = Psbt.fromHex(await signPSBTXverse(params));
     }
     if (walletInfo.selectedWallet === WalletProvider.ASIGNA) {
-      signedPsbt = await openSignPsbt(Psbt.fromHex(psbtHex).toBase64(), false);
-      signedPsbt = bytesToHex(
-        Uint8Array.from(atob(signedPsbt), (c) => c.charCodeAt(0)),
-      );
+      signedPsbt = (await openSignPsbt(
+        Psbt.fromHex(psbtHex).toBase64(),
+        false,
+      )) as any;
     }
 
     if (signedPsbt) {
