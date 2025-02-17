@@ -32,7 +32,6 @@ import {
 } from "@/util/wallet-utils/src/sign-psbt";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { Psbt } from "bitcoinjs-lib";
-import { bytesToHex } from "@stacks/common";
 /*
   Goal : User server side rendering as much as possible
   - Break down the components into either their own file or smaller components
