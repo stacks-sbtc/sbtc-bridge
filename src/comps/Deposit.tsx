@@ -347,7 +347,11 @@ const DepositFlowConfirm = ({
             txId = await sendBTCXverse(params);
             break;
           case WalletProvider.ASIGNA:
-            txId = (await openSignBtcAmount(params, true)) as string;
+            txId = (await openSignBtcAmount(
+              params,
+              true,
+              config.MEMPOOL_API_URL + "/",
+            )) as string;
             break;
         }
       } catch (error) {
