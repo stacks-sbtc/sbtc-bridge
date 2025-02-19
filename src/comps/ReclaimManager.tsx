@@ -397,7 +397,7 @@ const ReclaimDeposit = ({
     }
 
     if (signedPsbt) {
-      const finalizedTxHex = finalizePsbt(signedPsbt, walletNetwork);
+      const finalizedTxHex = finalizePsbt(signedPsbt);
 
       await broadcastTransaction(finalizedTxHex);
     } else {
