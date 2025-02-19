@@ -1,5 +1,28 @@
 import Image from "next/image";
 
+const contracts = [
+  {
+    id: "sbtc-registry",
+    title: "Registry",
+  },
+  {
+    id: "sbtc-token",
+    title: "Token",
+  },
+  {
+    id: "sbtc-deposit",
+    title: "Deposit",
+  },
+  {
+    id: "sbtc-withdrawal",
+    title: "Withdrawal",
+  },
+  {
+    id: "sbtc-bootstrap-signers",
+    title: "Signers Bootstrap",
+  },
+];
+
 export default function Footer({ supportLink }: { supportLink?: string }) {
   return (
     <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-white font-Matter">
@@ -56,6 +79,35 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
           >
             Github
           </a>
+          <a
+            key="pot"
+            href="https://mempool.space/address/bc1prcs82tvrz70jk8u79uekwdfjhd0qhs2mva6e526arycu7fu25zsqhyztuy"
+            target="_blank"
+            rel="noreferrer"
+            className="text-black font-light text-sm"
+          >
+            BTC Pot
+          </a>
+        </div>
+      </div>
+      <div className="px-4 text-black w-full max-w-[1200px] mt-8 flex justify-between">
+        <div>
+          <h3>Official Contracts</h3>
+          <ul>
+            {contracts.map((contract) => (
+              <li className="mb-1" key={contract.id}>
+                <a
+                  key={contract.id}
+                  href={`https://explorer.hiro.so/txid/SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.${contract.id}?chain=mainnet`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-black font-light text-sm"
+                >
+                  {contract.title}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>
