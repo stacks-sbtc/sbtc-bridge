@@ -30,7 +30,8 @@ import {
   signPSBTLeather,
   signPSBTXverse,
 } from "@/util/wallet-utils/src/sign-psbt";
-
+import { useAsignaConnect } from "@asigna/btc-connect";
+import { Psbt } from "bitcoinjs-lib";
 /*
   Goal : User server side rendering as much as possible
   - Break down the components into either their own file or smaller components
@@ -329,6 +330,7 @@ const ReclaimDeposit = ({
   const walletInfo = useAtomValue(walletInfoAtom);
   const setShowWallet = useSetAtom(showConnectWalletAtom);
   const router = useRouter();
+  const { openSignPsbt } = useAsignaConnect();
 
   const { WALLET_NETWORK: walletNetwork, SUPPORT_LINK } =
     useAtomValue(bridgeConfigAtom);
@@ -380,16 +382,22 @@ const ReclaimDeposit = ({
       address: walletInfo.addresses.payment!.address,
       network: walletNetwork,
     };
-    let signedPsbt = "";
+    let signedPsbt: Psbt | undefined = undefined;
     if (walletInfo.selectedWallet === WalletProvider.LEATHER) {
-      signedPsbt = await signPSBTLeather(params);
+      signedPsbt = Psbt.fromHex(await signPSBTLeather(params));
     }
     if (walletInfo.selectedWallet === WalletProvider.XVERSE) {
-      signedPsbt = await signPSBTXverse(params);
+      signedPsbt = Psbt.fromHex(await signPSBTXverse(params));
+    }
+    if (walletInfo.selectedWallet === WalletProvider.ASIGNA) {
+      signedPsbt = (await openSignPsbt(
+        Psbt.fromHex(psbtHex).toBase64(),
+        false,
+      )) as any;
     }
 
     if (signedPsbt) {
-      const finalizedTxHex = finalizePsbt(signedPsbt, walletNetwork);
+      const finalizedTxHex = finalizePsbt(signedPsbt);
 
       await broadcastTransaction(finalizedTxHex);
     } else {
