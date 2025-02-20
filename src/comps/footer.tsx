@@ -92,7 +92,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
       </div>
       <div className="px-4 text-black w-full max-w-[1200px] mt-8 flex justify-between">
         <div>
-          <h3>Official Contracts</h3>
+          <h3>Stacks Mainnet Contracts</h3>
           <ul>
             {contracts.map((contract) => (
               <li className="mb-1" key={contract.id}>
