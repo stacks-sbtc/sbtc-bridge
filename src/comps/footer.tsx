@@ -1,4 +1,9 @@
+"use client";
+import { getAggregateKey } from "@/util/get-aggregate-key";
+import { useQuery } from "@tanstack/react-query";
+import { payments } from "bitcoinjs-lib";
 import Image from "next/image";
+import { hexToBytes } from "@stacks/common";
 
 const contracts = [
   {
@@ -24,6 +29,17 @@ const contracts = [
 ];
 
 export default function Footer({ supportLink }: { supportLink?: string }) {
+  const { data: aggregateAddress } = useQuery({
+    queryKey: ["aggregateAddress"],
+    queryFn: async () => {
+      const response = await getAggregateKey();
+
+      const p2tr = payments.p2tr({
+        internalPubkey: hexToBytes(response.slice(2)),
+      });
+      return p2tr.address;
+    },
+  });
   return (
     <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-white font-Matter">
       <div
@@ -81,12 +97,12 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
           </a>
           <a
             key="pot"
-            href="https://mempool.space/address/bc1prcs82tvrz70jk8u79uekwdfjhd0qhs2mva6e526arycu7fu25zsqhyztuy"
+            href={`https://mempool.space/address/${aggregateAddress}`}
             target="_blank"
             rel="noreferrer"
             className="text-black font-light text-sm"
           >
-            BTC Pot
+            BTC aggregate address
           </a>
         </div>
       </div>
