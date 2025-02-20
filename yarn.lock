@@ -597,21 +597,21 @@
   resolved "https://registry.yarnpkg.com/@stacks/common/-/common-7.0.2.tgz#8b17f9cf6265cf1c9065bf3cd844556870a6ee20"
   integrity sha512-+RSecHdkxOtswmE4tDDoZlYEuULpnTQVeDIG5eZ32opK8cFxf4EugAcK9CsIsHx/Se1yTEaQ21WGATmJGK84lQ==
 
-"@stacks/connect-ui@7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-7.0.0.tgz#d361e0cc26da5f457cb15342436ea9a4b3c9c77d"
-  integrity sha512-Aal6lMy45rurQsJ3MvTkRybYL6MgaKBB7zpXTllL8P6lzGFYwTdBTZTvewxA4P4M1TyVKZWJYe03DQsfc1MwEA==
+"@stacks/connect-ui@8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-8.0.0.tgz#fd49f2e5135412aecbedb8f506f00bd28671182e"
+  integrity sha512-m8yqg28EWQCATkVxILotzbqvcnk0n+qhyncTTNEYXVe4VnfV0eRXvxX88nbA/fot1k+MuQlMu3WhrBFLHJ/xzA==
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@8.0.1":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.0.1.tgz#a06fb1abc09735ea87a746792fd99ff136fc0776"
-  integrity sha512-9assgRB+tTt9dP5r/NBy0bHn5V5mNq/N4jO1VPYFMcjbSxwiWbO1TaGpJwuvY5dKm6f1ca+sWC8OFR+9wx8OZQ==
+"@stacks/connect@8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.1.1.tgz#986d0829f0bda56e3698d8368ffd02227459eeb1"
+  integrity sha512-krjxztdBXxX0yd/qW7lhXqp+yQx7T52G3NI7+BsngyUiFNIBl//Fa/LwnUlxIHBm8GEAPMBp8bc7EnyIMG3rkQ==
   dependencies:
     "@scure/base" "^1.2.4"
     "@stacks/common" "^7.0.0"
-    "@stacks/connect-ui" "7.0.0"
+    "@stacks/connect-ui" "8.0.0"
     "@stacks/network" "^7.0.0"
     "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
     "@stacks/profile" "^7.0.0"

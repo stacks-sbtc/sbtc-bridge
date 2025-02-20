@@ -40,7 +40,6 @@ import { sendBTC } from "@/util/wallet-utils";
 import useMintCaps from "@/hooks/use-mint-caps";
 import { getAggregateKey } from "@/actions/get-aggregate-key";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
-import { useAsignaConnect } from "@asigna/btc-connect";
 import { useQuery } from "@tanstack/react-query";
 import getBtcBalance from "@/actions/get-btc-balance";
 import { useDepositStatus } from "@/hooks/use-deposit-status";
@@ -268,8 +267,6 @@ const DepositFlowConfirm = ({
   const config = useAtomValue(bridgeConfigAtom);
   const { notifyEmily, isPending: isPendingNotifyEmily } = useEmilyDeposit();
 
-  const { openSignBtcAmount } = useAsignaConnect();
-
   const walletInfo = useAtomValue(walletInfoAtom);
   const handleNextClick = async () => {
     try {
@@ -340,16 +337,7 @@ const DepositFlowConfirm = ({
           },
         });
 
-        txId = await sendBTC(params); // todo
-        switch (walletInfo.selectedWallet) {
-          case WalletProvider.ASIGNA:
-            txId = (await openSignBtcAmount(
-              params,
-              true,
-              config.MEMPOOL_API_URL + "/",
-            )) as string;
-            break;
-        }
+        txId = await sendBTC(params);
       } catch (error) {
         let errorMessage = error;
         console.warn(error);
