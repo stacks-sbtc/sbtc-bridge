@@ -7,7 +7,7 @@ import { useShortAddress } from "@/hooks/use-short-address";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
 import { PrimaryButton } from "./core/FlowButtons";
 import { useAtomValue } from "jotai";
-import { bridgeConfigAtom, walletInfoAtom, WalletProvider } from "@/util/atoms";
+import { bridgeConfigAtom, walletInfoAtom } from "@/util/atoms";
 
 import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationStatusType } from "./Notifications";
@@ -21,7 +21,6 @@ import {
   transmitRawTransaction,
 } from "@/actions/bitcoinClient";
 import ReclaimStepper from "./reclaim/reclaim-stepper";
-import { useAsignaConnect } from "@asigna/btc-connect";
 import { Psbt } from "bitcoinjs-lib";
 import { signPSBTRequest } from "@/util/wallet-utils/src/sign-psbt";
 import { useConnectWallet } from "../hooks/use-connect-wallet";
@@ -323,7 +322,6 @@ const ReclaimDeposit = ({
   const { notify } = useNotifications();
   const walletInfo = useAtomValue(walletInfoAtom);
   const router = useRouter();
-  const { openSignPsbt } = useAsignaConnect();
   const connectWallet = useConnectWallet();
 
   const { WALLET_NETWORK: walletNetwork, SUPPORT_LINK } =
@@ -364,17 +362,18 @@ const ReclaimDeposit = ({
       hex: psbtHex,
       address: walletInfo.addresses.payment!.address,
     };
-    const signedPsbt = await signPSBTRequest(params);
-    if (signedPsbt) {
-      const finalizedTxHex = finalizePsbt(signedPsbt);
 
-      await broadcastTransaction(finalizedTxHex);
-    } else {
-      notify({
+    const signedPsbt = await signPSBTRequest(params);
+
+    if (!signedPsbt) {
+      return notify({
         type: NotificationStatusType.ERROR,
         message: "Error signing PSBT",
       });
     }
+
+    const finalizedTxHex = finalizePsbt(signedPsbt as any);
+    await broadcastTransaction(finalizedTxHex);
   };
 
   const broadcastTransaction = async (finalizedTxHex: string) => {
