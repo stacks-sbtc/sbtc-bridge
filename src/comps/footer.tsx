@@ -4,6 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { payments } from "bitcoinjs-lib";
 import Image from "next/image";
 import { hexToBytes } from "@stacks/common";
+import { useAtomValue } from "jotai";
+import { bridgeConfigAtom } from "@/util/atoms";
+import getBitcoinNetwork from "@/util/get-bitcoin-network";
 
 const contracts = [
   {
@@ -29,6 +32,8 @@ const contracts = [
 ];
 
 export default function Footer({ supportLink }: { supportLink?: string }) {
+  const config = useAtomValue(bridgeConfigAtom);
+  const network = getBitcoinNetwork(config.WALLET_NETWORK);
   const { data: aggregateAddress } = useQuery({
     queryKey: ["aggregateAddress"],
     queryFn: async () => {
@@ -36,6 +41,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
 
       const p2tr = payments.p2tr({
         internalPubkey: hexToBytes(response.slice(2)),
+        network,
       });
       return p2tr.address;
     },
@@ -97,7 +103,7 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
           </a>
           <a
             key="pot"
-            href={`https://mempool.space/address/${aggregateAddress}`}
+            href={`${config.PUBLIC_MEMPOOL_URL}/address/${aggregateAddress}`}
             target="_blank"
             rel="noreferrer"
             className="text-black font-light text-sm"
