@@ -1,6 +1,6 @@
 import { env } from "@/env";
 
-import { bitcoindUtxoFetch, mempoolFetch } from "@/actions/mempool-api";
+import { getUtxosBitcoinDaemon } from "./rpc-handler-core";
 
 const { MEMPOOL_API_URL } = env;
 // Import your Bitcoin RPC logic
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const path = new URL(req.url).pathname.replace("/api/proxy/", "");
-    return mempoolFetch(`${MEMPOOL_API_URL}/${path}`, {
+    return fetch(`${MEMPOOL_API_URL}/${path}`, {
       method: req.method,
       body: await req.text(),
     });
@@ -44,12 +44,12 @@ export async function GET(req: Request) {
         return Response.json({ error: "Invalid address" }, { status: 400 });
       }
 
-      return bitcoindUtxoFetch(address);
+      return getUtxosBitcoinDaemon(address);
     }
 
     // Proxy all other routes to the base proxy URL
     const proxyUrl = `${MEMPOOL_API_URL}/${path}`;
-    const response = await mempoolFetch(proxyUrl, {
+    const response = await fetch(proxyUrl, {
       ...req,
     });
 
