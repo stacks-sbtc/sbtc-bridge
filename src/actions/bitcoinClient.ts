@@ -73,9 +73,7 @@ export const scanTxOutSet = async (
   if (env.WALLET_NETWORK !== "mainnet") {
     return bitcoindUtxoFetch(address).then((res) => res.json());
   }
-  const result = await mempoolFetch(
-    `${env.MEMPOOL_API_URL}/adddress/${address}/utxo`,
-  );
+  const result = await fetch(`${env.MEMPOOL_API_URL}/address/${address}/utxo`);
   return await result.json();
 };
 
@@ -83,7 +81,7 @@ export const scanTxOutSet = async (
 export const getRawTransaction = async (
   txid: string,
 ): Promise<BitcoinTransactionResponse | null> => {
-  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/tx/${txid}`);
+  const result = await fetch(`${env.MEMPOOL_API_URL}/tx/${txid}`);
   if (result.status === 404) {
     return null;
   }
@@ -103,7 +101,7 @@ export const getTransactionHex = async (txid: string): Promise<string> => {
 };
 
 export const getTxRbf = async (txid: string): Promise<boolean> => {
-  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/v1/tx/${txid}/rbf`);
+  const result = await fetch(`${env.MEMPOOL_API_URL}/v1/tx/${txid}/rbf`);
   return await result.json();
 };
 
@@ -111,7 +109,7 @@ export const getTxRbf = async (txid: string): Promise<boolean> => {
 export const transmitRawTransaction = async (hex: string): Promise<any> => {
   const baseURL = env.MEMPOOL_API_URL;
 
-  const result = await mempoolFetch(`${baseURL}/tx`, {
+  const result = await fetch(`${baseURL}/tx`, {
     method: "POST",
     headers: {
       "Content-Type": "text/plain",
@@ -125,6 +123,6 @@ export const transmitRawTransaction = async (hex: string): Promise<any> => {
 };
 
 export const getCurrentBlockHeight = async () => {
-  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/blocks/tip/height`);
+  const result = await fetch(`${env.MEMPOOL_API_URL}/blocks/tip/height`);
   return Number(await result.text());
 };

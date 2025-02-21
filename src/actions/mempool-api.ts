@@ -43,7 +43,7 @@ export const bitcoindUtxoFetch = factory((address: string) =>
 async function fetchAndRetryIfNecessary(callAPI: () => Promise<Response>) {
   const response = await callAPI();
   if (!response.ok) {
-    const millisToSleep = 100;
+    const millisToSleep = 500;
     await sleep(millisToSleep);
     return fetchAndRetryIfNecessary(callAPI);
   }
