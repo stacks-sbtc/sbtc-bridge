@@ -50,6 +50,9 @@ export async function getUtxosBitcoinDaemon(address: string) {
   const result = await rpcHandlerCore(RpcMethods.scantxoutset, args)
     .then((res) => res.json())
     .then((res) => res.result);
+  if (!result || !result.unspents || result.unspents.length === 0) {
+    return Response.json([]);
+  }
   const utxos = result.unspents.map((utxo: any) => ({
     txid: utxo.txid,
     vout: utxo.vout,
