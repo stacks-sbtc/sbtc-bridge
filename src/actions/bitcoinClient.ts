@@ -1,7 +1,7 @@
 "use server";
 
 import { env } from "@/env";
-import { bitcoindUtxoFetch, mempoolFetch } from "./mempool-api";
+import { bitcoindUtxoFetch, mempoolFetchUntilOk } from "./mempool-api";
 
 export interface BitcoinTransactionResponse {
   txid: string;
@@ -89,7 +89,9 @@ export const getRawTransaction = async (
 };
 
 export const getTransactionHex = async (txid: string): Promise<string> => {
-  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/tx/${txid}/hex`);
+  const result = await mempoolFetchUntilOk(
+    `${env.MEMPOOL_API_URL}/tx/${txid}/hex`,
+  );
   if (result.status === 404) {
     throw new Error("Transaction not found");
   }

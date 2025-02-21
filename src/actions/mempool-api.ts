@@ -32,8 +32,8 @@ const factory = <T extends (...args: any[]) => Promise<Response>>(fn: T) => {
     );
   };
 };
-export const mempoolFetch = factory((...args: Parameters<typeof fetch>) =>
-  fetch(...args),
+export const mempoolFetchUntilOk = factory(
+  (...args: Parameters<typeof fetch>) => fetch(...args),
 );
 
 export const bitcoindUtxoFetch = factory((address: string) =>
