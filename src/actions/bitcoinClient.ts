@@ -1,7 +1,7 @@
 "use server";
 
-import { getUtxosBitcoinDaemon } from "@/app/api/proxy/[...proxy]/rpc-handler-core";
 import { env } from "@/env";
+import { bitcoindUtxoFetch, mempoolFetch } from "./mempool-api";
 
 export interface BitcoinTransactionResponse {
   txid: string;
@@ -71,9 +71,11 @@ export const scanTxOutSet = async (
   address: string,
 ): Promise<AddressUtxos[]> => {
   if (env.WALLET_NETWORK !== "mainnet") {
-    return getUtxosBitcoinDaemon(address);
+    return bitcoindUtxoFetch(address).then((res) => res.json());
   }
-  const result = await fetch(`${env.MEMPOOL_API_URL}/adddress/${address}/utxo`);
+  const result = await mempoolFetch(
+    `${env.MEMPOOL_API_URL}/adddress/${address}/utxo`,
+  );
   return await result.json();
 };
 
@@ -81,7 +83,7 @@ export const scanTxOutSet = async (
 export const getRawTransaction = async (
   txid: string,
 ): Promise<BitcoinTransactionResponse | null> => {
-  const result = await fetch(`${env.MEMPOOL_API_URL}/tx/${txid}`);
+  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/tx/${txid}`);
   if (result.status === 404) {
     return null;
   }
@@ -89,7 +91,7 @@ export const getRawTransaction = async (
 };
 
 export const getTransactionHex = async (txid: string): Promise<string> => {
-  const result = await fetch(`${env.MEMPOOL_API_URL}/tx/${txid}/hex`);
+  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/tx/${txid}/hex`);
   if (result.status === 404) {
     throw new Error("Transaction not found");
   }
@@ -101,7 +103,7 @@ export const getTransactionHex = async (txid: string): Promise<string> => {
 };
 
 export const getTxRbf = async (txid: string): Promise<boolean> => {
-  const result = await fetch(`${env.MEMPOOL_API_URL}/v1/tx/${txid}/rbf`);
+  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/v1/tx/${txid}/rbf`);
   return await result.json();
 };
 
@@ -109,7 +111,7 @@ export const getTxRbf = async (txid: string): Promise<boolean> => {
 export const transmitRawTransaction = async (hex: string): Promise<any> => {
   const baseURL = env.MEMPOOL_API_URL;
 
-  const result = await fetch(`${baseURL}/tx`, {
+  const result = await mempoolFetch(`${baseURL}/tx`, {
     method: "POST",
     headers: {
       "Content-Type": "text/plain",
@@ -123,6 +125,6 @@ export const transmitRawTransaction = async (hex: string): Promise<any> => {
 };
 
 export const getCurrentBlockHeight = async () => {
-  const result = await fetch(`${env.MEMPOOL_API_URL}/blocks/tip/height`);
+  const result = await mempoolFetch(`${env.MEMPOOL_API_URL}/blocks/tip/height`);
   return Number(await result.text());
 };
