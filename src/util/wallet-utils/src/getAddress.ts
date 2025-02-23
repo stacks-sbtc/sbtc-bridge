@@ -92,8 +92,6 @@ export const getAddressesXverse: getAddresses = async (params) => {
     ],
   });
 
-  console.log(response);
-
   if (response.status === "error") {
     throw new Error(response.error.message);
   }
