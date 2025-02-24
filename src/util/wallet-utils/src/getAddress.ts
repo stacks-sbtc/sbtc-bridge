@@ -62,9 +62,9 @@ export function getWalletAddresses(
   }
 
   const stacks = getAddressByPurpose(response, AddressPurpose.Stacks);
-  if (!stacks) {
-    throw new Error("Stacks address not found");
-  }
+  // if (!stacks) {
+  //   throw new Error("Stacks address not found");
+  // }
   return {
     taproot: {
       address: taproot.address,
@@ -75,8 +75,8 @@ export function getWalletAddresses(
       publicKey: payment.publicKey,
     },
     stacks: {
-      address: stacks.address,
-      publicKey: stacks.publicKey,
+      address: stacks?.address || "",
+      publicKey: stacks?.publicKey || "",
     },
     musig: null,
   };

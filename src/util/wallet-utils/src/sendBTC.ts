@@ -69,6 +69,6 @@ export async function sendBTCFordefi({ amountInSats, recipient }: Payload) {
   if (error) {
     throw new Error(error.message);
   }
-  const result = (response as RpcSuccessResponse<"sendTransfer">).result;
-  return result.txid;
+  const result = (response as any).result;
+  return result.txId;
 }
