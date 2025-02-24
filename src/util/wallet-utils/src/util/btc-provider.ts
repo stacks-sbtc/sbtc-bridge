@@ -10,7 +10,7 @@ export function getLeatherBTCProviderOrThrow() {
 export const FORDEFI_PROVIDER_ID = "FordefiProviders.UtxoProvider";
 
 export function getFordefiBTCProviderOrThrow() {
-  let provider = window.FordefiProviders.UtxoProvider;
+  let provider = window.FordefiProviders?.UtxoProvider;
   if (!provider) {
     throw new Error("BTC provider not found");
   }
