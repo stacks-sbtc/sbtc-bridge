@@ -42,12 +42,12 @@ export type getAddresses = (params?: {
 }) => Promise<Results>;
 
 const getAddressByPurpose = (
-  response: RpcSuccessResponse<"getAddresses">["result"],
+  response: RpcSuccessResponse<"wallet_connect">["result"],
   purpose: AddressPurpose,
 ) => response.addresses.find((item) => item.purpose === purpose);
 
 export function getWalletAddresses(
-  response: RpcSuccessResponse<"getAddresses">["result"],
+  response: RpcSuccessResponse<"wallet_connect">["result"],
 ) {
   const taproot = getAddressByPurpose(response, AddressPurpose.Ordinals);
   if (!taproot) {
@@ -84,8 +84,8 @@ export function getWalletAddresses(
  * @description Get the address for the user
  */
 export const getAddressesXverse: getAddresses = async (params) => {
-  const response = await request("getAddresses", {
-    purposes: [
+  const response = await request("wallet_connect", {
+    addresses: [
       AddressPurpose.Ordinals,
       AddressPurpose.Payment,
       AddressPurpose.Stacks,

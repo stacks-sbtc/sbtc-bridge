@@ -1,23 +1,18 @@
-import { getProviderOrThrow } from "sats-connect";
-
-const checkXverseProvider = async () => {
-  try {
-    await getProviderOrThrow();
-    return true;
-  } catch (e) {
-    return false;
-  }
+const checkXverseProvider = () => {
+  return Boolean(
+    window.XverseProviders?.BitcoinProvider || window.BitcoinProvider,
+  );
 };
 export enum WalletType {
   xverse = "xverse",
   leather = "leather",
-  asigna = 'asigna',
+  asigna = "asigna",
 }
-export const checkAvailableWallets: () => Promise<{
+export const checkAvailableWallets: () => {
   [key in WalletType]: boolean;
-}> = async () => {
+} = () => {
   const isLeather = !!window.LeatherProvider;
-  const isXverse = await checkXverseProvider();
+  const isXverse = checkXverseProvider();
 
   return {
     leather: isLeather,
