@@ -53,9 +53,9 @@ export function getWalletAddresses(
   response: RpcSuccessResponse<"wallet_connect">["result"],
 ) {
   const taproot = getAddressByPurpose(response, AddressPurpose.Ordinals);
-  if (!taproot) {
-    throw new Error("Taproot address not found");
-  }
+  // if (!taproot) {
+  //   throw new Error("Taproot address not found");
+  // }
   const payment = getAddressByPurpose(response, AddressPurpose.Payment);
   if (!payment) {
     throw new Error("Payment address not found");
@@ -67,8 +67,8 @@ export function getWalletAddresses(
   // }
   return {
     taproot: {
-      address: taproot.address,
-      publicKey: taproot.publicKey,
+      address: taproot?.address || "",
+      publicKey: taproot?.publicKey || "",
     },
     payment: {
       address: payment.address,
