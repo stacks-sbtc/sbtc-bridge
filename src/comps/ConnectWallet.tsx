@@ -16,7 +16,6 @@ import {
 import { useAtomValue, useSetAtom } from "jotai";
 import { useNotifications } from "@/hooks/use-notifications";
 import { NotificationStatusType } from "./Notifications";
-import { useEffect, useState } from "react";
 import {
   getAddresses,
   getAddressesAsigna,
@@ -48,16 +47,7 @@ type ConnectWalletProps = {
   onClose: () => void;
 };
 const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
-  const [availableWallets, setAvailableWallets] = useState<{
-    [key in WalletProvider]: boolean;
-  }>({
-    leather: false,
-    xverse: false,
-    asigna: false,
-  });
-  useEffect(() => {
-    checkAvailableWallets().then(setAvailableWallets);
-  }, []);
+  const availableWallets = checkAvailableWallets();
 
   const setWalletInfo = useSetAtom(walletInfoAtom);
 

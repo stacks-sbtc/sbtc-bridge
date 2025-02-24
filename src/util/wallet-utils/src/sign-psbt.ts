@@ -1,6 +1,7 @@
 import { request } from "sats-connect";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 import { hexToBytes, bytesToHex } from "@stacks/common";
+import { getLeatherBTCProviderOrThrow } from "./util/btc-provider";
 
 type SignPSBTParams = {
   hex: string;
@@ -8,7 +9,7 @@ type SignPSBTParams = {
   address: string;
 };
 export async function signPSBTLeather({ hex, network }: SignPSBTParams) {
-  const response = await window.LeatherProvider?.request("signPsbt", {
+  const response = await getLeatherBTCProviderOrThrow()?.request("signPsbt", {
     network,
     hex,
   });
