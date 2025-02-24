@@ -604,10 +604,10 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@8.1.1":
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.1.1.tgz#986d0829f0bda56e3698d8368ffd02227459eeb1"
-  integrity sha512-krjxztdBXxX0yd/qW7lhXqp+yQx7T52G3NI7+BsngyUiFNIBl//Fa/LwnUlxIHBm8GEAPMBp8bc7EnyIMG3rkQ==
+"@stacks/connect@8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.1.2.tgz#1df3f7255042761100acd4566b9c3f2b46500656"
+  integrity sha512-6fU5aPXhks9PMMeuf0/hlFog9Yi2UBvJcJn4i3NiosFrwG76VvsVvLv721nUEUU93dP6N1ziApdscSHFOSoXxw==
   dependencies:
     "@scure/base" "^1.2.4"
     "@stacks/common" "^7.0.0"
