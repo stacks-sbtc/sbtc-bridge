@@ -32,6 +32,7 @@ export enum WalletProvider {
   LEATHER = "leather",
   XVERSE = "xverse",
   ASIGNA = "asigna",
+  FORDEFI = "fordefi",
 }
 
 type Address = {

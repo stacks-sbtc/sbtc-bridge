@@ -1,7 +1,10 @@
 import { request } from "sats-connect";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 import { hexToBytes, bytesToHex } from "@stacks/common";
-import { getLeatherBTCProviderOrThrow } from "./util/btc-provider";
+import {
+  FORDEFI_PROVIDER_ID,
+  getLeatherBTCProviderOrThrow,
+} from "./util/btc-provider";
 
 type SignPSBTParams = {
   hex: string;
@@ -29,6 +32,27 @@ export async function signPSBTXverse({ hex, address }: SignPSBTParams) {
       [address]: [0],
     },
   });
+  if (response.status === "error") {
+    throw new Error(`Error signing PSBT`);
+  }
+
+  return base64ToHex(response.result.psbt);
+}
+
+export async function signPSBTFordefi({ hex, address }: SignPSBTParams) {
+  const bytes = hexToBytes(hex);
+  const base64 = btoa(String.fromCharCode(...bytes));
+
+  const response = await request(
+    "signPsbt",
+    {
+      psbt: base64,
+      signInputs: {
+        [address]: [0],
+      },
+    },
+    FORDEFI_PROVIDER_ID,
+  );
   if (response.status === "error") {
     throw new Error(`Error signing PSBT`);
   }

@@ -2,7 +2,10 @@ import { AddressPurpose, request, RpcSuccessResponse } from "sats-connect";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 
 import { Address, BtcAddress } from "@leather.io/rpc";
-import { getLeatherBTCProviderOrThrow } from "./util/btc-provider";
+import {
+  FORDEFI_PROVIDER_ID,
+  getLeatherBTCProviderOrThrow,
+} from "./util/btc-provider";
 
 type Results = {
   /** @description payment address can be native segwit or segwit */
@@ -91,6 +94,27 @@ export const getAddressesXverse: getAddresses = async (params) => {
       AddressPurpose.Stacks,
     ],
   });
+
+  if (response.status === "error") {
+    throw new Error(response.error.message);
+  }
+
+  const result = response.result;
+  return getWalletAddresses(result);
+};
+
+export const getAddressesFordefi: getAddresses = async (params) => {
+  const response = await request(
+    "wallet_connect",
+    {
+      addresses: [
+        AddressPurpose.Ordinals,
+        AddressPurpose.Payment,
+        AddressPurpose.Stacks,
+      ],
+    },
+    FORDEFI_PROVIDER_ID,
+  );
 
   if (response.status === "error") {
     throw new Error(response.error.message);
