@@ -8,16 +8,22 @@ type SignPSBTParams = {
   address: string;
 };
 
-export async function signPSBTRequest({ hex, address }: SignPSBTParams) {
+export async function signPSBTRequest({
+  hex,
+  address,
+  network,
+}: SignPSBTParams): Promise<string> {
   const base64 = hexToBase64(hex);
 
   try {
     const result = await request("signPsbt", {
       psbt: base64,
       signInputs: [{ index: 0, address }],
-    });
+      broadcast: false,
+      network,
+    } as any);
 
-    return base64ToHex(result.psbt);
+    return "hex" in result ? (result.hex as string) : base64ToHex(result.psbt);
   } catch (e) {
     if (e instanceof Error) throw new Error(`Error signing PSBT: ${e.message}`);
     throw new Error(`Error signing PSBT`);

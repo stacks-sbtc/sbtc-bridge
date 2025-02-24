@@ -361,18 +361,19 @@ const ReclaimDeposit = ({
     const params = {
       hex: psbtHex,
       address: walletInfo.addresses.payment!.address,
+      network: walletNetwork,
     };
 
-    const signedPsbt = await signPSBTRequest(params);
-
-    if (!signedPsbt) {
+    const signedPsbtHex = await signPSBTRequest(params);
+    if (!signedPsbtHex) {
       return notify({
         type: NotificationStatusType.ERROR,
         message: "Error signing PSBT",
       });
     }
 
-    const finalizedTxHex = finalizePsbt(signedPsbt as any);
+    const signedPsbt = Psbt.fromHex(signedPsbtHex);
+    const finalizedTxHex = finalizePsbt(signedPsbt);
     await broadcastTransaction(finalizedTxHex);
   };
 
