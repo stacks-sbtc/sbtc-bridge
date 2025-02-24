@@ -19,6 +19,7 @@ import { NotificationStatusType } from "./Notifications";
 import {
   getAddresses,
   getAddressesAsigna,
+  getAddressesFordefi,
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
 
@@ -40,6 +41,12 @@ const WALLET_PROVIDERS = [
     name: "Asigna Multisig",
     walletProvider: WalletProvider.ASIGNA,
     installUrl: "https://btc.asigna.io",
+  },
+  {
+    image: "/images/fordefi.svg",
+    name: "Fordefi",
+    walletProvider: WalletProvider.FORDEFI,
+    installUrl: "https://www.fordefi.com/",
   },
 ];
 
@@ -66,6 +73,9 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
           break;
         case WalletProvider.XVERSE:
           addresses = await getAddressesXverse();
+          break;
+        case WalletProvider.FORDEFI:
+          addresses = await getAddressesFordefi();
           break;
         case WalletProvider.ASIGNA:
           addresses = await getAddressesAsigna({ action: asignaConnect });

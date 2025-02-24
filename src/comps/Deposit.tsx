@@ -45,6 +45,7 @@ import { useQuery } from "@tanstack/react-query";
 import getBtcBalance from "@/actions/get-btc-balance";
 import { useDepositStatus } from "@/hooks/use-deposit-status";
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
+import { sendBTCFordefi } from "../util/wallet-utils/src/sendBTC";
 
 /*
   deposit flow has 3 steps
@@ -345,6 +346,9 @@ const DepositFlowConfirm = ({
             break;
           case WalletProvider.XVERSE:
             txId = await sendBTCXverse(params);
+            break;
+          case WalletProvider.FORDEFI:
+            txId = await sendBTCFordefi(params);
             break;
           case WalletProvider.ASIGNA:
             txId = (await openSignBtcAmount(

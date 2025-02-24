@@ -18,13 +18,16 @@ export default function SBTCBalance({ address }: { address: string }) {
         network: getStacksNetwork(WALLET_NETWORK),
       });
     },
+    enabled: !!address && !!SBTC_CONTRACT_DEPLOYER && !!WALLET_NETWORK,
   });
-  console.log({ data });
+
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="text-center font-bold text-darkGray font-Matter text-sm">
-        Balance: {data !== undefined ? Number(data) / 1e8 : "..."} sBTC
+    !!address && (
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-center font-bold text-darkGray font-Matter text-sm">
+          Balance: {data !== undefined ? Number(data) / 1e8 : "..."} sBTC
+        </div>
       </div>
-    </div>
+    )
   );
 }

@@ -27,6 +27,7 @@ import {
 } from "@/actions/bitcoinClient";
 import ReclaimStepper from "./reclaim/reclaim-stepper";
 import {
+  signPSBTFordefi,
   signPSBTLeather,
   signPSBTXverse,
 } from "@/util/wallet-utils/src/sign-psbt";
@@ -388,6 +389,9 @@ const ReclaimDeposit = ({
     }
     if (walletInfo.selectedWallet === WalletProvider.XVERSE) {
       signedPsbt = Psbt.fromHex(await signPSBTXverse(params));
+    }
+    if (walletInfo.selectedWallet === WalletProvider.FORDEFI) {
+      signedPsbt = Psbt.fromHex(await signPSBTFordefi(params));
     }
     if (walletInfo.selectedWallet === WalletProvider.ASIGNA) {
       signedPsbt = (await openSignPsbt(
