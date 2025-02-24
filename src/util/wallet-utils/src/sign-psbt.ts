@@ -2,7 +2,7 @@ import { request } from "sats-connect";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 import { hexToBytes, bytesToHex } from "@stacks/common";
 import {
-  FORDEFI_PROVIDER_ID,
+  getFordefiBTCProviderOrThrow,
   getLeatherBTCProviderOrThrow,
 } from "./util/btc-provider";
 
@@ -40,24 +40,18 @@ export async function signPSBTXverse({ hex, address }: SignPSBTParams) {
 }
 
 export async function signPSBTFordefi({ hex, address }: SignPSBTParams) {
-  const bytes = hexToBytes(hex);
-  const base64 = btoa(String.fromCharCode(...bytes));
-
-  const response = await request(
-    "signPsbt",
-    {
-      psbt: base64,
-      signInputs: {
-        [address]: [0],
+  const provider = await getFordefiBTCProviderOrThrow();
+  const response = await provider.unisatProvider.signOrSignAndSendPsbt(hex, {
+    autoFinalized: false,
+    toSignInputs: [
+      {
+        index: 0,
+        address,
       },
-    },
-    FORDEFI_PROVIDER_ID,
-  );
-  if (response.status === "error") {
-    throw new Error(`Error signing PSBT`);
-  }
+    ],
+  });
 
-  return base64ToHex(response.result.psbt);
+  return response.hex;
 }
 
 export function base64ToHex(base64: string) {
