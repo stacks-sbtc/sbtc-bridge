@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Faqs from "./Faqs";
 // import SelectedSection from "./HomeSelectedHeader";
 import DepositFlow from "./Deposit";
 import { TransferAction } from "./TransferHome";
@@ -64,8 +63,6 @@ const HomeApp = () => {
         )} */}
         {selectedSection === SECTION.TRANSFER && <TransferAction />}
       </LandingAnimation>
-
-      <Faqs />
     </>
   );
 };

@@ -1,6 +1,5 @@
 "use client";
 
-import Faqs from "@/comps/Faqs";
 import { SECTION } from "@/comps/HomeApp";
 import { SectionAction } from "@/comps/HomeSelectedHeader";
 import Status from "./Status";
@@ -31,7 +30,6 @@ const StatusApp = () => {
         </div>
         <div className="w-screen flex "></div>
         <Status />
-        <Faqs />
       </div>
     </>
   );

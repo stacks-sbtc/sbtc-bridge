@@ -33,6 +33,15 @@ export default function LayoutClient({
           <Suspense fallback={<div>Loading...</div>}>
             <Header config={config} />
             {children}
+            <a
+              key="faqs"
+              href="https://docs.stacks.co/concepts/sbtc/sbtc-faq"
+              target="_blank"
+              rel="noreferrer"
+              className="text-white font-light block text-xl font-Matter px-20 py-2 bg-[#fd8341] rounded opacity-90"
+            >
+              FAQs
+            </a>
             <Footer supportLink={config.SUPPORT_LINK} />
             <AsignaSignActionModals />
           </Suspense>
