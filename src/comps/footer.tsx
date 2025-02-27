@@ -1,5 +1,5 @@
 "use client";
-import { getAggregateKey } from "@/util/get-aggregate-key";
+import { getAggregateKey } from "@/actions/get-aggregate-key";
 import { useQuery } from "@tanstack/react-query";
 import { payments } from "bitcoinjs-lib";
 import Image from "next/image";
