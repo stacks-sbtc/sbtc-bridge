@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 import { bytesToHex, hexToBytes } from "@stacks/common";
 
 import * as bitcoin from "bitcoinjs-lib";
-import { STACKS_TESTNET, STACKS_MAINNET } from "@stacks/network";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom, walletInfoAtom, WalletProvider } from "@/util/atoms";
 import {
@@ -28,7 +27,6 @@ import {
   callContractFordefi,
   callContractLeather,
   callContractXverse,
-  WalletType,
 } from "@/util/wallet-utils";
 import { getStacksNetwork } from "@/util/get-stacks-network";
 
