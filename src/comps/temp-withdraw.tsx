@@ -12,17 +12,25 @@ import { bytesToHex, hexToBytes } from "@stacks/common";
 
 import * as bitcoin from "bitcoinjs-lib";
 import { STACKS_TESTNET, STACKS_MAINNET } from "@stacks/network";
-
-import { address } from "bitcoinjs-lib";
 import { useAtomValue } from "jotai";
-import { bridgeConfigAtom } from "@/util/atoms";
+import { bridgeConfigAtom, walletInfoAtom, WalletProvider } from "@/util/atoms";
 import {
-  broadcastTransaction,
   bufferCV,
-  makeContractCall,
+  makeUnsignedContractCall,
+  PostConditionMode,
+  serializeTransaction,
   tupleCV,
   uintCV,
 } from "@stacks/transactions";
+import { serverBroadcastTx } from "@/actions/server-broadcast-tx";
+import {
+  callContractAsigna,
+  callContractFordefi,
+  callContractLeather,
+  callContractXverse,
+  WalletType,
+} from "@/util/wallet-utils";
+import { getStacksNetwork } from "@/util/get-stacks-network";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -108,16 +116,11 @@ const data: NameKeysInfo[] = [
     initValue: "",
     placeholder: "the max fee",
   },
-  {
-    nameKey: "privKey",
-    type: "text",
-    initValue: "",
-    placeholder: "your testing pk",
-  },
 ];
 
 const BasicWithdraw = () => {
   const [txId, setTxId] = useState<string | null>(null);
+  const { addresses, selectedWallet } = useAtomValue(walletInfoAtom);
 
   const router = useRouter();
 
@@ -126,7 +129,7 @@ const BasicWithdraw = () => {
 
   const handleSubmit = async (values: Record<string, string>) => {
     console.log(values);
-    const { address, amount, fee, privKey } = values;
+    const { address, amount, fee } = values;
 
     if (!WALLET_NETWORK) {
       throw new Error("Invalid network");
@@ -142,6 +145,11 @@ const BasicWithdraw = () => {
 
     if (!recipient) {
       throw new Error("Invalid recipient address");
+    }
+    const publicKey = addresses.stacks?.publicKey;
+
+    if (!publicKey) {
+      throw new Error("Invalid public key");
     }
     console.log(recipient);
 
@@ -161,26 +169,34 @@ const BasicWithdraw = () => {
       uintCV(satoshiFee),
     ];
 
-    const stacksNetwork =
-      WALLET_NETWORK === "mainnet" ? STACKS_MAINNET : STACKS_TESTNET;
+    const stacksNetwork = getStacksNetwork(WALLET_NETWORK);
 
-    console.log("privKey", privKey);
-
-    const txOptions = {
+    const transaction = await makeUnsignedContractCall({
       contractAddress: SBTC_CONTRACT_DEPLOYER,
       contractName: "sbtc-withdrawal",
       functionName: "initiate-withdrawal-request",
       functionArgs: contractArgs,
-      senderKey: privKey,
+      publicKey,
       validateWithAbi: true,
       network: stacksNetwork,
-    };
+      fee: WALLET_NETWORK === "mainnet" ? undefined : 10_000,
+      postConditionMode: PostConditionMode.Allow,
+    });
 
-    const transaction = await makeContractCall(txOptions);
+    const signTx = {
+      [WalletProvider.XVERSE]: callContractXverse,
+      [WalletProvider.LEATHER]: callContractLeather,
+      [WalletProvider.FORDEFI]: callContractFordefi,
+      [WalletProvider.ASIGNA]: callContractAsigna,
+    }[selectedWallet!];
 
-    const broadcastResponse = await broadcastTransaction({
-      transaction: transaction,
+    const signedTx = await signTx({
+      txHex: serializeTransaction(transaction),
       network: stacksNetwork,
+    });
+
+    const broadcastResponse = await serverBroadcastTx({
+      txHex: signedTx,
     });
     const txId = broadcastResponse.txid;
     router.push(`/withdraw?txId=${txId}`);
