@@ -15,6 +15,7 @@ export async function signPSBTLeather({ hex, network }: SignPSBTParams) {
   const response = await getLeatherBTCProviderOrThrow()?.request("signPsbt", {
     network,
     hex,
+    broadcast: false,
   });
   if (!response) {
     throw new Error(`Error signing PSBT`);
