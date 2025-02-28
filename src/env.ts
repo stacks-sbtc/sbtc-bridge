@@ -22,4 +22,5 @@ export const env = {
   SUPPORT_LINK: process.env.SUPPORT_LINK,
   POLLING_INTERVAL: Number(process.env.POLLING_INTERVAL) || 5000,
   BRIDGE_APP_URL: process.env.BRIDGE_APP_URL || "http://localhost:3000",
+  STACKS_API_URL: process.env.STACKS_API_URL || "http://localhost:3999",
 };

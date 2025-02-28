@@ -1,8 +1,7 @@
 "use client";
 
 import { bridgeConfigAtom } from "@/util/atoms";
-import getSbtcTotalBalance from "@/util/get-sbtc-balance";
-import { getStacksNetwork } from "@/util/get-stacks-network";
+import getSbtcTotalBalance from "@/actions/get-sbtc-balance";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
@@ -14,8 +13,6 @@ export default function SBTCBalance({ address }: { address: string }) {
     queryFn: async () => {
       return await getSbtcTotalBalance({
         address,
-        deployerAddress: SBTC_CONTRACT_DEPLOYER!,
-        network: getStacksNetwork(WALLET_NETWORK),
       });
     },
     enabled: !!address && !!SBTC_CONTRACT_DEPLOYER && !!WALLET_NETWORK,

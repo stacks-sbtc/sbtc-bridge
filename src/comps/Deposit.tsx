@@ -38,7 +38,7 @@ import { DepositStepper } from "./deposit-stepper";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { sendBTCLeather, sendBTCXverse } from "@/util/wallet-utils";
 import useMintCaps from "@/hooks/use-mint-caps";
-import { getAggregateKey } from "@/util/get-aggregate-key";
+import { getAggregateKey } from "@/actions/get-aggregate-key";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { useQuery } from "@tanstack/react-query";
