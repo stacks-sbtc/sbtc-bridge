@@ -15,9 +15,13 @@ import {
 import { useNotifications } from "@/hooks/use-notifications";
 import ConnectWallet from "../ConnectWallet";
 import { NotificationStatusType } from "../Notifications";
+import { GetTestnetBTC } from "../get-testnet-btc";
+import SBTCBalance from "../ui/sbtc-balance";
+import useMintCaps from "@/hooks/use-mint-caps";
 
 const Header = ({ config }: { config: BridgeConfig }) => {
   const { notify } = useNotifications();
+  const { currentCap } = useMintCaps();
 
   const [walletInfo, setWalletInfo] = useAtom(walletInfoAtom);
 
@@ -26,6 +30,11 @@ const Header = ({ config }: { config: BridgeConfig }) => {
   );
 
   const isConnected = useMemo(() => !!walletInfo.selectedWallet, [walletInfo]);
+
+  const isTestnet =
+    config.WALLET_NETWORK?.toLowerCase() === "sbtcTestnet".toLowerCase();
+
+  const isMintCapReached = currentCap <= 0;
 
   const handleSignOut = () => {
     setWalletInfo({
@@ -46,11 +55,8 @@ const Header = ({ config }: { config: BridgeConfig }) => {
   const renderUserWalletInfo = () => {
     return (
       <>
-        {
-          //isTestnet && <GetTestnetBTC />
-        }
-        {/* <SBTCBalance address={walletInfo.addresses.stacks!.address} /> */}
-
+        {isTestnet && <GetTestnetBTC />}
+        <SBTCBalance address={walletInfo.addresses.stacks!.address} />
         <h3
           onClick={() => handleSignOut()}
           className="font-Matter cursor-pointer text-xs text-white font-semibold tracking-wide"
@@ -93,6 +99,7 @@ const Header = ({ config }: { config: BridgeConfig }) => {
               <button
                 onClick={() => setShowConnectWallet(true)}
                 className=" bg-darkOrange  px-4 py-2 rounded-lg"
+                disabled={isMintCapReached}
               >
                 <h3 className="font-Matter text-black text-sm font-thin tracking-wide">
                   CONNECT WALLET
