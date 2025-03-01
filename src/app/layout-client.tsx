@@ -37,7 +37,18 @@ export default function LayoutClient({
         <main className="min-w-screen bg-white  flex items-center flex-col min-h-screen ">
           <Suspense fallback={<div>Loading...</div>}>
             {isReskin ? (
-              <>{children}</>
+              <>
+                {children}
+                <a
+                  key="faqs"
+                  href="https://docs.stacks.co/concepts/sbtc/sbtc-faq"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-white font-light block text-xl font-Matter px-20 py-2 bg-[#fd8341] rounded opacity-90"
+                >
+                  FAQs
+                </a>
+              </>
             ) : (
               <>
                 <Header config={config} />
