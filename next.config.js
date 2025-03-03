@@ -15,16 +15,29 @@ const nextConfig = {
     return config;
   },
   async redirects() {
-    return process.env.WALLET_NETWORK !== "sbtcDevenv"
-      ? [
-          // Basic redirect
-          {
-            source: "/transfer",
-            destination: "/",
-            permanent: false,
-          },
-        ]
-      : [];
+    let redirects =
+      process.env.WALLET_NETWORK !== "sbtcDevenv"
+        ? [
+            {
+              source: "/transfer",
+              destination: "/",
+              permanent: false,
+            },
+          ]
+        : [];
+
+    redirects =
+      process.env.WALLET_NETWORK === "mainnet"
+        ? [
+            ...redirects,
+            {
+              source: "/withdraw",
+              destination: "/",
+              permanent: false,
+            },
+          ]
+        : redirects;
+    return redirects;
   },
   async headers() {
     return [

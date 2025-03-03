@@ -40,11 +40,7 @@ const decodeBitcoinAddressToClarityRecipient = (
   // check if passed in address is bech32
   let decodedBech32;
   let isBech32 = false;
-  if (
-    lower.startsWith("bc1") ||
-    lower.startsWith("bcrt1") ||
-    lower.startsWith("tb1")
-  ) {
+  if (lower.startsWith("bc1") || lower.startsWith("bcrt1")) {
     try {
       decodedBech32 = bitcoin.address.fromBech32(address);
       isBech32 = true;

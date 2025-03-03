@@ -100,10 +100,12 @@ const Header = ({ config }: { config: BridgeConfig }) => {
           <div className="flex flex-row gap-10 items-center">
             {/* <h5 className="font-Matter text-xs text-black tracking-wide ">
               LEARN MORE
-            </h5>
-            <h4 className="font-Matter text-xs text-black tracking-wide ">
-              HISTORY
-            </h4> */}
+            </h5> */}
+            {isConnected && config.WALLET_NETWORK !== "mainnet" && (
+              <Link href="/withdraw" className="text-xs text-black underline">
+                Withdraw
+              </Link>
+            )}
             {isConnected ? (
               renderUserWalletInfo()
             ) : (
