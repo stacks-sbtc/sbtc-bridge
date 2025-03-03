@@ -604,10 +604,10 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@8.1.2":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.1.2.tgz#1df3f7255042761100acd4566b9c3f2b46500656"
-  integrity sha512-6fU5aPXhks9PMMeuf0/hlFog9Yi2UBvJcJn4i3NiosFrwG76VvsVvLv721nUEUU93dP6N1ziApdscSHFOSoXxw==
+"@stacks/connect@8.1.4":
+  version "8.1.4"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.1.4.tgz#cdec6147ad1a94cb229b00c044f82c497a7998b8"
+  integrity sha512-7VPUJedpaetEQ4zVKmVYqmi/Wm0ks/WMBO0GmHb0MXXCH6Z1N02GwcFaMKDYyBMUVr7GOsxFZcIwYpmqLMo4Rw==
   dependencies:
     "@scure/base" "^1.2.4"
     "@stacks/common" "^7.0.0"
@@ -618,15 +618,7 @@
     "@stacks/transactions" "^7.0.0"
     "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
 
-"@stacks/network-v6@npm:@stacks/network@^6.16.0":
-  version "6.17.0"
-  resolved "https://registry.yarnpkg.com/@stacks/network/-/network-6.17.0.tgz#9e0eefb8d72cb2243744beaf1e17673737290a49"
-  integrity sha512-numHbfKjwco/rbkGPOEz8+FcJ2nBnS/tdJ8R422Q70h3SiA9eqk9RjSzB8p4JP8yW1SZvW+eihADHfMpBuZyfw==
-  dependencies:
-    "@stacks/common" "^6.16.0"
-    cross-fetch "^3.1.5"
-
-"@stacks/network@^6.17.0":
+"@stacks/network-v6@npm:@stacks/network@^6.16.0", "@stacks/network@^6.17.0":
   version "6.17.0"
   resolved "https://registry.yarnpkg.com/@stacks/network/-/network-6.17.0.tgz#9e0eefb8d72cb2243744beaf1e17673737290a49"
   integrity sha512-numHbfKjwco/rbkGPOEz8+FcJ2nBnS/tdJ8R422Q70h3SiA9eqk9RjSzB8p4JP8yW1SZvW+eihADHfMpBuZyfw==
