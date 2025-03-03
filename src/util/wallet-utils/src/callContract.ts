@@ -2,7 +2,7 @@ import { request } from "sats-connect";
 
 import { StacksNetwork, StacksNetworkName } from "@stacks/network";
 import {
-  getFordefiBTCProviderOrThrow,
+  // getFordefiBTCProviderOrThrow,
   getLeatherBTCProviderOrThrow,
 } from "./util/btc-provider";
 
@@ -36,14 +36,15 @@ export const callContractLeather: CallContract = async (params) => {
 };
 
 export const callContractFordefi: CallContract = async (params) => {
-  const btc = getFordefiBTCProviderOrThrow();
-  const response = await btc.request("stx_signTransaction", {
-    transaction: params.txHex,
-  });
-  if (response.status === "error") {
-    throw new Error(response.error.message);
-  }
-  return response.result.transaction;
+  // const btc = getFordefiBTCProviderOrThrow();
+  // const response = await btc.request("stx_signTransaction", {
+  //   transaction: params.txHex,
+  // });
+  // if (response.status === "error") {
+  //   throw new Error(response.error.message);
+  // }
+  // return response.result.transaction;
+  throw new Error("Not implemented");
 };
 
 export const callContractAsigna: CallContract = async (params) => {
