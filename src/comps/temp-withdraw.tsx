@@ -210,7 +210,7 @@ const BasicWithdraw = () => {
         </div>
         {txId && (
           <div className="flex flex-col gap-1">
-            <SubText>Bitcoin TxID</SubText>
+            <SubText>Stacks TxID</SubText>
             <p className="text-black font-Matter font-semibold text-sm">
               {txId}
             </p>
