@@ -22,7 +22,7 @@ import {
 } from "@/actions/bitcoinClient";
 import ReclaimStepper from "./reclaim/reclaim-stepper";
 import { Psbt } from "bitcoinjs-lib";
-import { signPSBTRequest } from "@/util/wallet-utils/src/sign-psbt";
+import { signPSBTRequest } from "@/util/wallet-utils";
 import { useConnectWallet } from "../hooks/use-connect-wallet";
 
 /*
