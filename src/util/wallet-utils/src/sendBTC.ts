@@ -17,5 +17,9 @@ export async function sendBTC({ amountInSats, recipient, network }: Payload) {
     network,
   } as any);
 
-  return result.txid.replace(/"|'/g, "");
+  const values = Object.entries(result)
+  // why you might ask? ForDefi return txId instead of txid
+  const txId = values.filter(([key, value]) => key.toLowerCase() === "txid")[0][1]
+
+  return txId
 }
