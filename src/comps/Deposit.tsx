@@ -44,7 +44,6 @@ import { useQuery } from "@tanstack/react-query";
 import getBtcBalance from "@/actions/get-btc-balance";
 import { useDepositStatus } from "@/hooks/use-deposit-status";
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
-import { sendBTCFordefi } from "../util/wallet-utils/src/sendBTC";
 
 /*
   deposit flow has 3 steps
