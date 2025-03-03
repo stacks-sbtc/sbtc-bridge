@@ -111,7 +111,7 @@ const data: NameKeysInfo[] = [
   {
     nameKey: "fee",
     type: "number",
-    initValue: "",
+    initValue: "0.0008",
     placeholder: "the max fee",
   },
 ];
@@ -119,7 +119,6 @@ const data: NameKeysInfo[] = [
 const BasicWithdraw = () => {
   const [txId, setTxId] = useState<string | null>(null);
   const { addresses, selectedWallet } = useAtomValue(walletInfoAtom);
-
   const router = useRouter();
 
   const { WALLET_NETWORK, SBTC_CONTRACT_DEPLOYER } =
@@ -202,16 +201,21 @@ const BasicWithdraw = () => {
 
     setTxId(txId);
   };
+
   return (
     <FlowContainer>
       <>
         <div className="w-full flex flex-row items-center justify-between">
           <Heading>Start Withdraw Transfer</Heading>
         </div>
-        <div className="flex flex-col gap-1">
-          <SubText>Sender Address</SubText>
-          <p className="text-black font-Matter font-semibold text-sm">{txId}</p>
-        </div>
+        {txId && (
+          <div className="flex flex-col gap-1">
+            <SubText>Bitcoin TxID</SubText>
+            <p className="text-black font-Matter font-semibold text-sm">
+              {txId}
+            </p>
+          </div>
+        )}
         <FlowFormDynamic
           nameKeys={data}
           handleSubmit={(values) => handleSubmit(values)}
