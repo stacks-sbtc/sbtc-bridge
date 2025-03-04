@@ -4,8 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { payments } from "bitcoinjs-lib";
 import Image from "next/image";
 import { hexToBytes } from "@stacks/common";
-import { useAtomValue } from "jotai";
-import { bridgeConfigAtom } from "@/util/atoms";
+import { BridgeConfig } from "@/util/atoms";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
 
 const contracts = [
@@ -31,9 +30,9 @@ const contracts = [
   },
 ];
 
-export default function Footer({ supportLink }: { supportLink?: string }) {
-  const config = useAtomValue(bridgeConfigAtom);
+export default function Footer({ config }: { config: BridgeConfig }) {
   const network = getBitcoinNetwork(config.WALLET_NETWORK);
+  const { SUPPORT_LINK: supportLink } = config;
   const { data: aggregateAddress } = useQuery({
     queryKey: ["aggregateAddress"],
     queryFn: async () => {
@@ -114,13 +113,16 @@ export default function Footer({ supportLink }: { supportLink?: string }) {
       </div>
       <div className="px-4 text-black w-full max-w-[1200px] mt-8 flex justify-between">
         <div>
-          <h3>Stacks Mainnet Contracts</h3>
+          <h3>
+            Stacks {config.WALLET_NETWORK === "mainnet" ? "Mainnet" : "Testnet"}{" "}
+            Contracts
+          </h3>
           <ul>
             {contracts.map((contract) => (
               <li className="mb-1" key={contract.id}>
                 <a
                   key={contract.id}
-                  href={`https://explorer.hiro.so/txid/SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.${contract.id}?chain=mainnet`}
+                  href={`https://explorer.hiro.so/txid/${config.SBTC_CONTRACT_DEPLOYER}.${contract.id}?chain=${config.WALLET_NETWORK === "mainnet" ? "mainnet" : "testnet"}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-black font-light text-sm"

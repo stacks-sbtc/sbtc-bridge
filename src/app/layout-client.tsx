@@ -42,7 +42,7 @@ export default function LayoutClient({
             >
               FAQs
             </a>
-            <Footer supportLink={config.SUPPORT_LINK} />
+            <Footer config={config} />
             <AsignaSignActionModals />
           </Suspense>
         </main>
