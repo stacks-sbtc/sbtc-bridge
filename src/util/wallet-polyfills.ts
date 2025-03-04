@@ -16,7 +16,12 @@ export function setupAsigna(
         case "getAddresses":
           return { result: await asignaConnect.connect() };
         case "signPsbt":
-          return { result: await asignaConnect.openSignPsbt(params.psbt) };
+          return {
+            result: await asignaConnect.openSignPsbt(params.psbt, {
+              onlyFinalize: false,
+              execute: false,
+            }),
+          };
         case "sendTransfer":
           return {
             result: (await asignaConnect.openSignBtcAmount(
