@@ -2,7 +2,7 @@
 
 export async function getHiroTestnetBtc(address: string) {
   const res = await fetch(
-    `https://api.testnet.hiro.so/extended/v1/faucets/btc?address=${address}`,
+    `https://api.testnet.hiro.so/extended/v1/faucets/btc?address=${address}&large=true`,
     {
       method: "POST",
     },
