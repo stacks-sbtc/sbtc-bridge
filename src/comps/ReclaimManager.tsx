@@ -394,10 +394,10 @@ const ReclaimDeposit = ({
       signedPsbt = Psbt.fromHex(await signPSBTFordefi(params));
     }
     if (walletInfo.selectedWallet === WalletProvider.ASIGNA) {
-      signedPsbt = (await openSignPsbt(
-        Psbt.fromHex(psbtHex).toBase64(),
-        false,
-      )) as any;
+      signedPsbt = (await openSignPsbt(Psbt.fromHex(psbtHex).toBase64(), {
+        onlyFinalize: false,
+        execute: false,
+      })) as any;
     }
 
     if (signedPsbt) {
