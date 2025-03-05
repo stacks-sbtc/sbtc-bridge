@@ -2,6 +2,10 @@ FROM node:18 AS builder
 
 WORKDIR /code
 
+# docker build --build-arg GIT_COMMIT=$(git rev-parse HEAD)
+ARG GIT_COMMIT
+ENV GIT_COMMIT=$GIT_COMMIT
+
 COPY package.json ./
 COPY yarn.lock ./
 RUN yarn install --frozen-lockfile
@@ -14,6 +18,10 @@ RUN npm run build
 FROM node:18
 
 WORKDIR /app
+
+ARG GIT_COMMIT
+ENV GIT_COMMIT=$GIT_COMMIT
+
 COPY --from=builder /code/node_modules ./node_modules
 COPY --from=builder /code/public ./public
 COPY --from=builder /code/.next ./.next
