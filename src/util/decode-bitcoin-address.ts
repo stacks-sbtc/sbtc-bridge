@@ -8,6 +8,7 @@ const typeMapping = {
   [AddressType.p2wsh]: "0x05",
   [AddressType.p2tr]: "0x06",
 };
+
 export function decodeBitcoinAddress(address: string) {
   const addressInfo = getAddressInfo(address);
 
@@ -17,6 +18,18 @@ export function decodeBitcoinAddress(address: string) {
     hash = bitcoin.address.fromBech32(address).data;
   } else {
     hash = bitcoin.address.fromBase58Check(address).hash;
+  }
+
+  const supportedAddressTypes = [
+    AddressType.p2pkh,
+    AddressType.p2sh,
+    AddressType.p2wpkh,
+    AddressType.p2wsh,
+    AddressType.p2tr,
+  ];
+
+  if (!supportedAddressTypes.includes(addressInfo.type)) {
+    throw new Error(`Unsupported address type: ${addressInfo.type}`);
   }
 
   return {
