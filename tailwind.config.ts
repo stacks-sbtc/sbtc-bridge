@@ -8,9 +8,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        Matter: ["Matter"],
-      },
       colors: {
         orange: "#FD9D41",
         lightOrange: "#FFF6EC",
