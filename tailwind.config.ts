@@ -16,6 +16,7 @@ const config: Config = {
         gray: "#B9B9B9",
         lightGray: "#F5F5F5",
         sand: "#F3F2F0",
+        "reskin-dark-gray": "#272628",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -25,5 +26,6 @@ const config: Config = {
     },
   },
   plugins: [],
+  darkMode: "selector",
 };
 export default config;
