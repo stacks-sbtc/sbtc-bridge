@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Git commit ID for health endpoint
+
+To push the Git Commit version during the building phase you have to build the image passing the $GIT_COMMIT value:
+
+```bash
+export GIT_COMMIT=$(git rev-parse HEAD)
+
+docker build --build-arg GIT_COMMIT=$GIT_COMMIT
+```
+
+or passing through the docker compose file:
+
+```yaml
+sbtc-bridge:
+    restart: on-failure
+    build:
+      context: ./sbtc-bridge
+      dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT}
+```
