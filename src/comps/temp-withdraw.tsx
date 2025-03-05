@@ -8,18 +8,13 @@ import LandingAnimation from "./core/LandingAnimation";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 import { useRouter } from "next/navigation";
 
-import { bytesToHex, hexToBytes } from "@stacks/common";
-
-import * as bitcoin from "bitcoinjs-lib";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom, walletInfoAtom, WalletProvider } from "@/util/atoms";
 import {
-  bufferCV,
+  Cl,
   makeUnsignedContractCall,
-  PostConditionMode,
+  Pc,
   serializeTransaction,
-  tupleCV,
-  uintCV,
 } from "@stacks/transactions";
 import { serverBroadcastTx } from "@/actions/server-broadcast-tx";
 import {
@@ -29,6 +24,8 @@ import {
   callContractXverse,
 } from "@/util/wallet-utils";
 import { getStacksNetwork } from "@/util/get-stacks-network";
+import { validate, Network } from "bitcoin-address-validation";
+import { decodeBitcoinAddress } from "@/util/decode-bitcoin-address";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -36,58 +33,12 @@ const decodeBitcoinAddressToClarityRecipient = (
 ) => {
   const lower = address.toLowerCase();
   const isMainnet = network === "mainnet";
+  const addressNetwork = isMainnet ? Network.mainnet : Network.regtest;
 
-  // check if passed in address is bech32
-  let decodedBech32;
-  let isBech32 = false;
-  if (lower.startsWith("bc1") || lower.startsWith("bcrt1")) {
-    try {
-      decodedBech32 = bitcoin.address.fromBech32(address);
-      isBech32 = true;
-    } catch (err: any) {
-      throw new Error(`Invalid bech32 address: ${err.message}`);
-    }
-  }
-
-  if (isBech32 && decodedBech32) {
-    const {
-      prefix,
-      version: witnessVersion,
-      data: witnessProgram,
-    } = decodedBech32;
-
-    const hexHash = "0x" + bytesToHex(witnessProgram);
-    if (isMainnet) {
-      if (prefix !== "bc") {
-        throw new Error(`Expected mainnet bech32 (bc1...), got ${prefix}`);
-      }
-    } else if (!isMainnet) {
-      // regtest typically uses prefix 'bcrt'
-      if (prefix !== "bcrt") {
-        throw new Error(`Expected regtest bech32 (bcrt1...), got ${prefix}`);
-      }
-    }
-
-    if (witnessVersion === 0) {
-      if (witnessProgram.length === 20) {
-        // P2WPKH
-        return { version: "0x04", hashbytes: hexHash };
-      } else if (witnessProgram.length === 32) {
-        // P2WSH
-        return { version: "0x05", hashbytes: hexHash };
-      } else {
-        throw new Error(
-          `Unsupported witness v0 length=${witnessProgram.length}`,
-        );
-      }
-    } else if (witnessVersion === 1 && witnessProgram.length === 32) {
-      // P2TR
-      return { version: "0x06", hashbytes: hexHash };
-    } else {
-      throw new Error(
-        `Unrecognized witnessVersion=${witnessVersion}, length=${witnessProgram.length}`,
-      );
-    }
+  if (validate(lower, addressNetwork)) {
+    return decodeBitcoinAddress(address);
+  } else {
+    throw new Error(`Invalid address: ${address}`);
   }
 };
 
@@ -135,10 +86,6 @@ const BasicWithdraw = () => {
       address,
       WALLET_NETWORK,
     );
-
-    if (!recipient) {
-      throw new Error("Invalid recipient address");
-    }
     const publicKey = addresses.stacks?.publicKey;
 
     if (!publicKey) {
@@ -154,12 +101,12 @@ const BasicWithdraw = () => {
     const satoshiFee = Math.round(parseFloat(fee) * 1e8);
 
     const contractArgs = [
-      uintCV(satoshiAmount),
-      tupleCV({
-        version: bufferCV(hexToBytes(recipient.version)),
-        hashbytes: bufferCV(hexToBytes(recipient.hashbytes)),
+      Cl.uint(satoshiAmount),
+      Cl.tuple({
+        version: Cl.bufferFromHex(recipient.type),
+        hashbytes: Cl.buffer(recipient.hash),
       }),
-      uintCV(satoshiFee),
+      Cl.uint(satoshiFee),
     ];
 
     const stacksNetwork = getStacksNetwork(WALLET_NETWORK);
@@ -173,7 +120,11 @@ const BasicWithdraw = () => {
       validateWithAbi: true,
       network: stacksNetwork,
       fee: WALLET_NETWORK === "mainnet" ? undefined : 10_000,
-      postConditionMode: PostConditionMode.Allow,
+      postConditions: [
+        Pc.principal(addresses.stacks!.address)
+          .willSendLte(satoshiAmount + satoshiFee)
+          .ft(`${SBTC_CONTRACT_DEPLOYER}.sbtc-token`, "sbtc-token"),
+      ],
     });
 
     const signTx = {
