@@ -19,7 +19,7 @@ export default function LayoutClientReskin({
 
   return (
     <div className={theme}>
-      <main className="flex flex-col min-h-screen bg-white text-black dark:bg-reskin-dark-gray dark:text-white">
+      <main className="flex flex-col min-h-screen bg-white text-black dark:bg-reskin-dark-gray dark:text-white transition-all duration-75">
         <Header />
         {children}
       </main>

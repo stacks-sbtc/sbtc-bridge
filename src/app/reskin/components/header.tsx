@@ -1,21 +1,27 @@
 "use client";
 
+import SbtcBridgeLogo from "./sbtc-bridge-logo";
 import { themeAtom } from "@/util/atoms";
 import { useAtom } from "jotai";
-
+import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 export default function Header() {
   const [theme, setTheme] = useAtom(themeAtom);
   return (
-    <header>
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">SBTC Bridge</h1>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-        >
-          Switch to {theme === "light" ? "Dark" : "Light"} Mode
-        </button>
+    <header className="w-full mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex justify-between">
+      <div className="flex items-center">
+        <SbtcBridgeLogo />
+        <h1 className="ml-1 text-xl tracking-tight">Bridge</h1>
       </div>
+      <button
+        className="hover:bg-lightGray dark:hover:bg-darkGray p-2 rounded-full"
+        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      >
+        {theme === "light" ? (
+          <SunIcon className="h-6 w-6" />
+        ) : (
+          <MoonIcon className="h-6 w-6" />
+        )}
+      </button>
     </header>
   );
 }
