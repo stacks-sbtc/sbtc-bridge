@@ -61,3 +61,10 @@ export const walletInfoAtom = atomWithStorage<{
     musig: null,
   },
 });
+
+export const themeAtom = atomWithStorage<"light" | "dark">(
+  "themeV1",
+  globalThis.window && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light",
+);
