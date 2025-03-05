@@ -1,58 +1,29 @@
-import { Inter } from "next/font/google";
-
-import "./globals.css";
-import LayoutClient from "./layout-client";
-import getSbtcBridgeConfig from "@/actions/get-sbtc-bridge-config";
-import { ChatBubbleLeftIcon } from "@heroicons/react/20/solid";
-import { Metadata } from "next";
 import { env } from "@/env";
+import { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const matter = localFont({
+  src: "../../public/fonts/Matter-Regular.ttf",
+  display: "swap",
+});
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const sBTCBridgeConfig = await getSbtcBridgeConfig();
+}) {
   return (
     <html lang="en">
-      <head>
-        <title>sBTC Bridge</title>
-        <meta name="description" content="sBTC Bridge" />
-        <meta property="og:title" content="sBTC Bridge" />
-        <meta property="og:description" content="sBTC Bridge" />
-        <meta property="og:site_name" content="sBTC Bridge" />
-        <meta property="og:image:alt" content="sBTC Bridge" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@stacks" />
-        <meta name="twitter:title" content="sBTC Bridge" />
-        <meta name="twitter:description" content="sBTC Bridge" />
-        <meta name="twitter:image:alt" content="sBTC Bridge" />
-      </head>
-      <body className={inter.className}>
-        <LayoutClient config={sBTCBridgeConfig}>{children}</LayoutClient>
-        {sBTCBridgeConfig.SUPPORT_LINK && (
-          <a
-            href={sBTCBridgeConfig.SUPPORT_LINK}
-            target="_blank"
-            title="Support"
-            className={
-              "fixed z-90 bottom-20 right-8 bg-orange w-20 " +
-              "h-20 rounded-full drop-shadow-lg flex justify-center " +
-              "items-center text-white text-4xl"
-            }
-          >
-            <ChatBubbleLeftIcon className="w-8 h-8 text-black" />
-          </a>
-        )}
-      </body>
+      <body className={matter.className}>{children}</body>
     </html>
   );
 }
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.BRIDGE_APP_URL),
+  title: "sBTC Bridge",
+  description: "sBTC Bridge",
 };
 
 export const dynamic = "force-dynamic";

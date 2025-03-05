@@ -1,6 +1,11 @@
 "use server";
 import TempWithdraw from "@/comps/temp-withdraw";
+import OldLayout from "../old-layout";
 
 export default async function Home() {
-  return <TempWithdraw />;
+  return (
+    <OldLayout>
+      <TempWithdraw />
+    </OldLayout>
+  );
 }
