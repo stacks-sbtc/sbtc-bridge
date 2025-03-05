@@ -24,18 +24,22 @@ import {
   callContractXverse,
 } from "@/util/wallet-utils";
 import { getStacksNetwork } from "@/util/get-stacks-network";
-import { validate, Network } from "bitcoin-address-validation";
+import { validate, Network, getAddressInfo } from "bitcoin-address-validation";
 import { decodeBitcoinAddress } from "@/util/decode-bitcoin-address";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
   network: DefaultNetworkConfigurations,
 ) => {
-  const lower = address.toLowerCase();
   const isMainnet = network === "mainnet";
-  const addressNetwork = isMainnet ? Network.mainnet : Network.regtest;
+  const addressInfo = getAddressInfo(address);
+  let addressNetwork = isMainnet ? Network.mainnet : Network.regtest;
+  // bech32 is different between all three networks
+  // base58 is same between regtest and testnet
+  const isRegtestBase58 = !addressInfo.bech32 && !isMainnet;
+  addressNetwork = isRegtestBase58 ? Network.testnet : addressNetwork;
 
-  if (validate(lower, addressNetwork)) {
+  if (validate(address, addressNetwork)) {
     return decodeBitcoinAddress(address);
   } else {
     throw new Error(`Invalid address: ${address}`);
