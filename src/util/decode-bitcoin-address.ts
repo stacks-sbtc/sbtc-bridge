@@ -20,20 +20,13 @@ export function decodeBitcoinAddress(address: string) {
     hash = bitcoin.address.fromBase58Check(address).hash;
   }
 
-  const supportedAddressTypes = [
-    AddressType.p2pkh,
-    AddressType.p2sh,
-    AddressType.p2wpkh,
-    AddressType.p2wsh,
-    AddressType.p2tr,
-  ];
-
-  if (!supportedAddressTypes.includes(addressInfo.type)) {
+  const type = typeMapping[addressInfo.type];
+  if (!type) {
     throw new Error(`Unsupported address type: ${addressInfo.type}`);
   }
 
   return {
-    type: typeMapping[addressInfo.type],
+    type,
     hash,
   };
 }
