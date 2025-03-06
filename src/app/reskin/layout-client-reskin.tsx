@@ -5,6 +5,7 @@ import Header from "./components/header/header";
 import { themeAtom } from "@/util/atoms";
 import { useState, useEffect } from "react";
 import { NavTabs } from "./components/tabs/nav-tabs";
+import { Footer } from "./components/footer";
 
 export default function LayoutClientReskin({
   children,
@@ -21,10 +22,11 @@ export default function LayoutClientReskin({
   return (
     <div className={theme}>
       <main className="flex flex-col items-center min-h-screen bg-white text-black dark:bg-reskin-dark-gray dark:text-white">
-        <div className="max-w-7xl flex flex-col w-full">
+        <div className="flex flex-col w-full">
           <Header />
           <NavTabs />
           {children}
+          <Footer />
         </div>
       </main>
     </div>
