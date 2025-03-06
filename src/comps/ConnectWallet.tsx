@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Heading, SubText } from "./core/Heading";
 import Image from "next/image";
 import { ArrowRightIcon, ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import {
@@ -116,21 +115,18 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
       initial={{ x: "0", opacity: 0 }}
       animate={{ x: "0", opacity: 1 }}
       onClick={() => onClose()}
-      className="fixed inset-0 bg-black text-black bg-opacity-50 flex items-center justify-center md:p-4 z-20"
+      className="fixed inset-0 bg-black text-black dark:text-white bg-opacity-50 flex items-center justify-center md:p-4 z-20"
     >
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: "#FFF5EB",
-        }}
-        className=" rounded-lg  flex flex-col items-center justify-between p-6 w-full h-screen sm:h-[500px] sm:w-[340px]  shadow-lg"
+        className="bg-[#FFF5EB] dark:bg-reskin-dark-gray rounded-lg flex flex-col items-center justify-between p-6 w-full h-screen sm:h-[500px] sm:w-[340px]  shadow-lg"
       >
-        <div className="w-full flex flex-col gap-2 items-center justify-center">
-          <Heading>Connect Wallet</Heading>
-          <SubText>To Start Using the Bridge</SubText>
+        <div className="w-full flex flex-col gap-2 items-center justify-center mb-4">
+          <h1 className="text-3xl font-normal">Connect Wallet</h1>
+          <p className="font-thin text-sm">To Start Using the Bridge</p>
         </div>
         <Image
           src="/images/StacksBitcoin.svg"
@@ -168,7 +164,7 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
                     width={48}
                     alt={provider.name}
                   />
-                  <p className="ml-4 text-black">
+                  <p className="ml-4">
                     {provider.walletProvider === WalletProvider.ASIGNA &&
                     !available ? (
                       "Open as an embedded app in Asigna"
