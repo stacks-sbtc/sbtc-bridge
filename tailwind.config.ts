@@ -17,6 +17,8 @@ const config: Config = {
         lightGray: "#F5F5F5",
         sand: "#F3F2F0",
         "reskin-dark-gray": "#272628",
+        "dark-reskin-border-gray": "#333135",
+        "light-reskin-border-gray": "rgba(0, 0, 0, 0.2)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
