@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 const tabs = [
   {
     label: "Deposit",
-    link: "/reskin/deposit",
+    link: "/reskin",
   },
   {
     label: "Withdraw",
@@ -18,16 +18,19 @@ const tabs = [
 export const NavTabs = () => {
   const pathname = usePathname();
   return (
-    <div className="flex flex-row justify-between items-center w-full fixed bottom-0 h-20 sm:sticky bg-reskin-dark-gray">
-      {tabs.map((tab, index) => (
-        <Link
-          className={`h-full uppercase flex-1 flex justify-center items-center ${pathname === tab.link ? "border-t-dark-reskin-orange font-bold sm:border-b-dark-reskin-orange" : "border-t-transparent sm:border-b-transparent"} border-t-4 sm:border-b-4 sm:border-t-0 sm:bottom-auto`}
-          key={index}
-          href={tab.link}
-        >
-          {tab.label}
-        </Link>
-      ))}
+    <div className="fixed bottom-0 sm:sticky bg-reskin-dark-gray w-full">
+      <div className="flex h-20 flex-row justify-between items-center w-full sm:mx-auto max-w-5xl">
+        {tabs.map((tab, index) => (
+          <Link
+            className={`h-full uppercase flex-1 flex justify-center items-center ${pathname === tab.link ? "border-t-dark-reskin-orange font-bold sm:border-b-dark-reskin-orange" : "border-t-transparent sm:border-b-transparent"} border-t-4 sm:border-b-4 sm:border-t-0 sm:bottom-auto`}
+            key={index}
+            href={tab.link}
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </div>
+      <hr className="hidden sm:block w-full border-t-light-reskin-border-gray dark:border-t-dark-reskin-border-gray relative bottom-1" />
     </div>
   );
 };
