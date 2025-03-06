@@ -28,7 +28,7 @@ export const ConnectButton = () => {
     <>
       <button
         onClick={handleConnectButton}
-        className="bg-[#FC6432] h-7 px-3 sm:px-4 sm:h-10 rounded-lg uppercase text-xs leading-normal sm:text-sm dark:text-black"
+        className="bg-orange dark:bg-dark-reskin-orange h-7 px-3 sm:px-4 sm:h-10 rounded-lg uppercase text-xs leading-normal sm:text-sm dark:text-black"
       >
         {isConnected ? "Disconnect" : "Connect Wallet"}
       </button>
