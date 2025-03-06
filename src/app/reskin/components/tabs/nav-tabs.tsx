@@ -22,7 +22,7 @@ export const NavTabs = () => {
       <div className="flex h-20 flex-row justify-between items-center w-full sm:mx-auto max-w-5xl relative z-10">
         {tabs.map((tab, index) => (
           <Link
-            className={`h-full uppercase flex-1 flex justify-center items-center ${pathname === tab.link ? "border-t-orange sm:border-b-orange dark:border-t-dark-reskin-orange font-bold dark:sm:border-b-dark-reskin-orange" : "border-t-transparent sm:border-b-transparent"} border-t-4 sm:border-b-4 sm:border-t-0 sm:bottom-auto`}
+            className={`h-full uppercase flex-1 flex justify-center items-center ${pathname === tab.link ? "border-t-orange sm:border-b-orange dark:border-t-dark-reskin-orange font-bold dark:sm:border-b-dark-reskin-orange" : "border-t-transparent sm:border-b-[#D9D9D9]"} border-t-4 sm:border-b-4 sm:border-t-0 sm:bottom-auto`}
             key={index}
             href={tab.link}
           >
