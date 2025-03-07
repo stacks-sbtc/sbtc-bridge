@@ -2,7 +2,7 @@ import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 
 export const Footer = () => {
   return (
-    <div className="hidden sm:flex shadow-[0_-4px_28px_0_rgba(0,0,0,0.13)]  justify-center">
+    <div className="hidden sm:flex shadow-[0_-4px_28px_0_rgba(0,0,0,0.13)] justify-center dark:bg-dark-reskin-border-gray">
       <div className="w-full max-w-7xl pt-11 pb-14 pl-14">
         <a
           href="https://docs.stacks.co/concepts/sbtc"
@@ -14,7 +14,7 @@ export const Footer = () => {
             Learn more about sBTC
             <ArrowUpRightIcon className="w-6 text-orange dark:text-dark-reskin-orange" />
           </h2>
-          <p className="text-[#6C6C6C] dark:text-white font-light">
+          <p className="text-darkGray dark:text-white font-light">
             Enter into the world of sBTC with these resources
           </p>
         </a>
