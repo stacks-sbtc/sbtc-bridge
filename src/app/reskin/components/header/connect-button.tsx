@@ -1,13 +1,19 @@
 import ConnectWallet from "@/comps/ConnectWallet";
-import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
+import TOS from "@/comps/tos";
+import {
+  showConnectWalletAtom,
+  showTosAtom,
+  walletInfoAtom,
+} from "@/util/atoms";
 import { AnimatePresence } from "framer-motion";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 export const ConnectButton = () => {
   const [showConnectWallet, setShowConnectWallet] = useAtom(
     showConnectWalletAtom,
   );
   const [walletInfo, setWalletInfo] = useAtom(walletInfoAtom);
+  const showTos = useAtomValue(showTosAtom);
   const isConnected = !!walletInfo.selectedWallet;
   const handleConnectButton = () => {
     if (!isConnected) {
@@ -36,6 +42,7 @@ export const ConnectButton = () => {
         {showConnectWallet && (
           <ConnectWallet onClose={() => setShowConnectWallet(false)} />
         )}
+        {showTos && <TOS />}
       </AnimatePresence>
     </>
   );
