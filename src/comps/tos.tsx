@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import { SubText } from "./core/Heading";
 import { useRef, useState } from "react";
-import { classNames } from "@/util";
 import { useSetAtom } from "jotai";
 import { showTosAtom } from "@/util/atoms";
+import { classNames } from "@/util";
 
 const TOS = () => {
   const scrollContainerRef = useRef<any>(null);
@@ -47,27 +46,25 @@ const TOS = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: "#FFF5EB",
-        }}
-        className=" rounded-3xl gap-3 flex flex-col items-center justify-between p-6 w-full h-screen sm:h-[600px] sm:w-[600px]  shadow-lg"
+        className="bg-[#FFF5EB] dark:bg-dark-reskin-border-gray rounded-3xl gap-3 flex flex-col items-center justify-between p-6 w-full h-screen sm:h-[600px] sm:w-[600px]  shadow-lg"
       >
         <div className="flex w-4/5 text-center flex-col items-center justify-center gap-2">
-          <h1 className="text-3xl text-black font-Matter font-normal">
+          <h1 className="text-3xl text-black dark:text-white font-normal">
             Welcome To The sBTC Bridge
           </h1>
-          <div className="bg-orange w-full h-1" />
+          <div className="bg-orange w-full h-[3px] dark:bg-dark-reskin-orange" />
           <div className="flex flex-col gap-1">
-            <SubText>please read the TOS of below before proceeding.</SubText>
-            <SubText>
+            <p className="text-darkGray dark:text-white font-thin text-base">
+              please read the TOS of below before proceeding.
+              <br />
               sBTC is very much early beta software with many risks.
-            </SubText>
+            </p>
           </div>
         </div>
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="px-4 py-4  rounded-2xl w-full h-full overflow-y-auto bg-white"
+          className="px-4 py-4  rounded-2xl w-full h-full overflow-y-auto bg-white dark:bg-reskin-dark-gray dark:text-white"
         >
           <p>
             <strong>BitcoinL2 Labs - User Interface Terms of Use</strong>
@@ -274,23 +271,28 @@ const TOS = () => {
             use of the User Interface immediately.
           </p>
         </div>
-        <div className="cursor-pointer underline" onClick={() => downloadPDF()}>
-          <SubText>download as pdf</SubText>
+        <div
+          className="cursor-pointer underline text-darkGray dark:text-white font-thin text-sm"
+          onClick={() => downloadPDF()}
+        >
+          download as pdf
         </div>
 
         <button
           type="button"
           onClick={() => handleClick()}
-          className="w-full rounded-lg py-3 flex justify-center items-center flex-row bg-orange disabled:opacity-50 disabled:cursor-not-allowed "
+          className={classNames(
+            "w-full rounded-lg py-3 flex justify-center items-center uppercase",
+            "flex-row disabled:opacity-50",
+            "disabled:cursor-not-allowed text-md tracking-wider font-bold text-black",
+            isScrolledToBottom
+              ? "bg-orange dark:bg-dark-reskin-orange border-none"
+              : "bg-transparent dark:text-white",
+            "border border-gray dark:border-lightGray rounded-xl",
+            "transition-all",
+          )}
         >
-          <p
-            className={classNames(
-              " text-md tracking-wider font-Matter font-bold",
-              isScrolledToBottom ? "text-black" : "text-black",
-            )}
-          >
-            {isScrolledToBottom ? "I Agree" : "Scroll to Bottom to Agree"}
-          </p>
+          {isScrolledToBottom ? "I Agree" : "Scroll to Bottom to Agree"}
         </button>
       </motion.div>
     </motion.div>
