@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: {
+        'spin-slow': 'spin 15s linear infinite',
+      },
       colors: {
         orange: "#FD9D41",
         lightOrange: "#FFF6EC",
@@ -20,6 +23,9 @@ const config: Config = {
         "dark-reskin-border-gray": "#333135",
         "light-reskin-border-gray": "rgba(0, 0, 0, 0.2)",
         "dark-reskin-orange": "#FC6432",
+        "timeline-inactive-gray": "#ededed",
+        "timeline-inactive-step-text": "#808080",
+        "timeline-active-step-text": "#141414",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
