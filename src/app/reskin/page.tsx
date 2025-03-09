@@ -1,4 +1,4 @@
-import DepositTimeline from "./components/stepper/timeline";
+import DepositTimeline from "./components/stepper/deposit-timeline";
 
 export default function Page() {
   return (
