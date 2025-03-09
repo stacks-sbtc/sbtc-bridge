@@ -15,7 +15,9 @@ export function AmountDescription({}) {
     minimumDeposit && (
       <span className="opacity-60">
         How much BTC are you transferring over to sBTC? Enter an amount that’s
-        above the minimum ({minimumDeposit} BTC)
+        above the minimum (
+        {minimumDeposit.toLocaleString(undefined, { maximumFractionDigits: 8 })}{" "}
+        BTC)
       </span>
     )
   );
