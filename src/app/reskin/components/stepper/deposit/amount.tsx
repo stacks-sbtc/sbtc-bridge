@@ -8,7 +8,7 @@ export function AmountDescription({}) {
       const response = await getEmilyLimits();
       const isUnlimited = response.perDepositMinimum === 0;
       // to handle devenv situations
-      return isUnlimited ? 0.0001 : response.perDepositMinimum;
+      return isUnlimited ? 0.0001 : response.perDepositMinimum / 1e8;
     },
   });
   return (
