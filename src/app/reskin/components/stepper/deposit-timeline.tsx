@@ -4,6 +4,7 @@ import { defineStepper } from "@stepperize/react";
 
 import { AmountDescription } from "./deposit/amount";
 import { StatusDescription } from "./deposit/status";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 function AddressDescription({}) {
   return (
@@ -35,31 +36,34 @@ const { useStepper, utils } = defineStepper(
 function DepositTimeline() {
   const stepper = useStepper();
 
+  const isMobile = useMediaQuery("(max-width: 640px)");
   const currentIndex = utils.getIndex(stepper.current.id);
 
   return (
-    <div className="pt-6 pb-10 px-8 border rounded-2xl border-black border-opacity-20 dark:border-white dark:border-opacity-20 w-96">
-      <h2 className="uppercase text-xl leading-normal text-timeline-active-step-text dark:text-white">
-        Timeline
-      </h2>
-      <ol className="mt-4 flex flex-col gap-3">
-        {stepper.all.map((step, index) => (
-          <div className="flex flex-col gap-1" key={step.id}>
-            <StepTitle
-              step={step}
-              index={index}
-              stepper={stepper}
-              currentIndex={currentIndex}
-            />
-            <StepContent
-              step={step}
-              index={index}
-              currentIndex={currentIndex}
-            />
-          </div>
-        ))}
-      </ol>
-    </div>
+    !isMobile && (
+      <div className="pt-6 pb-10 px-8 border rounded-2xl border-black border-opacity-20 dark:border-white dark:border-opacity-20 w-96">
+        <h2 className="uppercase text-xl leading-normal text-timeline-active-step-text dark:text-white">
+          Timeline
+        </h2>
+        <ol className="mt-4 flex flex-col gap-3">
+          {stepper.all.map((step, index) => (
+            <div className="flex flex-col gap-1" key={step.id}>
+              <StepTitle
+                step={step}
+                index={index}
+                stepper={stepper}
+                currentIndex={currentIndex}
+              />
+              <StepContent
+                step={step}
+                index={index}
+                currentIndex={currentIndex}
+              />
+            </div>
+          ))}
+        </ol>
+      </div>
+    )
   );
 }
 
