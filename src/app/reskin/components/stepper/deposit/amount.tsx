@@ -13,10 +13,10 @@ export function AmountDescription({}) {
   });
   return (
     minimumDeposit && (
-      <>
+      <span className="opacity-60">
         How much BTC are you transferring over to sBTC? Enter an amount that’s
         above the minimum ({minimumDeposit} BTC)
-      </>
+      </span>
     )
   );
 }

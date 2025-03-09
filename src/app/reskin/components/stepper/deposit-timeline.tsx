@@ -7,10 +7,10 @@ import { StatusDescription } from "./deposit/status";
 
 function AddressDescription({}) {
   return (
-    <>
+    <span className="opacity-60">
       sBTC will be sent to a STX address. Connecting a wallet will auto-fill
       this in, but feel free to submit another address.
-    </>
+    </span>
   );
 }
 

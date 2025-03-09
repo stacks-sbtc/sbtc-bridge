@@ -60,7 +60,7 @@ export function StepContent({
           }`}
         />
       </div>
-      <div className="flex-1 text-xs leading-tight text-black dark:text-white text-opacity-60 ml-3 max-w-52">
+      <div className="flex-1 text-xs leading-tight ml-3 max-w-52">
         <step.description currentIndex={currentIndex} />
       </div>
     </div>
