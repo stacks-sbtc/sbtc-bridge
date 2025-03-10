@@ -23,6 +23,7 @@ const config: Config = {
         "dark-reskin-border-gray": "#333135",
         "light-reskin-border-gray": "rgba(0, 0, 0, 0.2)",
         "dark-reskin-orange": "#FC6432",
+        "dark-reskin-dark-gray": "#525153",
         "timeline-inactive-gray": "#ededed",
         "timeline-inactive-step-text": "#808080",
         "timeline-active-step-text": "#141414",
