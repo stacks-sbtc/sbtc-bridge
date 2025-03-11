@@ -10,6 +10,9 @@ import { useValidateDepositAmount } from "@/hooks/use-validate-deposit-amount";
 import { useQuery } from "@tanstack/react-query";
 import getBtcBalance from "@/actions/get-btc-balance";
 import { validateStacksAddress } from "@stacks/transactions";
+import { InputContainer } from "../form-elements/input-container";
+import { elide } from "@/util";
+import { depositStepper } from "../../stepper/deposit-timeline";
 declare module "yup" {
   interface StringSchema<TType, TContext, TDefault, TFlags> {
     stxAddress(): this;
@@ -50,7 +53,7 @@ export const DepositForm = () => {
   });
   const depositSchema = useMemo(() => {
     return amountValidationSchema.shape({
-      depositAddress: yup
+      address: yup
         .string()
         .stxAddress()
         .required()
@@ -59,12 +62,23 @@ export const DepositForm = () => {
   }, [addresses.stacks?.address, amountValidationSchema]);
 
   type Values = yup.InferType<typeof depositSchema>;
+  const { useStepper } = depositStepper;
+  const stepper = useStepper();
+  const handleEdit = (fieldName: keyof Values) => {
+    stepper.goTo(fieldName);
+  };
+
+  const handleNextClick = () => {
+    if (!stepper.isLast) {
+      stepper.next();
+    }
+  };
 
   return (
     <Formik
       initialValues={{
         amount: 0,
-        depositAddress: addresses.stacks?.address || "",
+        address: addresses.stacks?.address || "",
       }}
       enableReinitialize={true}
       validationSchema={depositSchema}
@@ -75,19 +89,49 @@ export const DepositForm = () => {
         }, 500);
       }}
     >
-      {({ errors, touched, isValid, isInitialValid }) => (
-        <Form className="flex flex-col gap-2 w-1/2">
-          <Field className="text-black" name="amount" placeholder="Amount" />
-          {errors.amount && touched.amount ? <div>{errors.amount}</div> : null}
-          <Field
-            className="text-black"
-            name="depositAddress"
-            placeholder="Deposit Address"
-          />
-          {errors.depositAddress && touched.depositAddress ? (
-            <div>{errors.depositAddress}</div>
-          ) : null}
-          <FormButton disabled={!isValid}>next</FormButton>
+      {({ errors, touched, isValid, isInitialValid, values }) => (
+        <Form className="flex flex-col gap-2 w-full px-6 lg:w-1/2 max-w-lg">
+          <InputContainer
+            isReadonly={stepper.when(
+              "amount",
+              () => false,
+              () => true,
+            )}
+            onClickEdit={() => handleEdit("amount")}
+            title="Selected Deposit Amount"
+            value={`${values.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`}
+          >
+            <Field className="text-black" name="amount" placeholder="Amount" />
+            {errors.amount && touched.amount ? (
+              <div>{errors.amount}</div>
+            ) : null}
+          </InputContainer>
+          <InputContainer
+            isReadonly={stepper.when(
+              "address",
+              () => false,
+              () => true,
+            )}
+            onClickEdit={() => handleEdit("address")}
+            title="Deposit Address"
+            value={elide(values.address)}
+          >
+            <Field
+              className="text-black"
+              name="address"
+              placeholder="Deposit Address"
+            />
+            {errors.address && touched.address ? (
+              <div>{errors.address}</div>
+            ) : null}
+          </InputContainer>
+          <FormButton
+            onClick={handleNextClick}
+            disabled={!isValid}
+            type="button"
+          >
+            {stepper.isLast ? "submit" : "next"}
+          </FormButton>
         </Form>
       )}
     </Formik>

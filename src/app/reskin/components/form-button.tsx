@@ -4,12 +4,14 @@ export const FormButton = ({
   onClick,
   className,
   variant = "primary",
+  type = "button",
 }: {
   children: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
   className?: string;
   variant?: "primary" | "secondary";
+  type?: "button" | "submit" | "reset";
 }) => {
   return (
     <button
@@ -22,6 +24,7 @@ export const FormButton = ({
       }`}
       disabled={disabled}
       onClick={onClick}
+      type={type}
     >
       {children}
     </button>

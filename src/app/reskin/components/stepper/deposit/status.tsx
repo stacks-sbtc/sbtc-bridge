@@ -1,6 +1,7 @@
 import { LoadingIndicator } from "../../../assets/loading-indicator";
 import { useEffect, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { depositStepper } from "../deposit-timeline";
 
 function HyperLink({
   href,
@@ -54,10 +55,11 @@ function TxCompleteStatus() {
     </div>
   );
 }
-
-export function StatusDescription({ currentIndex }: { currentIndex: number }) {
+const { useStepper } = depositStepper;
+export function StatusDescription({}) {
+  const stepper = useStepper();
   const [isCompleted, setIsCompleted] = useState(false);
-  const isCurrentStep = currentIndex === 2;
+  const isCurrentStep = stepper.current.id === "status";
   useEffect(() => {
     if (isCurrentStep) {
       const interval = setInterval(() => {

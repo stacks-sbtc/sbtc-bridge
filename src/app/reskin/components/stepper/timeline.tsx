@@ -38,7 +38,7 @@ export function StepContent({
   step: {
     id: string;
     title: string;
-    description: ({}: { currentIndex: number }) => React.ReactNode;
+    description: ({}: {}) => React.ReactNode;
   };
   currentIndex: number;
   index: number;
@@ -61,7 +61,7 @@ export function StepContent({
         />
       </div>
       <div className="flex-1 text-xs leading-tight ml-3 max-w-52">
-        <step.description currentIndex={currentIndex} />
+        <step.description />
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ function AddressDescription({}) {
   );
 }
 
-const { useStepper, utils } = defineStepper(
+export const depositStepper = defineStepper(
   {
     id: "amount",
     title: "Select Deposit Amount",
@@ -27,13 +27,20 @@ const { useStepper, utils } = defineStepper(
     description: AddressDescription,
   },
   {
+    id: "confirm",
+    title: "Confirm Deposit",
+    description: () => "Confirm your deposit details and proceed.",
+  },
+  {
     id: "status",
     title: "Operation Status:",
     description: StatusDescription,
   },
 );
 
-function DepositTimeline() {
+const { useStepper, utils } = depositStepper;
+
+export function DepositTimeline() {
   const stepper = useStepper();
 
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -66,5 +73,3 @@ function DepositTimeline() {
     )
   );
 }
-
-export default DepositTimeline;
