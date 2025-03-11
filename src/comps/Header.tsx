@@ -101,7 +101,7 @@ const Header = ({ config }: { config: BridgeConfig }) => {
             {/* <h5 className="font-Matter text-xs text-black tracking-wide ">
               LEARN MORE
             </h5> */}
-            {isConnected && config.WALLET_NETWORK !== "mainnet" && (
+            {isConnected && config.FEATURE_FLAGS.includes("withdrawals") && (
               <Link href="/withdraw" className="text-xs text-black underline">
                 Withdraw
               </Link>

@@ -26,17 +26,26 @@ const nextConfig = {
           ]
         : [];
 
-    redirects =
-      process.env.WALLET_NETWORK === "mainnet"
-        ? [
-            ...redirects,
-            {
-              source: "/withdraw",
-              destination: "/",
-              permanent: false,
-            },
-          ]
-        : redirects;
+    redirects = !process.env.FEATURE_FLAGS?.includes("withdrawals")
+      ? [
+          ...redirects,
+          {
+            source: "/withdraw",
+            destination: "/",
+            permanent: false,
+          },
+        ]
+      : redirects;
+    redirects = !process.env.FEATURE_FLAGS?.includes("reskin")
+      ? [
+          ...redirects,
+          {
+            source: "/reskin",
+            destination: "/",
+            permanent: false,
+          },
+        ]
+      : redirects;
     return redirects;
   },
   async headers() {
