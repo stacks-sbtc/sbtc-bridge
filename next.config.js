@@ -26,7 +26,7 @@ const nextConfig = {
           ]
         : [];
 
-    redirects = !process.env.FEATURE_FLAGS.includes("withdrawals")
+    redirects = !process.env.FEATURE_FLAGS?.includes("withdrawals")
       ? [
           ...redirects,
           {
@@ -36,7 +36,7 @@ const nextConfig = {
           },
         ]
       : redirects;
-    redirects = !process.env.FEATURE_FLAGS.includes("reskin")
+    redirects = !process.env.FEATURE_FLAGS?.includes("reskin")
       ? [
           ...redirects,
           {
