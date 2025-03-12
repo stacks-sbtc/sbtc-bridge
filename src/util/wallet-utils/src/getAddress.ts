@@ -12,12 +12,12 @@ type Results = {
   payment: {
     address: string;
     publicKey: string;
-  };
+  } | null;
   /** @description stacks address */
   stacks: {
     address: string;
     publicKey: string;
-  };
+  } | null;
   musig: {
     users: AsignaUser[];
     threshold: number;
@@ -48,23 +48,10 @@ export function getWalletAddresses(
   response: RpcSuccessResponse<"wallet_connect">["result"],
 ) {
   const payment = getAddressByPurpose(response, AddressPurpose.Payment);
-  if (!payment) {
-    throw new Error("Payment address not found");
-  }
-
   const stacks = getAddressByPurpose(response, AddressPurpose.Stacks);
-  // if (!stacks) {
-  //   throw new Error("Stacks address not found");
-  // }
   return {
-    payment: {
-      address: payment.address,
-      publicKey: payment.publicKey,
-    },
-    stacks: {
-      address: stacks?.address || "",
-      publicKey: stacks?.publicKey || "",
-    },
+    payment: payment || null,
+    stacks: stacks || null,
     musig: null,
   };
 }
@@ -121,10 +108,7 @@ export const getAddressesAsigna: getAddresses = async (params) => {
       address: response.address,
       publicKey: response.publicKey,
     },
-    stacks: {
-      address: "",
-      publicKey: "",
-    },
+    stacks: null,
     musig: {
       users: response.users,
       threshold: response.threshold,
@@ -139,15 +123,8 @@ const extractAddressByType = (
   const addressInfo = addresses.find(
     (address) => address.symbol === "BTC" && address.type === addressType,
   );
-  if (!addressInfo) {
-    throw new Error(
-      "BTC address not found, please make sure to connect your bitcoin wallet on leather and try again",
-    );
-  }
-  return {
-    address: addressInfo.address,
-    publicKey: addressInfo.publicKey,
-  };
+
+  return addressInfo || null;
 };
 /**
  * @name getAddressesLeather
@@ -158,16 +135,12 @@ export const getAddressesLeather: getAddresses = async () => {
   const response = await btc.request("getAddresses");
 
   const { addresses } = response.result;
-  const payment = extractAddressByType(addresses, "p2wpkh")!;
+  const payment = extractAddressByType(addresses, "p2wpkh");
   const stacks = addresses.find((address) => address.symbol === "STX");
-  if (!stacks) {
-    throw new Error(
-      "No STX address found, please make sure to connect your stacks wallet on leather and try again",
-    );
-  }
+
   return {
-    payment,
-    stacks,
+    payment: payment || null,
+    stacks: stacks || null,
     musig: null,
   };
 };
