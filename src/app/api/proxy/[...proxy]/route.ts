@@ -1,7 +1,7 @@
 import { env } from "@/env";
 
 import { getUtxosBitcoinDaemon } from "./rpc-handler-core";
-import { validate, Network } from "bitcoin-address-validation";
+import { validateBitcoinAddress } from "@/util/validate-bitcoin-address";
 
 const { MEMPOOL_API_URL } = env;
 // Import your Bitcoin RPC logic
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
 
       // get the second to last part of the url
       const address = path.split("/")[1];
-      if (!validate(address, Network.regtest)) {
+      if (!validateBitcoinAddress(address, env.WALLET_NETWORK)) {
         return Response.json({ error: "Invalid address" }, { status: 400 });
       }
 
