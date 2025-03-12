@@ -22,6 +22,7 @@ import {
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { AddressVersion, createAddress } from "@stacks/transactions";
+import { getAddressInfo, Network } from "bitcoin-address-validation";
 
 const WALLET_PROVIDERS = [
   {
@@ -51,16 +52,15 @@ const WALLET_PROVIDERS = [
 ];
 
 const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
-  const isBitcoinMainnetAddress =
-    addresses.payment?.address?.startsWith("bc1") ||
-    addresses.payment?.address?.startsWith("3");
-  if (isBitcoinMainnetAddress !== undefined) {
-    return isBitcoinMainnetAddress;
-  }
-  const address = addresses.stacks?.address;
+  const bitcoinAddress = addresses.payment?.address;
+  const stacksAddress = addresses.stacks?.address;
 
-  if (address) {
-    const addressData = createAddress(address);
+  if (bitcoinAddress) {
+    return getAddressInfo(bitcoinAddress).network === Network.mainnet;
+  }
+
+  if (stacksAddress) {
+    const addressData = createAddress(stacksAddress);
     return (
       addressData.version === AddressVersion.MainnetMultiSig ||
       addressData.version === AddressVersion.MainnetSingleSig
