@@ -22,7 +22,6 @@ import {
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { AddressVersion, createAddress } from "@stacks/transactions";
-import { getAddressInfo, Network } from "bitcoin-address-validation";
 
 const WALLET_PROVIDERS = [
   {
@@ -56,7 +55,7 @@ const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
   const stacksAddress = addresses.stacks?.address;
 
   if (bitcoinAddress) {
-    return getAddressInfo(bitcoinAddress).network === Network.mainnet;
+    return /^(3|bc1)/.test(bitcoinAddress);
   }
 
   if (stacksAddress) {
