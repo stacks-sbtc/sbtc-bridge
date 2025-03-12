@@ -23,7 +23,6 @@ export const ConnectButton = () => {
       selectedWallet: null,
       addresses: {
         payment: null,
-        taproot: null,
         stacks: null,
         musig: null,
       },

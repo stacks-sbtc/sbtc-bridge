@@ -13,11 +13,6 @@ type Results = {
     address: string;
     publicKey: string;
   };
-  /** @description taproot address */
-  taproot: {
-    address: string;
-    publicKey: string;
-  };
   /** @description stacks address */
   stacks: {
     address: string;
@@ -52,10 +47,6 @@ const getAddressByPurpose = (
 export function getWalletAddresses(
   response: RpcSuccessResponse<"wallet_connect">["result"],
 ) {
-  const taproot = getAddressByPurpose(response, AddressPurpose.Ordinals);
-  // if (!taproot) {
-  //   throw new Error("Taproot address not found");
-  // }
   const payment = getAddressByPurpose(response, AddressPurpose.Payment);
   if (!payment) {
     throw new Error("Payment address not found");
@@ -66,10 +57,6 @@ export function getWalletAddresses(
   //   throw new Error("Stacks address not found");
   // }
   return {
-    taproot: {
-      address: taproot?.address || "",
-      publicKey: taproot?.publicKey || "",
-    },
     payment: {
       address: payment.address,
       publicKey: payment.publicKey,
@@ -130,10 +117,6 @@ export const getAddressesAsigna: getAddresses = async (params) => {
   }
   const response = await params.action();
   return {
-    taproot: {
-      address: "",
-      publicKey: "",
-    },
     payment: {
       address: response.address,
       publicKey: response.publicKey,
@@ -176,7 +159,6 @@ export const getAddressesLeather: getAddresses = async () => {
 
   const { addresses } = response.result;
   const payment = extractAddressByType(addresses, "p2wpkh")!;
-  const taproot = extractAddressByType(addresses, "p2tr")!;
   const stacks = addresses.find((address) => address.symbol === "STX");
   if (!stacks) {
     throw new Error(
@@ -185,7 +167,6 @@ export const getAddressesLeather: getAddresses = async () => {
   }
   return {
     payment,
-    taproot,
     stacks,
     musig: null,
   };

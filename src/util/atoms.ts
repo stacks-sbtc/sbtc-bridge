@@ -46,7 +46,6 @@ export const walletInfoAtom = atomWithStorage<{
   addresses: {
     // can't call this p2wpkh because xverse sometimes uses segwit rather than native segwit
     payment: Address | null;
-    taproot: Address | null;
     stacks: Address | null;
     musig: {
       users: AsignaUser[];
@@ -57,7 +56,6 @@ export const walletInfoAtom = atomWithStorage<{
   selectedWallet: null,
   addresses: {
     payment: null,
-    taproot: null,
     stacks: null,
     musig: null,
   },
