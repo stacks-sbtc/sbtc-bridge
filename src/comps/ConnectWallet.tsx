@@ -21,6 +21,8 @@ import {
   getAddressesFordefi,
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
+import { AddressVersion, createAddress } from "@stacks/transactions";
+import { getAddressInfo, Network } from "bitcoin-address-validation";
 
 const WALLET_PROVIDERS = [
   {
@@ -48,6 +50,24 @@ const WALLET_PROVIDERS = [
     installUrl: "https://www.fordefi.com/",
   },
 ];
+
+const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
+  const bitcoinAddress = addresses.payment?.address;
+  const stacksAddress = addresses.stacks?.address;
+
+  if (bitcoinAddress) {
+    return getAddressInfo(bitcoinAddress).network === Network.mainnet;
+  }
+
+  if (stacksAddress) {
+    const addressData = createAddress(stacksAddress);
+    return (
+      addressData.version === AddressVersion.MainnetMultiSig ||
+      addressData.version === AddressVersion.MainnetSingleSig
+    );
+  }
+  return null;
+};
 
 type ConnectWalletProps = {
   onClose: () => void;
@@ -79,9 +99,13 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
         case WalletProvider.ASIGNA:
           addresses = await getAddressesAsigna({ action: asignaConnect });
       }
-      const isMainnetAddress =
-        addresses.payment.address.startsWith("bc1") ||
-        addresses.payment.address.startsWith("3");
+      // in the case of fordefi and asigna
+      // we might have only one of the addresses
+      const isMainnetAddress = isMainnetWallet(addresses);
+      // null means we couldn't get any address at all
+      if (isMainnetAddress === null) {
+        throw new Error("Could not determine wallet address");
+      }
       if (WALLET_NETWORK !== "mainnet" && isMainnetAddress) {
         throw new Error(`Please switch to ${WALLET_NETWORK} network`);
       } else if (WALLET_NETWORK === "mainnet" && !isMainnetAddress) {
