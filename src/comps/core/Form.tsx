@@ -14,6 +14,7 @@ type FlowFormProps = {
   children?: React.ReactNode;
   validationSchema?: YupSchema;
   disabled?: boolean;
+  requiredConnection?: "stx" | "btc" | "both";
 };
 // tailwind div that reset all default form styles
 
@@ -26,9 +27,35 @@ export const FlowForm = ({
   children,
   validationSchema,
   disabled,
+  requiredConnection = "btc",
 }: FlowFormProps) => {
   const walletInfo = useAtomValue(walletInfoAtom);
-  const isConnected = useMemo(() => !!walletInfo.selectedWallet, [walletInfo]);
+  const isConnected = useMemo(() => {
+    const { payment, stacks } = walletInfo.addresses;
+    if (requiredConnection === "btc") {
+      return !!payment?.address;
+    }
+    if (requiredConnection === "stx") {
+      return !!stacks?.address;
+    }
+    if (requiredConnection === "both") {
+      return !!payment?.address && !!stacks?.address;
+    }
+  }, [requiredConnection, walletInfo.addresses]);
+
+  const connectText = useMemo(() => {
+    const { payment, stacks } = walletInfo.addresses;
+    const isBTCConnected = !!payment?.address;
+    const isSTXConnected = !!stacks?.address;
+    if (requiredConnection === "btc" && !isBTCConnected) {
+      return "Connect Bitcoin wallet";
+    }
+    if (requiredConnection === "stx" && !isSTXConnected) {
+      return "Connect Stacks wallet";
+    }
+
+    return "Connect wallet";
+  }, [requiredConnection, walletInfo.addresses]);
   const setShowConnectWallet = useSetAtom(showConnectWalletAtom);
 
   const formik = useFormik({
@@ -75,9 +102,9 @@ export const FlowForm = ({
             disabled={disabled}
             type="button"
             onClick={() => setShowConnectWallet(true)}
-            className="bg-orange px-4 py-2 rounded-md font-Matter text-xs font-semibold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+            className="uppercase bg-orange px-4 py-2 rounded-md font-Matter text-xs font-semibold tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            CONNECT WALLET
+            {connectText}
           </button>
         )}
       </div>

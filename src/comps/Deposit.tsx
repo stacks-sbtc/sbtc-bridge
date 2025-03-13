@@ -148,6 +148,7 @@ const DepositFlowAmount = ({
         <FlowForm
           nameKey="amount"
           type="number"
+          requiredConnection="btc"
           placeholder={
             isMintCapReached
               ? "Mint cap reached!"
@@ -171,6 +172,9 @@ const DepositFlowAddress = ({
   setStxAddress,
 }: DepositFlowAddressProps) => {
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
+  const {
+    addresses: { stacks },
+  } = useAtomValue(walletInfoAtom);
 
   const { notify } = useNotifications();
   const validateStxAddress = (addressOrContract: string) => {
@@ -228,9 +232,11 @@ const DepositFlowAddress = ({
         <div className="w-full flex flex-row items-center justify-between">
           <Heading>Deposit</Heading>
         </div>
-        <SubText>Amount selected to transfer</SubText>
+        <SubText>STX Address to receive sBTC</SubText>
         <FlowForm
           nameKey="address"
+          requiredConnection="btc"
+          initialValue={stacks?.address}
           type="text"
           placeholder="Enter Stacks address to transfer to"
           handleSubmit={(value) => handleSubmit(value)}
