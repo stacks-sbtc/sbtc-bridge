@@ -1,0 +1,7 @@
+export enum WithdrawalStatus {
+  PENDING = "PENDING",
+  CONFIRMING = "CONFIRMING",
+  CONFIRMED = "CONFIRMED",
+  REJECTED = "REJECTED",
+  FAILED = "FAILED",
+}

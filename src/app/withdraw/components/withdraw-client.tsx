@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +27,6 @@ import { defineStepper, Stepper } from "@stepperize/react";
 import * as yup from "yup";
 
 import { FlowContainer } from "@/comps/core/FlowContainer";
-import { SubText } from "@/comps/core/Heading";
 import LandingAnimation from "@/comps/core/LandingAnimation";
 
 import { WithdrawFlowAddress } from "./withdraw-address";
@@ -35,6 +34,8 @@ import { testBTCAddress } from "@/util/yup/test-btc-address";
 import { WithdrawFlowAmount } from "./withdraw-amount";
 import { useFormik } from "formik";
 import { WithdrawConfirm } from "./withdraw-confirm";
+
+const MAX_WITHDRAWAL_FEE = 0.0008 * 1e8;
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -68,7 +69,7 @@ const { useStepper } = defineStepper(
   },
 );
 
-const BasicWithdraw = () => {
+const Withdraw = () => {
   const { addresses, selectedWallet } = useAtomValue(walletInfoAtom);
 
   // const stxAddress = addresses.stacks?.address;
@@ -88,16 +89,13 @@ const BasicWithdraw = () => {
       }),
     [stacksNetwork],
   );
-
-  const [txId, setTxId] = useState<string | null>(null);
   const router = useRouter();
 
   const { WALLET_NETWORK, SBTC_CONTRACT_DEPLOYER } =
     useAtomValue(bridgeConfigAtom);
 
   const handleSubmit = async (values: Record<string, string>) => {
-    console.log(values);
-    const { address, amount, fee } = values;
+    const { address, amount } = values;
 
     if (!WALLET_NETWORK) {
       throw new Error("Invalid network");
@@ -115,14 +113,12 @@ const BasicWithdraw = () => {
     if (!publicKey) {
       throw new Error("Invalid public key");
     }
-    console.log(recipient);
 
     // convert the amount to satoshis
     const satoshiAmount = Math.round(parseFloat(amount) * 1e8);
-    console.log("satoshiAmount", satoshiAmount);
 
     // convert the fee to satoshis
-    const satoshiFee = Math.round(parseFloat(fee) * 1e8);
+    const satoshiFee = Math.round(MAX_WITHDRAWAL_FEE);
 
     const contractArgs = [
       Cl.uint(satoshiAmount),
@@ -172,13 +168,15 @@ const BasicWithdraw = () => {
       txHex: signedTx,
     });
     const txId = broadcastResponse.txid;
-    router.push(`/withdraw?txId=${txId}`);
+    router.push(`/withdraw/${txId}`);
     // add tx to search query for the user to have a link to the tx
-
-    setTxId(txId);
   };
   const stepper = useStepper();
-  const { setFieldValue, values } = useFormik({
+  const {
+    setFieldValue,
+    values,
+    handleSubmit: submitForm,
+  } = useFormik({
     initialValues: {
       amount: "",
       address: "",
@@ -188,12 +186,6 @@ const BasicWithdraw = () => {
 
   return (
     <FlowContainer>
-      {txId && (
-        <div className="flex flex-col gap-1">
-          <SubText>Stacks TxID</SubText>
-          <p className="text-black font-Matter font-semibold text-sm">{txId}</p>
-        </div>
-      )}
       {stepper.switch({
         amount: () => (
           <WithdrawFlowAmount
@@ -221,7 +213,7 @@ const BasicWithdraw = () => {
             btcAddress={values.address || ""}
             stepper={stepper as Stepper<any>}
             handleSubmit={() => {
-              stepper.next();
+              submitForm();
             }}
           />
         ),
@@ -234,7 +226,7 @@ export const WithdrawClient = () => {
   return (
     <LandingAnimation>
       <div className="w-screen flex"></div>
-      <BasicWithdraw />
+      <Withdraw />
       <div
         style={{
           margin: "16px 0",
