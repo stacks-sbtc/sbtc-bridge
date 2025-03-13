@@ -106,7 +106,7 @@ export const getAddressesFordefi: getAddresses = async (params) => {
 };
 
 export const getAddressesAsigna: getAddresses = async (params) => {
-  return Promise.race([getBTCAddressAsigna(params), getStxAddressAsigna()]);
+  return Promise.any([getBTCAddressAsigna(params), getStxAddressAsigna()]);
 };
 
 const getBTCAddressAsigna: getAddresses = async (params) => {
