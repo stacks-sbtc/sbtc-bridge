@@ -1,10 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { FlowContainer } from "./core/FlowContainer";
-import { FlowFormDynamic, NameKeysInfo } from "./core/Form";
-import { Heading, SubText } from "./core/Heading";
-import LandingAnimation from "./core/LandingAnimation";
+import { useMemo, useState } from "react";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 import { useRouter } from "next/navigation";
 
@@ -27,6 +23,18 @@ import { getStacksNetwork } from "@/util/get-stacks-network";
 
 import { decodeBitcoinAddress } from "@/util/decode-bitcoin-address";
 import { validateBitcoinAddress } from "@/util/validate-bitcoin-address";
+import { defineStepper, Stepper } from "@stepperize/react";
+import * as yup from "yup";
+
+import { FlowContainer } from "@/comps/core/FlowContainer";
+import { SubText } from "@/comps/core/Heading";
+import LandingAnimation from "@/comps/core/LandingAnimation";
+
+import { WithdrawFlowAddress } from "./withdraw-address";
+import { testBTCAddress } from "@/util/yup/test-btc-address";
+import { WithdrawFlowAmount } from "./withdraw-amount";
+import { useFormik } from "formik";
+import { WithdrawConfirm } from "./withdraw-confirm";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -39,30 +47,49 @@ const decodeBitcoinAddressToClarityRecipient = (
   }
 };
 
-const data: NameKeysInfo[] = [
+const { useStepper } = defineStepper(
   {
-    nameKey: "address",
-    type: "text",
-    initValue: "",
-    placeholder: "address to receive your Bitcoin",
-  },
-  {
-    nameKey: "amount",
+    id: "amount",
     type: "number",
     initValue: "",
     placeholder: "withdraw amount",
   },
   {
-    nameKey: "fee",
-    type: "number",
-    initValue: "0.0008",
-    placeholder: "the max fee",
+    id: "address",
+    type: "text",
+    initValue: "",
+    placeholder: "address to receive your Bitcoin",
   },
-];
+  {
+    id: "confirm",
+  },
+  {
+    id: "status",
+  },
+);
 
 const BasicWithdraw = () => {
-  const [txId, setTxId] = useState<string | null>(null);
   const { addresses, selectedWallet } = useAtomValue(walletInfoAtom);
+
+  // const stxAddress = addresses.stacks?.address;
+  const amountValidationSchema = yup.object().shape({
+    amount: yup.number().min(0).required(),
+  });
+  const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
+  const addressValidationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        address: yup
+          .string()
+          .test("btc", "Invalid BTC address", function (value) {
+            return testBTCAddress.call(this, value, stacksNetwork!);
+          })
+          .required(),
+      }),
+    [stacksNetwork],
+  );
+
+  const [txId, setTxId] = useState<string | null>(null);
   const router = useRouter();
 
   const { WALLET_NETWORK, SBTC_CONTRACT_DEPLOYER } =
@@ -150,44 +177,69 @@ const BasicWithdraw = () => {
 
     setTxId(txId);
   };
+  const stepper = useStepper();
+  const { setFieldValue, values } = useFormik({
+    initialValues: {
+      amount: "",
+      address: "",
+    },
+    onSubmit: handleSubmit,
+  });
 
   return (
     <FlowContainer>
-      <>
-        <div className="w-full flex flex-row items-center justify-between">
-          <Heading>Start Withdraw Transfer</Heading>
+      {txId && (
+        <div className="flex flex-col gap-1">
+          <SubText>Stacks TxID</SubText>
+          <p className="text-black font-Matter font-semibold text-sm">{txId}</p>
         </div>
-        {txId && (
-          <div className="flex flex-col gap-1">
-            <SubText>Stacks TxID</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {txId}
-            </p>
-          </div>
-        )}
-        <FlowFormDynamic
-          nameKeys={data}
-          handleSubmit={(values) => handleSubmit(values)}
-        />
-      </>
+      )}
+      {stepper.switch({
+        amount: () => (
+          <WithdrawFlowAmount
+            validationSchema={amountValidationSchema as any}
+            handleSubmit={(value) => {
+              setFieldValue("amount", value);
+              stepper.next();
+            }}
+            stepper={stepper as Stepper<any>}
+          />
+        ),
+        address: () => (
+          <WithdrawFlowAddress
+            validationSchema={addressValidationSchema as any}
+            handleSubmit={(value) => {
+              setFieldValue("address", value);
+              stepper.next();
+            }}
+            stepper={stepper as Stepper<any>}
+          />
+        ),
+        confirm: () => (
+          <WithdrawConfirm
+            amount={Number(values.amount)}
+            btcAddress={values.address || ""}
+            stepper={stepper as Stepper<any>}
+            handleSubmit={() => {
+              stepper.next();
+            }}
+          />
+        ),
+      })}
     </FlowContainer>
   );
 };
 
-const TempWithdraw = () => {
+export const WithdrawClient = () => {
   return (
-    <>
-      <LandingAnimation>
-        <div className="w-screen flex "></div>
-        <BasicWithdraw />
-        <div
-          style={{
-            margin: "16px 0",
-          }}
-        />
-      </LandingAnimation>
-    </>
+    <LandingAnimation>
+      <div className="w-screen flex"></div>
+      <BasicWithdraw />
+      <div
+        style={{
+          margin: "16px 0",
+        }}
+      />
+    </LandingAnimation>
   );
 };
-
-export default TempWithdraw;

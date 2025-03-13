@@ -1,11 +1,12 @@
 "use server";
-import TempWithdraw from "@/comps/temp-withdraw";
+
 import OldLayout from "../old-layout";
+import { WithdrawClient } from "./components/withdraw-client";
 
 export default async function Home() {
   return (
     <OldLayout>
-      <TempWithdraw />
+      <WithdrawClient />
     </OldLayout>
   );
 }
