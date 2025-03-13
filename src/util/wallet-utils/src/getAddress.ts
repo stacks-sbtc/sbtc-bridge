@@ -1,11 +1,18 @@
 import { AddressPurpose, request, RpcSuccessResponse } from "sats-connect";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
 
+import {
+  authenticate,
+  AppConfig,
+  UserSession,
+  FinishedAuthData,
+} from "@stacks/connect";
 import { Address, BtcAddress } from "@leather.io/rpc";
 import {
   FORDEFI_PROVIDER_ID,
   getLeatherBTCProviderOrThrow,
 } from "./util/btc-provider";
+import { AsignaIframeProvider } from "./util/asigna-provider";
 
 type Results = {
   /** @description payment address can be native segwit or segwit */
@@ -99,10 +106,15 @@ export const getAddressesFordefi: getAddresses = async (params) => {
 };
 
 export const getAddressesAsigna: getAddresses = async (params) => {
+  return Promise.race([getBTCAddressAsigna(params), getStxAddressAsigna()]);
+};
+
+const getBTCAddressAsigna: getAddresses = async (params) => {
   if (!params?.action) {
     throw new Error("Action is required");
   }
   const response = await params.action();
+
   return {
     payment: {
       address: response.address,
@@ -112,6 +124,35 @@ export const getAddressesAsigna: getAddresses = async (params) => {
     musig: {
       users: response.users,
       threshold: response.threshold,
+    },
+  };
+};
+
+const getStxAddressAsigna: getAddresses = async () => {
+  const appConfig = new AppConfig(["store_write", "publish_data"]);
+  const userSession = new UserSession({ appConfig });
+  const result = await new Promise<FinishedAuthData>((res, rej) => {
+    authenticate(
+      {
+        userSession,
+        appDetails: {
+          name: "sBTC Bridge",
+          icon: window.location.origin + "/icon.png",
+        },
+        onFinish: res,
+        onCancel: rej,
+      },
+      AsignaIframeProvider as any,
+    );
+  });
+  const stxAddress = result.userSession.loadUserData().profile.stxAddress
+    .mainnet as string;
+  return {
+    payment: null,
+    musig: null,
+    stacks: {
+      address: stxAddress,
+      publicKey: "",
     },
   };
 };
