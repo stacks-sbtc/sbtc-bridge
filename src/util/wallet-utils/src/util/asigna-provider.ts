@@ -1,3 +1,9 @@
+/*
+Source: https://github.com/hirosystems/connect/blob/main/packages/connect/src/asigna.ts
+we cannot rely on the exported initializeAsignaProvider because of document.referrer can be an empty string or undefined.
+That's why we can't rely on AsignaProvider being defined in the asigna app iframe
+*/
+
 const source = "asigna-stx";
 
 const generateCall = (payload: string, key: string) => {
