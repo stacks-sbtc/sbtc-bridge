@@ -53,9 +53,8 @@ export const FlowForm = ({
     if (requiredConnection === "stx" && !isSTXConnected) {
       return "Connect Stacks wallet";
     }
-    if (!isBTCConnected || !isSTXConnected) {
-      return "Connect wallet";
-    }
+
+    return "Connect wallet";
   }, [requiredConnection, walletInfo.addresses]);
   const setShowConnectWallet = useSetAtom(showConnectWalletAtom);
 
