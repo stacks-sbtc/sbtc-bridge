@@ -11,21 +11,14 @@ export const FlowContainer = ({ children }: FlowContainerProps) => {
       }}
       className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl "
     >
-      <div
-        style={{
-          maxWidth: "400px",
-        }}
-        className="flex flex-1 px-8 p-6  gap-3 flex-col "
-      >
-        {children}
-      </div>
+      <div className="flex flex-1 px-8 p-6  gap-3 flex-col ">{children}</div>
       <div
         style={{
           backgroundColor: "rgba(253, 157, 65, 0.1)",
           minHeight: "320px",
           minWidth: "320px",
         }}
-        className="flex flex-col items-center justify-center flex-1"
+        className="hidden md:flex flex-col items-center justify-center flex-1"
       >
         <Image
           src="/images/StacksBitcoin.svg"
