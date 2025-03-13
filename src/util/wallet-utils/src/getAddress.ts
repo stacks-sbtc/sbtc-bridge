@@ -145,6 +145,10 @@ const getStxAddressAsigna: getAddresses = async () => {
       AsignaIframeProvider as any,
     );
   });
+  // the thing is and don't tell anybody asigna sets mainnet and testnet address to the same address
+  // if it's testnet then it sets both of them to testnet
+  // if it's mainnet it sets both of them to mainnet
+  // musigs aren't portable through networks
   const stxAddress = result.userSession.loadUserData().profile.stxAddress
     .mainnet as string;
   return {
