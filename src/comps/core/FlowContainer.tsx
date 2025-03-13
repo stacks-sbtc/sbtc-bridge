@@ -9,7 +9,7 @@ export const FlowContainer = ({ children }: FlowContainerProps) => {
       style={{
         maxWidth: "800px",
       }}
-      className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl "
+      className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl"
     >
       <div className="flex flex-1 px-8 p-6 gap-3 flex-col ">{children}</div>
       <div
@@ -43,13 +43,13 @@ export const FlowLoaderContainer = ({
       style={{
         maxWidth: "800px",
       }}
-      className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl "
+      className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl"
     >
       <div
         style={{
           maxWidth: "400px",
         }}
-        className="flex flex-1 px-8 p-6 gap-3 flex-col "
+        className="flex flex-1 px-8 p-6 gap-3 flex-col"
       >
         {children}
       </div>
@@ -85,13 +85,13 @@ export const StatusContainer = ({ children }: FlowContainerProps) => {
       style={{
         maxWidth: "800px",
       }}
-      className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl "
+      className="w-full flex-row flex border-2 gap-4 border-lightGray rounded-2xl"
     >
       <div
         style={{
           maxWidth: "400px",
         }}
-        className="flex flex-1 px-8 p-6 gap-3 flex-col "
+        className="flex flex-1 px-8 p-6 gap-3 flex-col"
       >
         {children}
       </div>
