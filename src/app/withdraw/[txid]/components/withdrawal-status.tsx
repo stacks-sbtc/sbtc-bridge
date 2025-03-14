@@ -55,9 +55,8 @@ function Content(initialData: Props) {
     refetchInterval: ({ state }) => {
       const status = state.data?.status;
       if (
-        status === WithdrawalStatus.FAILED ||
-        status === WithdrawalStatus.CONFIRMED ||
-        status === WithdrawalStatus.REJECTED
+        status === WithdrawalStatus.failed ||
+        status === WithdrawalStatus.confirmed
       ) {
         return false;
       }
@@ -67,13 +66,13 @@ function Content(initialData: Props) {
   const stepper = useStepper();
 
   useEffect(() => {
-    if (status === WithdrawalStatus.PENDING) {
+    if (status === WithdrawalStatus.pending) {
       stepper.goTo("stx-tx");
     }
-    if (status === WithdrawalStatus.CONFIRMING) {
+    if (status === WithdrawalStatus.accepted) {
       stepper.goTo("signers-deliberation");
     }
-    if (status === WithdrawalStatus.CONFIRMED) {
+    if (status === WithdrawalStatus.confirmed) {
       stepper.goTo("completed");
     }
   }, [stepper, status]);
@@ -102,13 +101,10 @@ function Content(initialData: Props) {
         </div>
       </div>
       <div className="flex flex-1 items-end">
-        {status === WithdrawalStatus.REJECTED && (
-          <SubText>Withdrawal rejected</SubText>
+        {status === WithdrawalStatus.failed && (
+          <SubText>Withdrawal failed</SubText>
         )}
-        {status === WithdrawalStatus.FAILED && (
-          <SubText>Stacks transaction failed</SubText>
-        )}
-        {status === WithdrawalStatus.CONFIRMING && (
+        {status === WithdrawalStatus.accepted && (
           <SubText>Withdrawal accepted, confirming...</SubText>
         )}
       </div>

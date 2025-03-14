@@ -45,6 +45,7 @@ export async function getWithdrawalInfo(txid: string) {
     address,
     amount: Number(amount),
   };
+  let status: WithdrawalStatus = WithdrawalStatus.pending;
   if (txData.tx_status === "success") {
     const [, , printEvent] = txData.events;
 
@@ -59,38 +60,13 @@ export async function getWithdrawalInfo(txid: string) {
     const withdrawal = await fetch(`${env.EMILY_URL}/withdrawal/${requestId}`);
 
     const withdrawalData = await withdrawal.json();
-    if (withdrawalData.status === "pending") {
-      return {
-        ...data,
-        status: WithdrawalStatus.PENDING,
-      };
-    }
-    if (withdrawalData.status === "failed") {
-      return {
-        ...data,
-        status: WithdrawalStatus.REJECTED,
-      };
-    }
-
-    if (withdrawalData.status === "accepted") {
-      return {
-        ...data,
-        status: WithdrawalStatus.CONFIRMING,
-      };
-    }
-    return {
-      ...data,
-      status: WithdrawalStatus.CONFIRMED,
-    };
+    status = WithdrawalStatus[withdrawalData.status as WithdrawalStatus];
   }
-  if (txData.tx_status === "pending") {
-    return {
-      ...data,
-      status: WithdrawalStatus.PENDING,
-    };
+  if (txData.tx_status !== "pending") {
+    status = WithdrawalStatus.failed;
   }
   return {
     ...data,
-    status: WithdrawalStatus.FAILED,
+    status,
   };
 }

@@ -1,7 +1,8 @@
 export enum WithdrawalStatus {
-  PENDING = "PENDING",
-  CONFIRMING = "CONFIRMING",
-  CONFIRMED = "CONFIRMED",
-  REJECTED = "REJECTED",
-  FAILED = "FAILED",
+  pending = "pending",
+  // Remapping reprocessing to pending to keep things simple
+  reprocessing = "pending",
+  accepted = "accepted",
+  confirmed = "confirmed",
+  failed = "failed",
 }

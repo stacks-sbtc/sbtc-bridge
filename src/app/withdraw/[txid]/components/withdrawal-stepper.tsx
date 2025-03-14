@@ -76,32 +76,26 @@ export function WithdrawalStepper({
   const stepper = useStepper();
   return (
     <div className="flex flex-col gap-4 w-full ">
-      {(status === WithdrawalStatus.PENDING ||
-        status === WithdrawalStatus.CONFIRMING) && (
+      {(status === WithdrawalStatus.pending ||
+        status === WithdrawalStatus.accepted) && (
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
         ></div>
       )}
-      {status === WithdrawalStatus.CONFIRMED && (
+      {status === WithdrawalStatus.confirmed && (
         <CheckCircleIcon className="text-green-600 w-12" />
       )}
-      {status === WithdrawalStatus.FAILED ||
-        (status === WithdrawalStatus.REJECTED && (
-          <XCircleIcon className="text-red-500 w-12" />
-        ))}
-      {status !== WithdrawalStatus.FAILED &&
-        status !== WithdrawalStatus.REJECTED && (
-          <ol className="flex items-center w-full text-xs text-gray-900 font-medium sm:text-base text-black">
-            <Step stepper={stepper} name="Pending" id="stx-tx" />
-            <Step
-              stepper={stepper}
-              name="Confirming"
-              id="signers-deliberation"
-            />
-            <Step stepper={stepper} name="Released" id="completed" />
-          </ol>
-        )}
+      {status === WithdrawalStatus.failed || (
+        <XCircleIcon className="text-red-500 w-12" />
+      )}
+      {status !== WithdrawalStatus.failed && (
+        <ol className="flex items-center w-full text-xs text-gray-900 font-medium sm:text-base text-black">
+          <Step stepper={stepper} name="Pending" id="stx-tx" />
+          <Step stepper={stepper} name="Confirming" id="signers-deliberation" />
+          <Step stepper={stepper} name="Released" id="completed" />
+        </ol>
+      )}
     </div>
   );
 }
