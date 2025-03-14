@@ -2,9 +2,11 @@ FROM node:18 AS builder
 
 WORKDIR /code
 
-# docker build --build-arg GIT_COMMIT=$(git rev-parse HEAD)
+# docker build --build-arg GIT_COMMIT=$(git rev-parse HEAD) --build-arg FEATURE_FLAGS=withdrawals,reskin
 ARG GIT_COMMIT
 ENV GIT_COMMIT=$GIT_COMMIT
+ARG FEATURE_FLAGS
+ENV FEATURE_FLAGS=$FEATURE_FLAGS
 
 COPY package.json ./
 COPY yarn.lock ./
