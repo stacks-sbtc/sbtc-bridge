@@ -18,6 +18,11 @@ export const WithdrawFlowAmount = ({
         <Heading>Withdraw</Heading>
       </div>
       <SubText>Convert sBTC into BTC</SubText>
+      <SubText>
+        Note: An additional 80K sats will be reserved to cover Bitcoin
+        transaction fees. Any remaining amount will be automatically refunded to
+        your Stacks account as change.{" "}
+      </SubText>
       <FlowForm
         nameKey="amount"
         requiredConnection="stx"
