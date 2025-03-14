@@ -86,7 +86,7 @@ export function WithdrawalStepper({
       {status === WithdrawalStatus.confirmed && (
         <CheckCircleIcon className="text-green-600 w-12" />
       )}
-      {status === WithdrawalStatus.failed || (
+      {status === WithdrawalStatus.failed && (
         <XCircleIcon className="text-red-500 w-12" />
       )}
       {status !== WithdrawalStatus.failed && (
