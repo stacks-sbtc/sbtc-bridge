@@ -5,6 +5,14 @@ import {
   getFordefiBTCProviderOrThrow,
   getLeatherBTCProviderOrThrow,
 } from "./util/btc-provider";
+import { openContractCall } from "@stacks/connect";
+import { AsignaIframeProvider } from "./util/asigna-provider";
+import {
+  addressToString,
+  ContractCallPayload,
+  deserializeTransaction,
+  wireToPostCondition,
+} from "@stacks/transactions";
 
 type RequestArgs = {
   txHex: string;
@@ -47,5 +55,25 @@ export const callContractFordefi: CallContract = async (params) => {
 };
 
 export const callContractAsigna: CallContract = async (params) => {
-  throw new Error("Not implemented");
+  const tx = deserializeTransaction(params.txHex);
+  const payload = tx.payload as ContractCallPayload;
+
+  return new Promise<string>((resolve, reject) =>
+    openContractCall(
+      {
+        contractName: payload.contractName.content,
+        contractAddress: addressToString(payload.contractAddress),
+        functionArgs: payload.functionArgs,
+        functionName: payload.functionName.content,
+        postConditionMode: tx.postConditionMode,
+        postConditions: tx.postConditions.values.map(wireToPostCondition),
+        anchorMode: tx.anchorMode,
+        fee: Number(tx.auth.spendingCondition.fee),
+        network: params.network,
+        onFinish: (data) => resolve(data.txId),
+        onCancel: reject,
+      },
+      AsignaIframeProvider as any,
+    ),
+  );
 };

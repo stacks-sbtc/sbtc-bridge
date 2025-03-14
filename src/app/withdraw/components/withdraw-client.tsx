@@ -125,10 +125,16 @@ const Withdraw = () => {
       address,
       WALLET_NETWORK,
     );
-    const publicKey = addresses.stacks?.publicKey;
+    let publicKey = addresses.stacks?.publicKey;
 
     if (!publicKey) {
-      throw new Error("Invalid public key");
+      if (selectedWallet === WalletProvider.ASIGNA) {
+        // asigna only provides the stacks address
+        // this workaround works so why not
+        publicKey = "";
+      } else {
+        throw new Error("Invalid public key");
+      }
     }
 
     // convert the amount to satoshis
