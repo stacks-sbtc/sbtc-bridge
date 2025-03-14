@@ -108,21 +108,26 @@ const BasicWithdraw = () => {
 
     const stacksNetwork = getStacksNetwork(WALLET_NETWORK);
 
-    const transaction = await makeUnsignedContractCall({
+    const opts = {
       contractAddress: SBTC_CONTRACT_DEPLOYER,
       contractName: "sbtc-withdrawal",
       functionName: "initiate-withdrawal-request",
       functionArgs: contractArgs,
       publicKey,
-      validateWithAbi: true,
       network: stacksNetwork,
-      fee: WALLET_NETWORK === "mainnet" ? undefined : 10_000,
+
       postConditions: [
         Pc.principal(addresses.stacks!.address)
           .willSendLte(satoshiAmount + satoshiFee)
           .ft(`${SBTC_CONTRACT_DEPLOYER}.sbtc-token`, "sbtc-token"),
       ],
-    });
+    } as any;
+
+    if (WALLET_NETWORK !== "mainnet") {
+      // fee apis break in devenv and testnet sometimes and are unreliable
+      opts.fee = 10_000;
+    }
+    const transaction = await makeUnsignedContractCall(opts);
 
     const signTx = {
       [WalletProvider.XVERSE]: callContractXverse,
