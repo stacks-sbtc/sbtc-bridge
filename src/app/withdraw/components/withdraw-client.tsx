@@ -34,8 +34,8 @@ import { testBTCAddress } from "@/util/yup/test-btc-address";
 import { WithdrawFlowAmount } from "./withdraw-amount";
 import { useFormik } from "formik";
 import { WithdrawConfirm } from "./withdraw-confirm";
-
-const MAX_WITHDRAWAL_FEE = 0.0008 * 1e8;
+import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
+import { MAX_WITHDRAWAL_FEE } from "@/util/constants";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -71,11 +71,29 @@ const { useStepper } = defineStepper(
 
 const Withdraw = () => {
   const { addresses, selectedWallet } = useAtomValue(walletInfoAtom);
+  const { data: satsBalance } = useSBTCBalance({
+    address: addresses.stacks?.address,
+  });
 
   // const stxAddress = addresses.stacks?.address;
-  const amountValidationSchema = yup.object().shape({
-    amount: yup.number().min(0).required(),
-  });
+  const amountValidationSchema = useMemo(() => {
+    const btcBalance = Number(satsBalance) / 1e8;
+    return yup.object().shape({
+      amount: yup
+        .number()
+        .min(0)
+        .max(
+          btcBalance - MAX_WITHDRAWAL_FEE / 1e8,
+          `The withdrawal + max fees amount exceeds your current balance of ${btcBalance.toLocaleString(
+            undefined,
+            {
+              maximumFractionDigits: 8,
+            },
+          )} sBTC`,
+        )
+        .required(),
+    });
+  }, [satsBalance]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
