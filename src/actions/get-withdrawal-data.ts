@@ -59,6 +59,9 @@ export async function getWithdrawalInfo(txid: string) {
 
     const withdrawal = await fetch(`${env.EMILY_URL}/withdrawal/${requestId}`);
 
+    if (!withdrawal.ok) {
+      throw new Error(`Failed to fetch withdrawal data: ${withdrawal.status}`);
+    }
     const withdrawalData = await withdrawal.json();
     status = WithdrawalStatus[withdrawalData.status as WithdrawalStatus];
   } else if (txData.tx_status !== "pending") {
