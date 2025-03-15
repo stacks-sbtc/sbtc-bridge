@@ -32,7 +32,7 @@ export function Step({
 
   const isCurrentStep = stepper.current.id === id;
   const currentIndex = utils.getIndex(stepper.current.id);
-  const isCompleted = myIndex <= currentIndex;
+  const isCompleted = myIndex < currentIndex;
   const isPending = myIndex > currentIndex;
   let statusClassName = "";
   let nameClassName = "";
