@@ -61,9 +61,7 @@ export async function getWithdrawalInfo(txid: string) {
 
     const withdrawalData = await withdrawal.json();
     status = WithdrawalStatus[withdrawalData.status as WithdrawalStatus];
-  }
-
-  if (txData.tx_status !== "pending" && txData.tx_status !== "success") {
+  } else if (txData.tx_status !== "pending") {
     status = WithdrawalStatus.failed;
   }
   return {
