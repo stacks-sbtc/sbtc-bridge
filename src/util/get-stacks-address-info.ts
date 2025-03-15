@@ -7,7 +7,6 @@ export function getStacksAddressInfo(address: string): {
 } {
   try {
     const addressData = createAddress(address);
-    AddressVersion.TestnetSingleSig;
     const isMainnet =
       addressData.version === AddressVersion.MainnetMultiSig ||
       addressData.version === AddressVersion.MainnetSingleSig;
