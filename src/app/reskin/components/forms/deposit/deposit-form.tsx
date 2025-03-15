@@ -12,7 +12,9 @@ import getBtcBalance from "@/actions/get-btc-balance";
 import { validateStacksAddress } from "@stacks/transactions";
 import { InputContainer } from "../form-elements/input-container";
 import { elide } from "@/util";
-import { depositStepper } from "../../stepper/deposit-timeline";
+import { depositStepper } from "../../stepper/deposit/util";
+import { AmountInput } from "./amount-input";
+
 declare module "yup" {
   interface StringSchema<TType, TContext, TDefault, TFlags> {
     stxAddress(): this;
@@ -89,23 +91,19 @@ export const DepositForm = () => {
         }, 500);
       }}
     >
-      {({ errors, touched, isValid, isInitialValid, values }) => (
+      {({ errors, touched, isValid, values }) => (
         <Form className="flex flex-col gap-2 w-full px-6 lg:w-1/2 max-w-lg">
-          <InputContainer
+          <AmountInput
+            value={`${values.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`}
             isReadonly={stepper.when(
               "amount",
               () => false,
               () => true,
             )}
             onClickEdit={() => handleEdit("amount")}
-            title="Selected Deposit Amount"
-            value={`${values.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`}
-          >
-            <Field className="text-black" name="amount" placeholder="Amount" />
-            {errors.amount && touched.amount ? (
-              <div>{errors.amount}</div>
-            ) : null}
-          </InputContainer>
+            error={touched.amount && errors.amount}
+          />
+
           <InputContainer
             isReadonly={stepper.when(
               "address",

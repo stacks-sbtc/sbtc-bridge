@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       animation: {
-        'spin-slow': 'spin 15s linear infinite',
+        "spin-slow": "spin 15s linear infinite",
       },
       colors: {
         orange: "#FD9D41",
@@ -67,6 +67,7 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        "input-label-dark": "#1E1E1E",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

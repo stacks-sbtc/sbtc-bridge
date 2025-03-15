@@ -1,7 +1,8 @@
 "use client";
 
 import { DepositForm } from "./forms/deposit/deposit-form";
-import { depositStepper, DepositTimeline } from "./stepper/deposit-timeline";
+import { DepositTimeline } from "./stepper/deposit-timeline";
+import { depositStepper } from "./stepper/deposit/util";
 const { Scoped } = depositStepper;
 export function DepositClient() {
   return (
