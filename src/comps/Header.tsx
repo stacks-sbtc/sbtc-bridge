@@ -59,7 +59,9 @@ const Header = ({ config }: { config: BridgeConfig }) => {
     return (
       <>
         {isTestnet && <GetTestnetBTC />}
-        <SBTCBalance address={walletInfo.addresses.stacks!.address} />
+        {walletInfo.addresses.stacks && (
+          <SBTCBalance address={walletInfo.addresses.stacks.address} />
+        )}
         <button
           onClick={() => handleSignOut()}
           className="px-4 py-2 rounded-md border-2 border-orange"

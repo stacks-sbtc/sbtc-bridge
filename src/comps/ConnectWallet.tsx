@@ -21,7 +21,7 @@ import {
   getAddressesFordefi,
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
-import { AddressVersion, createAddress } from "@stacks/transactions";
+import { getStacksAddressInfo } from "@/util/get-stacks-address-info";
 
 const WALLET_PROVIDERS = [
   {
@@ -59,11 +59,10 @@ const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
   }
 
   if (stacksAddress) {
-    const addressData = createAddress(stacksAddress);
-    return (
-      addressData.version === AddressVersion.MainnetMultiSig ||
-      addressData.version === AddressVersion.MainnetSingleSig
-    );
+    const addressData = getStacksAddressInfo(stacksAddress);
+    if (addressData.valid) {
+      return addressData.type === "mainnet";
+    }
   }
   return null;
 };
