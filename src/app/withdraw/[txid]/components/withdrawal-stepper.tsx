@@ -93,7 +93,7 @@ export function WithdrawalStepper({
         <ol className="flex items-center w-full text-xs text-gray-900 font-medium sm:text-base text-black">
           <Step stepper={stepper} name="Pending" id="stx-tx" />
           <Step stepper={stepper} name="Confirming" id="signers-deliberation" />
-          <Step stepper={stepper} name="Released" id="completed" />
+          <Step stepper={stepper} name="Completed" id="completed" />
         </ol>
       )}
     </div>
