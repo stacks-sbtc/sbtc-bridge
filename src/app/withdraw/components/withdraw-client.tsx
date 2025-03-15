@@ -75,7 +75,6 @@ const Withdraw = () => {
     address: addresses.stacks?.address,
   });
 
-  // const stxAddress = addresses.stacks?.address;
   const amountValidationSchema = useMemo(() => {
     const btcBalance = Number(satsBalance) / 1e8;
     return yup.object().shape({
@@ -228,7 +227,7 @@ const Withdraw = () => {
         confirm: () => (
           <WithdrawConfirm
             amount={Number(values.amount)}
-            btcAddress={values.address || ""}
+            btcAddress={values.address}
             stepper={stepper as Stepper<any>}
             handleSubmit={() => {
               submitForm();
