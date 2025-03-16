@@ -1,6 +1,6 @@
 "use client";
 import useMintCaps from "@/hooks/use-mint-caps";
-import { walletInfoAtom } from "@/util/atoms";
+import { bridgeConfigAtom, walletInfoAtom } from "@/util/atoms";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
@@ -9,30 +9,18 @@ import { FormButton } from "../../form-button";
 import { useValidateDepositAmount } from "@/hooks/use-validate-deposit-amount";
 import { useQuery } from "@tanstack/react-query";
 import getBtcBalance from "@/actions/get-btc-balance";
-import { validateStacksAddress } from "@stacks/transactions";
+
 import { InputContainer } from "../form-elements/input-container";
 import { elide } from "@/util";
 import { depositStepper } from "../../stepper/deposit/util";
 import { AmountInput } from "./amount-input";
-
-declare module "yup" {
-  interface StringSchema<TType, TContext, TDefault, TFlags> {
-    stxAddress(): this;
-  }
-}
-
-yup.addMethod(yup.string, "stxAddress", function () {
-  return this.test("stxAddress", "Invalid Stacks address", (value) => {
-    if (!value) return true;
-    const isValid = validateStacksAddress(value);
-    return isValid;
-  });
-});
+import { testStxAddress } from "@/util/yup/test-stx-address";
 
 export const DepositForm = () => {
   const { currentCap, perDepositMinimum } = useMintCaps();
   const maxDepositAmount = (currentCap || 1e8) / 1e8;
   const minDepositAmount = (perDepositMinimum || 10_000) / 1e8;
+  const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
 
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
@@ -53,17 +41,29 @@ export const DepositForm = () => {
     btcBalance,
     minDepositAmount,
   });
-  const depositSchema = useMemo(() => {
-    return amountValidationSchema.shape({
-      address: yup
+  const addressValidationSchema = useMemo(
+    () =>
+      yup
         .string()
-        .stxAddress()
+        .test("stx-address", "Invalid STX address", function (value) {
+          return testStxAddress.call(this, value, WALLET_NETWORK!);
+        })
         .required()
         .default(addresses.stacks?.address || ""),
-    });
-  }, [addresses.stacks?.address, amountValidationSchema]);
+    [WALLET_NETWORK, addresses.stacks?.address],
+  );
 
-  type Values = yup.InferType<typeof depositSchema>;
+  const depositSchema = useMemo(() => {
+    return yup.object().shape({
+      amount: amountValidationSchema,
+      address: addressValidationSchema,
+    });
+  }, [addressValidationSchema, amountValidationSchema]);
+
+  type Values = {
+    amount: string;
+    address: string;
+  };
   const { useStepper } = depositStepper;
   const stepper = useStepper();
   const handleEdit = (fieldName: keyof Values) => {
@@ -79,7 +79,7 @@ export const DepositForm = () => {
   return (
     <Formik
       initialValues={{
-        amount: 0,
+        amount: "",
         address: addresses.stacks?.address || "",
       }}
       enableReinitialize={true}
@@ -94,7 +94,7 @@ export const DepositForm = () => {
       {({ errors, touched, isValid, values }) => (
         <Form className="flex flex-col gap-2 w-full px-6 lg:w-1/2 max-w-lg">
           <AmountInput
-            value={`${values.amount.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`}
+            value={`${values.amount} BTC`}
             isReadonly={stepper.when(
               "amount",
               () => false,
