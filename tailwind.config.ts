@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        "matter-mono": "var(--font-matter-mono)",
+        matter: "var(--font-matter)",
+      },
       animation: {
         "spin-slow": "spin 15s linear infinite",
       },
