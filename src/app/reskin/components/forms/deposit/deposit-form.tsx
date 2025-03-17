@@ -1,20 +1,22 @@
 "use client";
 import useMintCaps from "@/hooks/use-mint-caps";
 import { bridgeConfigAtom, walletInfoAtom } from "@/util/atoms";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { useAtomValue } from "jotai";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import * as yup from "yup";
 import { FormButton } from "../../form-button";
 import { useValidateDepositAmount } from "@/hooks/use-validate-deposit-amount";
 import { useQuery } from "@tanstack/react-query";
 import getBtcBalance from "@/actions/get-btc-balance";
 
-import { InputContainer } from "../form-elements/input-container";
-import { elide } from "@/util";
 import { depositStepper } from "../../stepper/deposit/util";
 import { AmountInput } from "./amount-input";
 import { testStxAddress } from "@/util/yup/test-stx-address";
+import { AddressInput } from "./address-input";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+
+const { useStepper, utils } = depositStepper;
 
 export const DepositForm = () => {
   const { currentCap, perDepositMinimum } = useMintCaps();
@@ -48,9 +50,9 @@ export const DepositForm = () => {
         .test("stx-address", "Invalid STX address", function (value) {
           return testStxAddress.call(this, value, WALLET_NETWORK!);
         })
-        .required()
-        .default(addresses.stacks?.address || ""),
-    [WALLET_NETWORK, addresses.stacks?.address],
+        .required(),
+
+    [WALLET_NETWORK],
   );
 
   const depositSchema = useMemo(() => {
@@ -64,7 +66,6 @@ export const DepositForm = () => {
     amount: string;
     address: string;
   };
-  const { useStepper } = depositStepper;
   const stepper = useStepper();
   const handleEdit = (fieldName: keyof Values) => {
     stepper.goTo(fieldName);
@@ -74,7 +75,20 @@ export const DepositForm = () => {
     if (!stepper.isLast) {
       stepper.next();
     }
+    if (utils.getNext(stepper.current.id).id === "confirm") {
+      nextButtonRef.current?.focus();
+    }
   };
+
+  const handlePrevClick = () => {
+    if (!stepper.isFirst) {
+      stepper.prev();
+    }
+  };
+
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
+
+  const isMobile = useIsMobile();
 
   return (
     <Formik
@@ -93,43 +107,61 @@ export const DepositForm = () => {
     >
       {({ errors, touched, isValid, values }) => (
         <Form className="flex flex-col gap-2 w-full px-6 lg:w-1/2 max-w-lg">
-          <AmountInput
-            value={`${values.amount} BTC`}
-            isReadonly={stepper.when(
-              "amount",
-              () => false,
-              () => true,
-            )}
-            onClickEdit={() => handleEdit("amount")}
-            error={touched.amount && errors.amount}
-          />
-
-          <InputContainer
-            isReadonly={stepper.when(
-              "address",
-              () => false,
-              () => true,
-            )}
-            onClickEdit={() => handleEdit("address")}
-            title="Deposit Address"
-            value={elide(values.address)}
-          >
-            <Field
-              className="text-black"
-              name="address"
-              placeholder="Deposit Address"
+          {(!isMobile || stepper.current.id !== "address") && (
+            <AmountInput
+              value={`${values.amount} BTC`}
+              isReadonly={stepper.when(
+                "amount",
+                () => false,
+                () => true,
+              )}
+              onClickEdit={() => handleEdit("amount")}
+              onPressEnter={handleNextClick}
+              error={touched.amount && errors.amount}
             />
-            {errors.address && touched.address ? (
-              <div>{errors.address}</div>
-            ) : null}
-          </InputContainer>
-          <FormButton
-            onClick={handleNextClick}
-            disabled={!isValid}
-            type="button"
-          >
-            {stepper.isLast ? "submit" : "next"}
-          </FormButton>
+          )}
+
+          {stepper.current.id !== "amount" && (
+            <AddressInput
+              value={values.address}
+              isReadonly={stepper.when(
+                "address",
+                () => false,
+                () => true,
+              )}
+              onPressEnter={handleNextClick}
+              onClickEdit={() => handleEdit("address")}
+              error={touched.address && errors.address}
+            />
+          )}
+
+          <div className="flex gap-5 w-full">
+            {!stepper.isFirst && !stepper.isLast && (
+              <FormButton
+                onClick={handlePrevClick}
+                type="button"
+                variant="secondary"
+                className={"flex-1 md:flex-[4]"}
+              >
+                back
+              </FormButton>
+            )}
+
+            <FormButton
+              ref={nextButtonRef}
+              onClick={handleNextClick}
+              disabled={!isValid}
+              type={stepper.isLast ? "submit" : "button"}
+              className="flex-1 md:flex-[8]"
+            >
+              {stepper.switch({
+                address: () => (isValid ? "review" : "next"),
+                amount: () => "next",
+                confirm: () => "confirm",
+                status: () => "view history",
+              })}
+            </FormButton>
+          </div>
         </Form>
       )}
     </Formik>

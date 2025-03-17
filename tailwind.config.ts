@@ -68,6 +68,7 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
         "input-label-dark": "#1E1E1E",
+        "button-secondary-text-light": "#333333",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

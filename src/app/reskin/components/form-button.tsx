@@ -5,6 +5,7 @@ export const FormButton = ({
   className,
   variant = "primary",
   type = "button",
+  ref,
 }: {
   children: React.ReactNode;
   disabled?: boolean;
@@ -12,6 +13,7 @@ export const FormButton = ({
   className?: string;
   variant?: "primary" | "secondary";
   type?: "button" | "submit" | "reset";
+  ref?: React.RefObject<HTMLButtonElement>;
 }) => {
   return (
     <button
@@ -20,11 +22,12 @@ export const FormButton = ({
       } ${
         variant === "primary"
           ? "bg-orange dark:bg-dark-reskin-orange disabled:bg-darkGray disabled:dark:bg-white disabled:opacity-20"
-          : "bg-transparent"
+          : "bg-transparent text-button-secondary-text-light dark:text-midGray border border-button-secondary-text-light rounded-lg"
       }`}
       disabled={disabled}
       onClick={onClick}
       type={type}
+      ref={ref}
     >
       {children}
     </button>

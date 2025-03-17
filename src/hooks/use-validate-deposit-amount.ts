@@ -1,6 +1,15 @@
 import { useMemo } from "react";
 import * as yup from "yup";
-
+yup.setLocale({
+  mixed: {
+    notType: ({ path, type, value }) => {
+      return type !== "mixed"
+        ? `${path} must be a ${type} `
+        : `${path} must match the configured type. ` +
+            `The validated value was: \`${value}\``;
+    },
+  },
+});
 export function useValidateDepositAmount({
   btcBalance,
   maxDepositAmount,
@@ -14,6 +23,8 @@ export function useValidateDepositAmount({
     () =>
       yup
         .number()
+        .positive()
+
         .min(
           minDepositAmount,
           `Minimum deposit amount is ${minDepositAmount} BTC`,
