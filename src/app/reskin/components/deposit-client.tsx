@@ -7,8 +7,10 @@ const { Scoped } = depositStepper;
 export function DepositClient() {
   return (
     <Scoped>
-      <DepositForm />
-      <DepositTimeline />
+      <div className="flex w-full justify-center min-h-[calc(100%-12rem)]">
+        <DepositForm />
+        <DepositTimeline />
+      </div>
     </Scoped>
   );
 }

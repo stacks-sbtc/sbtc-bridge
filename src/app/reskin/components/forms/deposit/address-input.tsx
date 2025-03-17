@@ -2,7 +2,6 @@ import { Field, FieldProps } from "formik";
 import { InputContainer } from "../form-elements/input-container";
 
 import { Textarea } from "@/components/ui/textarea";
-import { elide } from "@/util";
 
 export const AddressInput = ({
   isReadonly,
@@ -22,12 +21,12 @@ export const AddressInput = ({
       isReadonly={isReadonly}
       onClickEdit={onClickEdit}
       title="Selected Deposit Address"
-      value={elide(value)}
+      value={value}
     >
       <div
-        className={`text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
+        className={`md:ml-14 text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
       >
-        <div className="bg-gray dark:bg-input-label-dark dark:text-white flex items-center justify-center rounded-full w-32 h-10">
+        <div className="bg-lightGray dark:bg-input-label-dark dark:text-white flex items-center justify-center rounded-full w-32 h-10">
           STX Address
         </div>
         <Field name="address" placeholder="Address">
@@ -46,7 +45,7 @@ export const AddressInput = ({
                     }
                   }}
                   autoFocus
-                  className="text-black dark:text-white w-full bg-transparent break-all text-2xl tracking-tight placeholder:text-xl placeholder:tracking-normal"
+                  className="font-matter-mono text-black dark:text-white w-full bg-transparent break-all text-2xl tracking-tight placeholder:text-xl placeholder:tracking-normal placeholder:font-matter"
                   {...field}
                   placeholder="Enter STX address to receive sBTC"
                 />

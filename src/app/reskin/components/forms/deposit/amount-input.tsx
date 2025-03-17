@@ -24,9 +24,9 @@ export const AmountInput = ({
       value={value}
     >
       <div
-        className={`text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
+        className={`md:ml-14 text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
       >
-        <div className="bg-gray dark:bg-input-label-dark dark:text-white flex items-center justify-center rounded-full w-28 h-10">
+        <div className="bg-lightGray dark:bg-input-label-dark dark:text-white flex items-center justify-center rounded-full w-28 h-10">
           BTC
         </div>
         <Field name="amount" placeholder="Amount">

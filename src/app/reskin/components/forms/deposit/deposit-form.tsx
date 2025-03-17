@@ -90,6 +90,12 @@ export const DepositForm = () => {
 
   const isMobile = useIsMobile();
 
+  const handleEnter = (error?: string) => {
+    if (!error) {
+      handleNextClick();
+    }
+  };
+
   return (
     <Formik
       initialValues={{
@@ -105,37 +111,41 @@ export const DepositForm = () => {
         }, 500);
       }}
     >
-      {({ errors, touched, isValid, values }) => (
-        <Form className="flex flex-col gap-2 w-full px-6 lg:w-1/2 max-w-lg">
-          {(!isMobile || stepper.current.id !== "address") && (
-            <AmountInput
-              value={`${values.amount} BTC`}
-              isReadonly={stepper.when(
-                "amount",
-                () => false,
-                () => true,
-              )}
-              onClickEdit={() => handleEdit("amount")}
-              onPressEnter={handleNextClick}
-              error={touched.amount && errors.amount}
-            />
-          )}
+      {({ errors, touched, isValid, values, submitForm, getFieldMeta }) => (
+        <Form className="flex flex-col justify-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl min-h-full">
+          <div className="flex flex-col gap-2 flex-1">
+            {(!isMobile || stepper.current.id !== "address") && (
+              <AmountInput
+                value={`${values.amount} BTC`}
+                isReadonly={stepper.when(
+                  "amount",
+                  () => false,
+                  () => true,
+                )}
+                onClickEdit={() => handleEdit("amount")}
+                onPressEnter={() => {
+                  return touched.amount && handleEnter(errors.amount);
+                }}
+                error={touched.amount && errors.amount}
+              />
+            )}
 
-          {stepper.current.id !== "amount" && (
-            <AddressInput
-              value={values.address}
-              isReadonly={stepper.when(
-                "address",
-                () => false,
-                () => true,
-              )}
-              onPressEnter={handleNextClick}
-              onClickEdit={() => handleEdit("address")}
-              error={touched.address && errors.address}
-            />
-          )}
+            {stepper.current.id !== "amount" && (
+              <AddressInput
+                value={values.address}
+                isReadonly={stepper.when(
+                  "address",
+                  () => false,
+                  () => true,
+                )}
+                onPressEnter={() => handleEnter(errors.address)}
+                onClickEdit={() => handleEdit("address")}
+                error={touched.address && errors.address}
+              />
+            )}
+          </div>
 
-          <div className="flex gap-5 w-full">
+          <div className="flex gap-5 w-full md:pl-14 self-end">
             {!stepper.isFirst && !stepper.isLast && (
               <FormButton
                 onClick={handlePrevClick}
@@ -148,9 +158,9 @@ export const DepositForm = () => {
             )}
 
             <FormButton
-              ref={nextButtonRef}
+              buttonRef={nextButtonRef}
               onClick={handleNextClick}
-              disabled={!isValid}
+              disabled={!!getFieldMeta(stepper.current.id).error && !isValid}
               type={stepper.isLast ? "submit" : "button"}
               className="flex-1 md:flex-[8]"
             >
