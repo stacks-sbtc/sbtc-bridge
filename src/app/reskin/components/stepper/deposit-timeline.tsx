@@ -1,14 +1,14 @@
 "use client";
 import { StepContent, StepTitle } from "./timeline";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { depositStepper } from "./deposit/util";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 const { useStepper, utils } = depositStepper;
 
 export function DepositTimeline() {
   const stepper = useStepper();
 
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isDesktop = !useIsMobile();
   const currentIndex = utils.getIndex(stepper.current.id);
 
   return (
