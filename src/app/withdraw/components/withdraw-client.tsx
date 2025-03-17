@@ -186,11 +186,13 @@ const Withdraw = () => {
       txHex: serializeTransaction(transaction),
       network: stacksNetwork,
     });
-
-    const broadcastResponse = await serverBroadcastTx({
-      txHex: signedTx,
-    });
-    const txId = broadcastResponse.txid;
+    let txId = signedTx;
+    if (selectedWallet !== WalletProvider.ASIGNA) {
+      const broadcastResponse = await serverBroadcastTx({
+        txHex: signedTx,
+      });
+      txId = broadcastResponse.txid;
+    }
     router.push(`/withdraw/${txId}`);
     // add tx to search query for the user to have a link to the tx
   };
