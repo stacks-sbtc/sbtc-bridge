@@ -27,4 +27,5 @@ export const env = {
   STACKS_API_URL: process.env.STACKS_API_URL || "http://localhost:3999",
   FEATURE_FLAGS: (process.env.FEATURE_FLAGS?.split(",") || []) as featureFlag[],
   WITHDRAWAL_FEE_MULTIPLIER: Number(process.env.WITHDRAWAL_FEE_MULTIPLIER || 4),
+  HIRO_API_KEY: process.env.HIRO_API_KEY,
 };
