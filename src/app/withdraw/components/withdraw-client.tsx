@@ -81,12 +81,11 @@ const Withdraw = () => {
     queryFn: async () => {
       return getWithdrawalMaxFee();
     },
-    initialData: 8_000,
   });
 
   const amountValidationSchema = useMemo(() => {
     const btcBalance = Number(satsBalance) / 1e8;
-    const fee = maxFee / 1e8;
+    const fee = maxFee! / 1e8;
     return yup.object().shape({
       amount: yup
         .number()
@@ -145,7 +144,7 @@ const Withdraw = () => {
     const satoshiAmount = Math.round(parseFloat(amount) * 1e8);
 
     // convert the fee to satoshis
-    const satoshiFee = Math.round(maxFee);
+    const satoshiFee = Math.round(maxFee!);
 
     const contractArgs = [
       Cl.uint(satoshiAmount),
@@ -221,7 +220,7 @@ const Withdraw = () => {
               setFieldValue("amount", value);
               stepper.next();
             }}
-            stepper={stepper as Stepper<any>}
+            disabled={maxFee === undefined}
           />
         ),
         address: () => (
