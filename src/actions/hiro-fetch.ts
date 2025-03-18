@@ -1,3 +1,5 @@
+import "server-only";
+
 import { env } from "@/env";
 
 async function hiroFetch(url: string, options: RequestInit = {}) {
