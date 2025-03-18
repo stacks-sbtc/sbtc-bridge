@@ -19,5 +19,9 @@ export async function getAggregateKey() {
     },
   })) as BufferCV;
 
+  if (result.value.length < 64) {
+    throw new Error("Invalid aggregate key");
+  }
+
   return result.value;
 }
