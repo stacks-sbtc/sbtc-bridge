@@ -1,16 +1,15 @@
 import { FlowForm } from "@/comps/core/Form";
 import { Heading, SubText } from "@/comps/core/Heading";
-import { Stepper } from "@stepperize/react";
 import { Schema } from "yup";
 
 export const WithdrawFlowAmount = ({
   validationSchema,
   handleSubmit,
-  stepper,
+  disabled,
 }: {
   validationSchema: Schema;
   handleSubmit: (value: any) => void;
-  stepper: Stepper;
+  disabled?: boolean;
 }) => {
   return (
     <>
@@ -24,6 +23,7 @@ export const WithdrawFlowAmount = ({
         your Stacks account as change.{" "}
       </SubText>
       <FlowForm
+        disabled={disabled}
         nameKey="amount"
         requiredConnection="stx"
         initialValue={""}
