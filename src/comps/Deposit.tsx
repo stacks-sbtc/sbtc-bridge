@@ -59,7 +59,7 @@ import { sendBTCFordefi } from "../util/wallet-utils/src/sendBTC";
 
 /*
   each step will have it's own custom configuration about how to deal with this data and basic parsing
-  - we should create bulding blocks by not try to create dynamic views
+  - we should create building blocks by not try to create dynamic views
 */
 
 enum DEPOSIT_STEP {
@@ -73,7 +73,7 @@ enum DEPOSIT_STEP {
   basic structure of a flow step
   1) heading with sometime a action item to the right of the heading
   2) subtext to give context to the user with the possibility of tags
-  3) form to collect data or the final step which is usually reviewing all data before submitting (or even revewing post submission)
+  3) form to collect data or the final step which is usually reviewing all data before submitting (or even reviewing post submission)
   4) buttons to navigate between steps
 */
 type DepositFlowStepProps = {
@@ -270,6 +270,12 @@ const DepositFlowConfirm = ({
   const { WALLET_NETWORK: walletNetwork, RECLAIM_LOCK_TIME: lockTime } =
     useAtomValue(bridgeConfigAtom);
 
+  const { data: signersAggregatePubKey } = useQuery({
+    queryKey: ["signers-aggregate-key"],
+    queryFn: async () => {
+      return (await getAggregateKey()).slice(2);
+    },
+  });
   const maxFee = useAtomValue(depositMaxFeeAtom);
   const config = useAtomValue(bridgeConfigAtom);
   const { notifyEmily, isPending: isPendingNotifyEmily } = useEmilyDeposit();
@@ -279,8 +285,6 @@ const DepositFlowConfirm = ({
   const walletInfo = useAtomValue(walletInfoAtom);
   const handleNextClick = async () => {
     try {
-      const signersAggregatePubKey = (await getAggregateKey()).slice(2);
-
       // Combine the version and hash into a single Uint8Array
       const serializedAddress = serializeCVBytes(principalCV(stxAddress));
 
@@ -458,7 +462,7 @@ const DepositFlowConfirm = ({
             PREV
           </SecondaryButton>
           <PrimaryButton
-            disabled={isPendingNotifyEmily}
+            disabled={isPendingNotifyEmily || !signersAggregatePubKey}
             onClick={handleNextClick}
           >
             NEXT
