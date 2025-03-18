@@ -22,8 +22,9 @@ export const env = {
   BANNER_CONTENT: process.env.BANNER_CONTENT,
   RECLAIM_LOCK_TIME: process.env.RECLAIM_LOCK_TIME,
   SUPPORT_LINK: process.env.SUPPORT_LINK,
-  POLLING_INTERVAL: Number(process.env.POLLING_INTERVAL) || 5000,
+  POLLING_INTERVAL: Number(process.env.POLLING_INTERVAL || 5000),
   BRIDGE_APP_URL: process.env.BRIDGE_APP_URL || "http://localhost:3000",
   STACKS_API_URL: process.env.STACKS_API_URL || "http://localhost:3999",
   FEATURE_FLAGS: (process.env.FEATURE_FLAGS?.split(",") || []) as featureFlag[],
+  WITHDRAWAL_FEE_MULTIPLIER: Number(process.env.WITHDRAWAL_FEE_MULTIPLIER || 4),
 };

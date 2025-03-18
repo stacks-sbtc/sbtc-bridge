@@ -18,5 +18,9 @@ export const getWithdrawalMaxFee = async () => {
     `${env.MEMPOOL_API_URL}/v1/fees/recommended`,
   ).then((res) => res.json())) as mempoolFeesRes;
 
-  return 4 * currentMempoolFees.fastestFee * MAX_WITHDRAWAL_TX_SIZE;
+  return (
+    env.WITHDRAWAL_FEE_MULTIPLIER *
+    currentMempoolFees.fastestFee *
+    MAX_WITHDRAWAL_TX_SIZE
+  );
 };
