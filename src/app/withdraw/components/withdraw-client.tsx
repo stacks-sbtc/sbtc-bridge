@@ -35,7 +35,8 @@ import { WithdrawFlowAmount } from "./withdraw-amount";
 import { useFormik } from "formik";
 import { WithdrawConfirm } from "./withdraw-confirm";
 import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
-import { MAX_WITHDRAWAL_FEE } from "@/util/constants";
+import { useQuery } from "@tanstack/react-query";
+import { getWithdrawalMaxFee } from "@/actions/get-withdrawal-max-fee";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -75,15 +76,24 @@ const Withdraw = () => {
     address: addresses.stacks?.address,
   });
 
+  const { data: maxFee } = useQuery({
+    queryKey: ["maxFee"],
+    queryFn: async () => {
+      return getWithdrawalMaxFee();
+    },
+    initialData: 8_000,
+  });
+
   const amountValidationSchema = useMemo(() => {
     const btcBalance = Number(satsBalance) / 1e8;
+    const fee = maxFee / 1e8;
     return yup.object().shape({
       amount: yup
         .number()
         .min(0)
         .max(
-          btcBalance - MAX_WITHDRAWAL_FEE / 1e8,
-          `The withdrawal + max fees amount exceeds your current balance of ${btcBalance.toLocaleString(
+          btcBalance - fee,
+          `The withdrawal + max fees (${fee.toLocaleString(undefined, { maximumFractionDigits: 8 })}) amount exceeds your current balance of ${btcBalance.toLocaleString(
             undefined,
             {
               maximumFractionDigits: 8,
@@ -92,7 +102,7 @@ const Withdraw = () => {
         )
         .required(),
     });
-  }, [satsBalance]);
+  }, [maxFee, satsBalance]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
@@ -135,7 +145,7 @@ const Withdraw = () => {
     const satoshiAmount = Math.round(parseFloat(amount) * 1e8);
 
     // convert the fee to satoshis
-    const satoshiFee = Math.round(MAX_WITHDRAWAL_FEE);
+    const satoshiFee = Math.round(maxFee);
 
     const contractArgs = [
       Cl.uint(satoshiAmount),
