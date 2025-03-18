@@ -2,9 +2,10 @@
 import { fetchCallReadOnlyFunction, BufferCV } from "@stacks/transactions";
 import { getStacksNetwork } from "../util/get-stacks-network";
 import { env } from "@/env";
+import { hiroClient } from "./hiro-fetch";
 
 export async function getAggregateKey() {
-  const { WALLET_NETWORK, SBTC_CONTRACT_DEPLOYER, STACKS_API_URL } = env;
+  const { WALLET_NETWORK, SBTC_CONTRACT_DEPLOYER } = env;
   const network = getStacksNetwork(WALLET_NETWORK);
 
   const result = (await fetchCallReadOnlyFunction({
@@ -14,9 +15,7 @@ export async function getAggregateKey() {
     functionArgs: [],
     network: network,
     senderAddress: SBTC_CONTRACT_DEPLOYER!,
-    client: {
-      baseUrl: STACKS_API_URL,
-    },
+    client: hiroClient,
   })) as BufferCV;
 
   if (result.value.length < 66) {

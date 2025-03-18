@@ -8,6 +8,7 @@ import {
 } from "@stacks/transactions";
 
 import { getStacksNetwork } from "@/util/get-stacks-network";
+import { hiroClient } from "./hiro-fetch";
 export default async function getCurrentSbtcSupply() {
   const response = (await fetchCallReadOnlyFunction({
     contractAddress: env.SBTC_CONTRACT_DEPLOYER!,
@@ -16,9 +17,7 @@ export default async function getCurrentSbtcSupply() {
     functionArgs: [],
     network: getStacksNetwork(env.WALLET_NETWORK),
     senderAddress: env.SBTC_CONTRACT_DEPLOYER!,
-    client: {
-      baseUrl: env.STACKS_API_URL,
-    },
+    client: hiroClient,
   })) as ResponseOkCV<UIntCV>;
 
   return response;

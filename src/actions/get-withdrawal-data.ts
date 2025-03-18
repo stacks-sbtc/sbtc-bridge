@@ -6,6 +6,7 @@ import { BufferCV, Cl, TupleCV, UIntCV } from "@stacks/transactions";
 import { encodeBitcoinAddress } from "@/util/decode-bitcoin-address";
 import { WithdrawalStatus } from "@/app/withdraw/[txid]/components/util";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
+import { hiroClient } from "./hiro-fetch";
 
 type contractCallData = {
   contract_id: string;
@@ -22,7 +23,9 @@ type FunctionArg = {
 };
 
 export async function getWithdrawalInfo(txid: string) {
-  const tx = await fetch(`${env.STACKS_API_URL}/extended/v1/tx/${txid}`);
+  const tx = await hiroClient.fetch(
+    `${hiroClient.baseUrl}/extended/v1/tx/${txid}`,
+  );
   const txData = await tx.json();
   const contractCall = txData.contract_call as contractCallData;
 
