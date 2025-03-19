@@ -10,6 +10,7 @@ import getBitcoinNetwork from "@/util/get-bitcoin-network";
 import { hiroClient } from "./hiro-fetch";
 
 import { getEmilyWithdrawal } from "./get-emily-withdrawal";
+import { getRegistryWithdrawal } from "./get-registry-withdrawal";
 
 type contractCallData = {
   contract_id: string;
@@ -34,7 +35,16 @@ export async function getWithdrawalInfo(txidOrRequestId: string): Promise<{
   const isRequestId = txidOrRequestId.length < 64;
 
   if (isRequestId) {
-    return await getEmilyWithdrawal(txidOrRequestId);
+    try {
+      return getEmilyWithdrawal(txidOrRequestId);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "error fetching emily withdrawal falling back to registry",
+        // e,
+      );
+      return getRegistryWithdrawal(txidOrRequestId);
+    }
   }
 
   const tx = await hiroClient.fetch(
