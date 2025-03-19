@@ -134,10 +134,16 @@ const Withdraw = () => {
       address,
       WALLET_NETWORK,
     );
-    const publicKey = addresses.stacks?.publicKey;
+    let publicKey = addresses.stacks?.publicKey;
 
     if (!publicKey) {
-      throw new Error("Invalid public key");
+      if (selectedWallet === WalletProvider.ASIGNA) {
+        // asigna only provides the stacks address
+        // this workaround works so why not
+        publicKey = "";
+      } else {
+        throw new Error("Invalid public key");
+      }
     }
 
     // convert the amount to satoshis
@@ -189,11 +195,13 @@ const Withdraw = () => {
       txHex: serializeTransaction(transaction),
       network: stacksNetwork,
     });
-
-    const broadcastResponse = await serverBroadcastTx({
-      txHex: signedTx,
-    });
-    const txId = broadcastResponse.txid;
+    let txId = signedTx;
+    if (selectedWallet !== WalletProvider.ASIGNA) {
+      const broadcastResponse = await serverBroadcastTx({
+        txHex: signedTx,
+      });
+      txId = broadcastResponse.txid;
+    }
     router.push(`/withdraw/${txId}`);
     // add tx to search query for the user to have a link to the tx
   };

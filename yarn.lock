@@ -728,19 +728,7 @@
     c32check "^2.0.0"
     lodash.clonedeep "^4.5.0"
 
-"@stacks/transactions@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.0.2.tgz#fe4a3ece5a779b65a1d7cbef9393f13dc7ec7f85"
-  integrity sha512-m2bvchqUeYv1ttXuC0EukW8UX4xBXTDcYb8bXmfI1RG89HXAvvCCgr5aiadU6zbutgoXvm8mquDt3nww0PO4Jg==
-  dependencies:
-    "@noble/hashes" "1.1.5"
-    "@noble/secp256k1" "1.7.1"
-    "@stacks/common" "^7.0.2"
-    "@stacks/network" "^7.0.2"
-    c32check "^2.0.0"
-    lodash.clonedeep "^4.5.0"
-
-"@stacks/transactions@^7.0.0", "@stacks/transactions@^7.0.5":
+"@stacks/transactions@7.0.5", "@stacks/transactions@^7.0.0", "@stacks/transactions@^7.0.5":
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.0.5.tgz#e8ddfe90395ab05316f93f86657fecb86e458e75"
   integrity sha512-mHsv7lUbZ5w4MKJ3NAirtdClIXLNKMqWIqT2rLjbIHzlYBqvZaELJSYD+km6E7Cm9G3yUYszorhruQmSTgilbg==
