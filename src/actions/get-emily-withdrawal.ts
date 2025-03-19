@@ -43,8 +43,9 @@ export async function getEmilyWithdrawal(requestId: string) {
   if (!withdrawal.ok) {
     throw new Error(`Failed to fetch withdrawal data: ${withdrawal.status}`);
   }
-  const { status, amount, recipient } =
-    (await withdrawal.json()) as EmilyWithdrawal;
+  const data = await withdrawal.json();
+
+  const { status, amount, recipient, fulfillment } = data as EmilyWithdrawal;
   const bitcoinNetwork = getBitcoinNetwork(env.WALLET_NETWORK);
   return {
     address: bitcoin.address.fromOutputScript(
@@ -54,5 +55,7 @@ export async function getEmilyWithdrawal(requestId: string) {
     amount: amount,
     status: WithdrawalStatus[status as WithdrawalStatus],
     requestId,
+    stacksTx: fulfillment?.StacksTxid,
+    bitcoinTx: fulfillment?.BitcoinTxid,
   };
 }

@@ -31,6 +31,8 @@ export async function getWithdrawalInfo(txidOrRequestId: string): Promise<{
   address: string;
   requestId: string | null;
   amount: number;
+  stacksTx?: string;
+  bitcoinTx?: string;
 }> {
   const isRequestId = txidOrRequestId.length < 64;
 
