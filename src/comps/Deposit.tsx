@@ -46,6 +46,8 @@ import getBtcBalance from "@/actions/get-btc-balance";
 import { useDepositStatus } from "@/hooks/use-deposit-status";
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
 import { sendBTCFordefi } from "../util/wallet-utils/src/sendBTC";
+import { getExplorerUrl } from "@/lib/get-explorer-url";
+import { getStacksNetwork } from "@/util/get-stacks-network";
 
 /*
   deposit flow has 3 steps
@@ -558,9 +560,7 @@ const DepositFlowReview = ({ txId }: DepositFlowReviewProps) => {
           <div className="w-full flex-row flex justify-between items-center">
             <a
               className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-              href={`https://explorer.hiro.so/txid/${stacksTxId}?chain=${
-                walletNetwork === "mainnet" ? "mainnet" : "testnet"
-              }`}
+              href={getExplorerUrl(stacksTxId, getStacksNetwork(walletNetwork))}
               target="_blank"
               rel="noreferrer"
             >
