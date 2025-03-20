@@ -12,7 +12,6 @@ import LandingAnimation from "@/comps/core/LandingAnimation";
 import { useQuery } from "@tanstack/react-query";
 import { getWithdrawalInfo } from "@/actions/get-withdrawal-data";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { getExplorerUrl } from "@/lib/get-explorer-url";
 import { getStacksNetwork } from "@/util/get-stacks-network";
 
@@ -46,7 +45,7 @@ function Content(initialData: Props) {
   const { txid } = initialData;
 
   const {
-    data: { address, amount, status, requestId, stacksTx, bitcoinTx },
+    data: { address, amount, status, stacksTx, bitcoinTx },
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
@@ -73,19 +72,6 @@ function Content(initialData: Props) {
     },
   });
 
-  const router = useRouter();
-
-  useEffect(() => {
-    // if the route is request id format do nothing
-    if (txid.length < 64) {
-      return;
-    }
-
-    // if it is a tx id and we have a request id navigate to request id
-    if (requestId) {
-      router.push(`/withdraw/${requestId}`);
-    }
-  }, [requestId, router, txid.length]);
   const stepper = useStepper();
 
   useEffect(() => {
