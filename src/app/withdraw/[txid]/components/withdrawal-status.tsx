@@ -45,7 +45,7 @@ function Content(initialData: Props) {
   const { txid } = initialData;
 
   const {
-    data: { address, amount, status, stacksTx, bitcoinTx },
+    data: { address, amount, status, bitcoinTx },
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
@@ -123,19 +123,18 @@ function Content(initialData: Props) {
       </div>
 
       <div className="w-full flex-row flex justify-between items-center">
-        {stacksTx && (
-          <a
-            className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-            href={getExplorerUrl(
-              stacksTx,
-              getStacksNetwork(bridgeConfig.WALLET_NETWORK),
-            )}
-            target="_blank"
-            rel="noreferrer"
-          >
-            View stacks tx
-          </a>
-        )}
+        <a
+          className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
+          href={getExplorerUrl(
+            txid,
+            getStacksNetwork(bridgeConfig.WALLET_NETWORK),
+          )}
+          target="_blank"
+          rel="noreferrer"
+        >
+          View stacks tx
+        </a>
+
         {bitcoinTx && (
           <a
             className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
