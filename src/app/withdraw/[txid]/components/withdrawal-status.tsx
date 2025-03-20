@@ -12,6 +12,8 @@ import LandingAnimation from "@/comps/core/LandingAnimation";
 import { useQuery } from "@tanstack/react-query";
 import { getWithdrawalInfo } from "@/actions/get-withdrawal-data";
 import { useEffect } from "react";
+import { getExplorerUrl } from "@/lib/get-explorer-url";
+import { getStacksNetwork } from "@/util/get-stacks-network";
 
 const { useStepper, Scoped } = withdrawalStepper;
 type Props = {
@@ -19,6 +21,8 @@ type Props = {
   recipient: string;
   txid: string;
   status: WithdrawalStatus;
+  stacksTx?: string;
+  bitcoinTx?: string;
 };
 export default function TrackWithdrawalStatus(props: Props) {
   return (
@@ -39,8 +43,9 @@ export default function TrackWithdrawalStatus(props: Props) {
 
 function Content(initialData: Props) {
   const { txid } = initialData;
+
   const {
-    data: { address, amount, status },
+    data: { address, amount, status, bitcoinTx },
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
@@ -51,6 +56,9 @@ function Content(initialData: Props) {
       status: initialData.status,
       address: initialData.recipient,
       amount: initialData.btcAmount,
+      stacksTx: initialData.stacksTx,
+      bitcoinTx: initialData.bitcoinTx,
+      requestId: null,
     },
     refetchInterval: ({ state }) => {
       const status = state.data?.status;
@@ -63,6 +71,7 @@ function Content(initialData: Props) {
       return 5000;
     },
   });
+
   const stepper = useStepper();
 
   useEffect(() => {
@@ -113,20 +122,30 @@ function Content(initialData: Props) {
         <WithdrawalStepper status={status} txId={txid} />
       </div>
 
-      {txid && (
-        <div className="w-full flex-row flex justify-between items-center">
+      <div className="w-full flex-row flex justify-between items-center">
+        <a
+          className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
+          href={getExplorerUrl(
+            txid,
+            getStacksNetwork(bridgeConfig.WALLET_NETWORK),
+          )}
+          target="_blank"
+          rel="noreferrer"
+        >
+          View stacks tx
+        </a>
+
+        {bitcoinTx && (
           <a
             className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-            href={`https://explorer.hiro.so/txid/${txid}?chain=${
-              bridgeConfig.WALLET_NETWORK === "mainnet" ? "mainnet" : "testnet"
-            }`}
+            href={`${bridgeConfig.PUBLIC_MEMPOOL_URL}/tx/${bitcoinTx}`}
             target="_blank"
             rel="noreferrer"
           >
-            View stacks tx
+            View bitcoin tx
           </a>
-        </div>
-      )}
+        )}
+      </div>
     </FlowContainer>
   );
 }

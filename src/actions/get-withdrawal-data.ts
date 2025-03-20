@@ -6,7 +6,11 @@ import { BufferCV, Cl, TupleCV, UIntCV } from "@stacks/transactions";
 import { encodeBitcoinAddress } from "@/util/decode-bitcoin-address";
 import { WithdrawalStatus } from "@/app/withdraw/[txid]/components/util";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
+
 import { hiroClient } from "./hiro-fetch";
+
+import { getEmilyWithdrawal } from "./get-emily-withdrawal";
+import { getRegistryWithdrawal } from "./get-registry-withdrawal";
 
 type contractCallData = {
   contract_id: string;
@@ -22,9 +26,31 @@ type FunctionArg = {
   type: string;
 };
 
-export async function getWithdrawalInfo(txid: string) {
+export async function getWithdrawalInfo(txidOrRequestId: string): Promise<{
+  status: WithdrawalStatus;
+  address: string;
+  requestId: string | null;
+  amount: number;
+  stacksTx?: string;
+  bitcoinTx?: string;
+}> {
+  const isRequestId = txidOrRequestId.length < 64;
+
+  if (isRequestId) {
+    try {
+      return getEmilyWithdrawal(txidOrRequestId);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "error fetching emily withdrawal falling back to registry",
+        // e,
+      );
+      return getRegistryWithdrawal(txidOrRequestId);
+    }
+  }
+
   const tx = await hiroClient.fetch(
-    `${hiroClient.baseUrl}/extended/v1/tx/${txid}`,
+    `${hiroClient.baseUrl}/extended/v1/tx/${txidOrRequestId}`,
   );
   const txData = await tx.json();
   const contractCall = txData.contract_call as contractCallData;
@@ -47,6 +73,7 @@ export async function getWithdrawalInfo(txid: string) {
   let data = {
     address,
     amount: Number(amount),
+    requestId: null as string | null,
   };
   let status: WithdrawalStatus = WithdrawalStatus.pending;
   if (txData.tx_status === "success") {
@@ -60,13 +87,7 @@ export async function getWithdrawalInfo(txid: string) {
     const requestId = printEventDeserialized.value["request-id"]
       .value as bigint;
 
-    const withdrawal = await fetch(`${env.EMILY_URL}/withdrawal/${requestId}`);
-
-    if (!withdrawal.ok) {
-      throw new Error(`Failed to fetch withdrawal data: ${withdrawal.status}`);
-    }
-    const withdrawalData = await withdrawal.json();
-    status = WithdrawalStatus[withdrawalData.status as WithdrawalStatus];
+    return await getEmilyWithdrawal(String(requestId));
   } else if (txData.tx_status !== "pending") {
     status = WithdrawalStatus.failed;
   }

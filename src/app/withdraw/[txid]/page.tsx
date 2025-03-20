@@ -17,6 +17,8 @@ export default async function WithdrawalStatusPage({
       <TrackWithdrawalStatus
         status={result.status}
         txid={txid}
+        stacksTx={result.stacksTx}
+        bitcoinTx={result.bitcoinTx}
         btcAmount={result.amount}
         recipient={result.address}
       />

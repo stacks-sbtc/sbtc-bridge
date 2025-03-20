@@ -6,6 +6,8 @@ import Image from "next/image";
 import { hexToBytes } from "@stacks/common";
 import { BridgeConfig } from "@/util/atoms";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
+import { getExplorerUrl } from "@/lib/get-explorer-url";
+import { getStacksNetwork } from "@/util/get-stacks-network";
 
 const contracts = [
   {
@@ -122,7 +124,10 @@ export default function Footer({ config }: { config: BridgeConfig }) {
               <li className="mb-1" key={contract.id}>
                 <a
                   key={contract.id}
-                  href={`https://explorer.hiro.so/txid/${config.SBTC_CONTRACT_DEPLOYER}.${contract.id}?chain=${config.WALLET_NETWORK === "mainnet" ? "mainnet" : "testnet"}`}
+                  href={getExplorerUrl(
+                    `${config.SBTC_CONTRACT_DEPLOYER}.${contract.id}`,
+                    getStacksNetwork(config.WALLET_NETWORK),
+                  )}
                   target="_blank"
                   rel="noreferrer"
                   className="text-black font-light text-sm"
