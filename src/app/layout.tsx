@@ -3,6 +3,11 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+// globally init ecc lib for server
+import * as bitcoin from "bitcoinjs-lib";
+import ecc from "@bitcoinerlab/secp256k1";
+bitcoin.initEccLib(ecc);
+
 const matter = localFont({
   src: "../../public/fonts/Matter-Regular.ttf",
   display: "swap",

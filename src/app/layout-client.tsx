@@ -9,6 +9,11 @@ import { queryClient } from "@/query/client";
 import { useEffect } from "react";
 import { bridgeConfigAtom } from "@/util/atoms";
 import { AsignaSignActionModals } from "@asigna/btc-connect";
+import * as bitcoin from "bitcoinjs-lib";
+
+// globally init ecc lib for client
+import ecc from "@bitcoinerlab/secp256k1";
+bitcoin.initEccLib(ecc);
 
 export default function LayoutClient({
   children,

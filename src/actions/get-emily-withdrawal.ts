@@ -2,12 +2,9 @@
 
 import { env } from "@/env";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
-import * as bitcoin from "bitcoinjs-lib";
 import { hexToBytes } from "@stacks/common";
-import ecc from "@bitcoinerlab/secp256k1";
+import * as bitcoin from "bitcoinjs-lib";
 import { WithdrawalStatus } from "@/app/withdraw/[txid]/components/util";
-
-bitcoin.initEccLib(ecc);
 
 type EmilyWithdrawal = {
   requestId: number;
