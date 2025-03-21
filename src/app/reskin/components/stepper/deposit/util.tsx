@@ -4,7 +4,7 @@ import { StatusDescription } from "./status";
 
 function AddressDescription({}) {
   return (
-    <span className="opacity-60">
+    <span className="md:opacity-60 px-4 md:px-0">
       sBTC will be sent to a STX address. Connecting a wallet will auto-fill
       this in, but feel free to submit another address.
     </span>
@@ -25,7 +25,11 @@ export const depositStepper = defineStepper(
   {
     id: "confirm",
     title: "Confirm Deposit",
-    description: () => "Confirm your deposit details and proceed.",
+    description: () => (
+      <span className="md:opacity-60 px-4 md:px-0">
+        Confirm your deposit details and proceed.
+      </span>
+    ),
   },
   {
     id: "status",

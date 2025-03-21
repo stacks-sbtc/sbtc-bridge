@@ -112,16 +112,17 @@ export const DepositForm = () => {
       }}
     >
       {({ errors, touched, isValid, values, submitForm, getFieldMeta }) => (
-        <Form className="flex flex-col justify-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl min-h-full">
-          <div className="flex flex-col gap-2 flex-1">
-            {(!isMobile || stepper.current.id !== "address") && (
+        <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1 self-stretch">
+          <div
+            className={`flex flex-col gap-2 flex-1 justify-center md:justify-normal w-full h-full`}
+          >
+            {(!isMobile ||
+              stepper.current.id === "amount" ||
+              stepper.current.id === "confirm" ||
+              stepper.current.id === "status") && (
               <AmountInput
                 value={`${values.amount} BTC`}
-                isReadonly={stepper.when(
-                  "amount",
-                  () => false,
-                  () => true,
-                )}
+                isReadonly={stepper.current.id !== "amount"}
                 onClickEdit={() => handleEdit("amount")}
                 onPressEnter={() => {
                   return touched.amount && handleEnter(errors.amount);
@@ -130,14 +131,12 @@ export const DepositForm = () => {
               />
             )}
 
-            {stepper.current.id !== "amount" && (
+            {(stepper.current.id === "address" ||
+              stepper.current.id === "confirm" ||
+              stepper.current.id === "status") && (
               <AddressInput
                 value={values.address}
-                isReadonly={stepper.when(
-                  "address",
-                  () => false,
-                  () => true,
-                )}
+                isReadonly={stepper.current.id !== "address"}
                 onPressEnter={() => handleEnter(errors.address)}
                 onClickEdit={() => handleEdit("address")}
                 error={touched.address && errors.address}
