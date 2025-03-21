@@ -9,16 +9,19 @@ export const AmountInput = ({
   value,
   error,
   onPressEnter,
+  isEditable,
 }: {
   isReadonly: boolean;
   onClickEdit: () => void;
   value: string;
   error?: string | boolean;
   onPressEnter?: () => void;
+  isEditable: boolean;
 }) => {
   return (
     <InputContainer
       isReadonly={isReadonly}
+      isEditable={isEditable}
       onClickEdit={onClickEdit}
       title="Selected Deposit Amount"
       value={value}

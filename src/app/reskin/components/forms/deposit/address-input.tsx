@@ -9,17 +9,20 @@ export const AddressInput = ({
   value,
   error,
   onPressEnter,
+  isEditable,
 }: {
   isReadonly: boolean;
   onClickEdit: () => void;
   value: string;
   error?: string | boolean;
   onPressEnter?: () => void;
+  isEditable: boolean;
 }) => {
   return (
     <InputContainer
       isReadonly={isReadonly}
       onClickEdit={onClickEdit}
+      isEditable={isEditable}
       title="Selected Deposit Address"
       value={value}
     >

@@ -17,7 +17,7 @@ export const FormButton = ({
 }) => {
   return (
     <button
-      className={`flex items-center justify-center h-16 rounded-lg text-black text-xl uppercase disabled:cursor-not-allowed transition-all ${
+      className={`font-matter-mono flex items-center justify-center h-16 rounded-lg text-black text-xl uppercase disabled:cursor-not-allowed transition-all ${
         className || ""
       } ${
         variant === "primary"

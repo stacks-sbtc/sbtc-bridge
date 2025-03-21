@@ -15,6 +15,8 @@ import { AmountInput } from "./amount-input";
 import { testStxAddress } from "@/util/yup/test-stx-address";
 import { AddressInput } from "./address-input";
 import { useIsMobile } from "@/hooks/use-is-mobile";
+import { useRouter } from "next/navigation";
+import { elide } from "@/util";
 
 const { useStepper, utils } = depositStepper;
 
@@ -23,6 +25,7 @@ export const DepositForm = () => {
   const maxDepositAmount = (currentCap || 1e8) / 1e8;
   const minDepositAmount = (perDepositMinimum || 10_000) / 1e8;
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
+  const router = useRouter();
 
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
@@ -68,12 +71,17 @@ export const DepositForm = () => {
   };
   const stepper = useStepper();
   const handleEdit = (fieldName: keyof Values) => {
-    stepper.goTo(fieldName);
+    if (stepper.current.id !== "status") {
+      stepper.goTo(fieldName);
+    }
   };
 
   const handleNextClick = () => {
     if (!stepper.isLast) {
       stepper.next();
+    } else {
+      // FIXME: need to change when reskin is released
+      router.push(`/reskin/history`);
     }
     if (utils.getNext(stepper.current.id).id === "confirm") {
       nextButtonRef.current?.focus();
@@ -112,7 +120,7 @@ export const DepositForm = () => {
       }}
     >
       {({ errors, touched, isValid, values, submitForm, getFieldMeta }) => (
-        <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1 self-stretch">
+        <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
           <div
             className={`flex flex-col gap-2 flex-1 justify-center md:justify-normal w-full h-full`}
           >
@@ -124,6 +132,7 @@ export const DepositForm = () => {
                 value={`${values.amount} BTC`}
                 isReadonly={stepper.current.id !== "amount"}
                 onClickEdit={() => handleEdit("amount")}
+                isEditable={stepper.current.id !== "status"}
                 onPressEnter={() => {
                   return touched.amount && handleEnter(errors.amount);
                 }}
@@ -135,8 +144,9 @@ export const DepositForm = () => {
               stepper.current.id === "confirm" ||
               stepper.current.id === "status") && (
               <AddressInput
-                value={values.address}
+                value={elide(values.address, isMobile ? 20 : 8)}
                 isReadonly={stepper.current.id !== "address"}
+                isEditable={stepper.current.id !== "status"}
                 onPressEnter={() => handleEnter(errors.address)}
                 onClickEdit={() => handleEdit("address")}
                 error={touched.address && errors.address}
@@ -158,9 +168,16 @@ export const DepositForm = () => {
 
             <FormButton
               buttonRef={nextButtonRef}
-              onClick={handleNextClick}
+              onClick={
+                stepper.current.id === "confirm"
+                  ? async () => {
+                      await submitForm();
+                      handleNextClick();
+                    }
+                  : handleNextClick
+              }
               disabled={!!getFieldMeta(stepper.current.id).error && !isValid}
-              type={stepper.isLast ? "submit" : "button"}
+              type="button"
               className="flex-1 md:flex-[8]"
             >
               {stepper.switch({

@@ -24,9 +24,9 @@ function HyperLink({
 
 function TxPendingStatus() {
   return (
-    <div className="flex flex-col items-center justify-center mt-4">
+    <div className="flex flex-col items-center justify-center mt-4 h-28">
       <LoadingIndicator />
-      <div className="h-8 flex items-center text-xl leading-normal tracking-[-0.02em] text-center text-reskin-dark-gray dark:text-midGray uppercase mt-2">
+      <div className="h-8 flex items-center text-xl leading-normal tracking-[-0.02em] text-center text-reskin-dark-gray dark:text-midGray uppercase mt-2 font-matter-mono">
         Processing
       </div>
       <div>
@@ -42,9 +42,9 @@ function TxPendingStatus() {
 
 function TxCompleteStatus() {
   return (
-    <div className="flex flex-col items-center justify-center mt-4">
+    <div className="flex flex-col items-center justify-center mt-4 h-28">
       <CheckCircleIcon className="h-8 w-8 text-green-500 dark:text-green-700" />
-      <div className="h-8 flex items-center text-xl leading-normal tracking-[-0.02em] text-center text-reskin-dark-gray dark:text-midGray uppercase mt-2">
+      <div className="h-8 flex items-center text-xl leading-normal tracking-[-0.02em] text-center text-reskin-dark-gray dark:text-midGray uppercase mt-2 font-matter-mono">
         Completed
       </div>
       <div>
