@@ -1,19 +1,29 @@
+"use client";
 import getSbtcTotalBalance from "@/actions/get-sbtc-balance";
-import { bridgeConfigAtom } from "@/util/atoms";
 import { useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
 
 export function useSBTCBalance({ address }: { address?: string }) {
-  const { SBTC_CONTRACT_DEPLOYER, WALLET_NETWORK } =
-    useAtomValue(bridgeConfigAtom);
-  return useQuery({
+  const [isEnabled, setIsEnabled] = useState(false);
+  const query = useQuery({
     queryKey: ["sbtc-balance", address],
     queryFn: async () => {
-      return await getSbtcTotalBalance({
+      const data = await getSbtcTotalBalance({
         address: address!,
       });
+      return data;
     },
     initialData: 0,
-    enabled: !!address && !!SBTC_CONTRACT_DEPLOYER && !!WALLET_NETWORK,
+    enabled: isEnabled,
   });
+
+  useEffect(() => {
+    setIsEnabled(!!address);
+
+    // actions are mutations that are not expected to run
+    // at initial render that's why this workaround exists
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address]);
+
+  return query;
 }

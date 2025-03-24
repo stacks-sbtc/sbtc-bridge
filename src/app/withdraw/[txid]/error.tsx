@@ -24,7 +24,7 @@ export default function WithdrawalStatusPage({
 
   return (
     config && (
-      <OldLayoutClient config={config}>
+      <OldLayoutClient config={config} footer={null}>
         <LandingAnimation>
           <div className="w-screen flex"></div>
           <FlowContainer>

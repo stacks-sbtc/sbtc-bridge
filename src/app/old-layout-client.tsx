@@ -3,15 +3,16 @@
 import { BridgeConfig } from "@/util/atoms";
 
 import Header from "@/comps/Header";
-import Footer from "@/comps/footer";
 
 import LayoutClient from "./layout-client";
 
 export default function OldLayoutClient({
   children,
   config,
+  footer,
 }: Readonly<{
   children: React.ReactNode;
+  footer: React.ReactNode;
   config: BridgeConfig;
 }>) {
   return (
@@ -28,7 +29,7 @@ export default function OldLayoutClient({
         >
           FAQs
         </a>
-        <Footer config={config} />
+        {footer}
       </main>
     </LayoutClient>
   );

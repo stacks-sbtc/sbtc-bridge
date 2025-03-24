@@ -1,6 +1,7 @@
 import getSbtcBridgeConfig from "@/actions/get-sbtc-bridge-config";
 import { ChatBubbleLeftIcon } from "@heroicons/react/20/solid";
 import OldLayoutClient from "./old-layout-client";
+import Footer from "@/comps/footer";
 
 export default async function OldLayout({
   children,
@@ -10,7 +11,12 @@ export default async function OldLayout({
   const sBTCBridgeConfig = await getSbtcBridgeConfig();
   return (
     <>
-      <OldLayoutClient config={sBTCBridgeConfig}>{children}</OldLayoutClient>
+      <OldLayoutClient
+        footer={<Footer config={sBTCBridgeConfig} />}
+        config={sBTCBridgeConfig}
+      >
+        {children}
+      </OldLayoutClient>
       {sBTCBridgeConfig.SUPPORT_LINK && (
         <a
           href={sBTCBridgeConfig.SUPPORT_LINK}
