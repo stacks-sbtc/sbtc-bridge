@@ -35,13 +35,21 @@ const contracts = [
 export default async function Footer({ config }: { config: BridgeConfig }) {
   const network = getBitcoinNetwork(config.WALLET_NETWORK);
   const { SUPPORT_LINK: supportLink } = config;
-  const response = await getAggregateKey();
+  let aggregateAddress = "";
 
-  const p2tr = payments.p2tr({
-    internalPubkey: hexToBytes(response.slice(2)),
-    network,
-  });
-  const aggregateAddress = p2tr.address;
+  try {
+    const response = await getAggregateKey();
+
+    const p2tr = payments.p2tr({
+      internalPubkey: hexToBytes(response.slice(2)),
+      network,
+    });
+    aggregateAddress = p2tr.address!;
+  } catch (error) {
+    // expected log
+    // eslint-disable-next-line no-console
+    console.warn("Error generating aggregate address:", error);
+  }
 
   return (
     <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-white font-Matter">
@@ -98,15 +106,17 @@ export default async function Footer({ config }: { config: BridgeConfig }) {
           >
             Github
           </a>
-          <a
-            key="pot"
-            href={`${config.PUBLIC_MEMPOOL_URL}/address/${aggregateAddress}`}
-            target="_blank"
-            rel="noreferrer"
-            className="text-black font-light text-sm"
-          >
-            BTC aggregate address
-          </a>
+          {aggregateAddress && (
+            <a
+              key="pot"
+              href={`${config.PUBLIC_MEMPOOL_URL}/address/${aggregateAddress}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-black font-light text-sm"
+            >
+              BTC aggregate address
+            </a>
+          )}
         </div>
       </div>
       <div className="px-4 text-black w-full max-w-[1200px] mt-8 flex justify-between">
