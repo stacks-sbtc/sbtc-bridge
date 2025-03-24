@@ -76,7 +76,11 @@ const Withdraw = () => {
     address: addresses.stacks?.address,
   });
 
-  const { data: maxFee } = useQuery({
+  const {
+    data: maxFee,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: ["maxFee"],
     queryFn: async () => {
       return getWithdrawalMaxFee();
@@ -223,6 +227,9 @@ const Withdraw = () => {
       {stepper.switch({
         amount: () => (
           <WithdrawFlowAmount
+            isFailed={isError}
+            isLoading={isLoading}
+            maxFee={maxFee}
             validationSchema={amountValidationSchema as any}
             handleSubmit={(value) => {
               setFieldValue("amount", value);
