@@ -10,8 +10,10 @@ import LayoutClient from "./layout-client";
 export default function OldLayoutClient({
   children,
   config,
+  footer,
 }: Readonly<{
   children: React.ReactNode;
+  footer: React.ReactNode;
   config: BridgeConfig;
 }>) {
   return (
@@ -28,7 +30,7 @@ export default function OldLayoutClient({
         >
           FAQs
         </a>
-        <Footer config={config} />
+        {footer}
       </main>
     </LayoutClient>
   );

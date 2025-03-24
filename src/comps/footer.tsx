@@ -1,6 +1,6 @@
-"use client";
+"use server";
 import { getAggregateKey } from "@/actions/get-aggregate-key";
-import { useQuery } from "@tanstack/react-query";
+
 import { payments } from "bitcoinjs-lib";
 import Image from "next/image";
 import { hexToBytes } from "@stacks/common";
@@ -32,21 +32,17 @@ const contracts = [
   },
 ];
 
-export default function Footer({ config }: { config: BridgeConfig }) {
+export default async function Footer({ config }: { config: BridgeConfig }) {
   const network = getBitcoinNetwork(config.WALLET_NETWORK);
   const { SUPPORT_LINK: supportLink } = config;
-  const { data: aggregateAddress } = useQuery({
-    queryKey: ["aggregateAddress"],
-    queryFn: async () => {
-      const response = await getAggregateKey();
+  const response = await getAggregateKey();
 
-      const p2tr = payments.p2tr({
-        internalPubkey: hexToBytes(response.slice(2)),
-        network,
-      });
-      return p2tr.address;
-    },
+  const p2tr = payments.p2tr({
+    internalPubkey: hexToBytes(response.slice(2)),
+    network,
   });
+  const aggregateAddress = p2tr.address;
+
   return (
     <footer className="w-full flex flex-col items-center justify-center py-10 px-4 bg-white font-Matter">
       <div
