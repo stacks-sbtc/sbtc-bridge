@@ -26,16 +26,6 @@ const nextConfig = {
           ]
         : [];
 
-    redirects = !process.env.FEATURE_FLAGS?.includes("withdrawals")
-      ? [
-          ...redirects,
-          {
-            source: "/withdraw",
-            destination: "/",
-            permanent: false,
-          },
-        ]
-      : redirects;
     redirects = !process.env.FEATURE_FLAGS?.includes("reskin")
       ? [
           ...redirects,
