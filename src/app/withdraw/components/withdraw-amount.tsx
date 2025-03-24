@@ -7,11 +7,15 @@ export const WithdrawFlowAmount = ({
   handleSubmit,
   maxFee,
   disabled,
+  isFailed,
+  isLoading,
 }: {
   validationSchema: Schema;
   handleSubmit: (value: any) => void;
-  maxFee: number;
+  maxFee?: number;
   disabled?: boolean;
+  isLoading: boolean;
+  isFailed: boolean;
 }) => {
   return (
     <>
@@ -19,11 +23,19 @@ export const WithdrawFlowAmount = ({
         <Heading>Withdraw</Heading>
       </div>
       <SubText>Convert sBTC into BTC</SubText>
-      <SubText>
-        Note: An additional {Math.ceil(maxFee / 1000)}K sats will be reserved to
-        cover Bitcoin transaction fees. Any remaining amount will be
-        automatically refunded to your Stacks account as change.{" "}
-      </SubText>
+      {maxFee && (
+        <SubText>
+          Note: An additional {Math.ceil(maxFee / 1000)}K sats will be reserved
+          to cover Bitcoin transaction fees. Any remaining amount will be
+          automatically refunded to your Stacks account as change.
+        </SubText>
+      )}
+      {isFailed && (
+        <SubText>
+          Withdrawals are down due to technical issues. Please try again later.
+        </SubText>
+      )}
+      {isLoading && <SubText>Loading...</SubText>}
       <FlowForm
         disabled={disabled}
         nameKey="amount"
