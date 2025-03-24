@@ -7,6 +7,21 @@ import { useState, useEffect } from "react";
 import { NavTabs } from "./components/tabs/nav-tabs";
 import { Footer } from "./components/footer";
 
+const tabs = [
+  {
+    label: "Deposit",
+    link: "/reskin",
+  },
+  {
+    label: "Withdraw",
+    link: "/reskin/withdraw",
+  },
+  {
+    label: "History",
+    link: "/reskin/history",
+  },
+];
+
 export default function LayoutClientReskin({
   children,
 }: Readonly<{
@@ -24,7 +39,7 @@ export default function LayoutClientReskin({
       <main className="flex flex-col items-center min-h-screen bg-white text-black dark:bg-reskin-dark-gray dark:text-white">
         <div className="flex flex-col w-full h-screen">
           <Header />
-          <NavTabs />
+          <NavTabs tabs={tabs} />
           {children}
           <Footer />
         </div>
