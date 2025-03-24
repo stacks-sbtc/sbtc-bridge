@@ -223,6 +223,7 @@ const Withdraw = () => {
       {stepper.switch({
         amount: () => (
           <WithdrawFlowAmount
+            maxFee={maxFee!}
             validationSchema={amountValidationSchema as any}
             handleSubmit={(value) => {
               setFieldValue("amount", value);

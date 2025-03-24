@@ -5,10 +5,12 @@ import { Schema } from "yup";
 export const WithdrawFlowAmount = ({
   validationSchema,
   handleSubmit,
+  maxFee,
   disabled,
 }: {
   validationSchema: Schema;
   handleSubmit: (value: any) => void;
+  maxFee: number;
   disabled?: boolean;
 }) => {
   return (
@@ -18,9 +20,9 @@ export const WithdrawFlowAmount = ({
       </div>
       <SubText>Convert sBTC into BTC</SubText>
       <SubText>
-        Note: An additional 80K sats will be reserved to cover Bitcoin
-        transaction fees. Any remaining amount will be automatically refunded to
-        your Stacks account as change.{" "}
+        Note: An additional {Math.ceil(maxFee / 1000)}K sats will be reserved to
+        cover Bitcoin transaction fees. Any remaining amount will be
+        automatically refunded to your Stacks account as change.{" "}
       </SubText>
       <FlowForm
         disabled={disabled}
