@@ -3,7 +3,6 @@
 import { BridgeConfig } from "@/util/atoms";
 
 import Header from "@/comps/Header";
-import Footer from "@/comps/footer";
 
 import LayoutClient from "./layout-client";
 
