@@ -9,7 +9,9 @@ type FlowFormProps = {
   nameKey: string;
   placeholder: string;
   initialValue?: string;
-  handleSubmit: (value: string | undefined) => void;
+  handleSubmit: (
+    value: string | undefined,
+  ) => Promise<void | undefined | string> | void;
   type?: "text" | "number";
   children?: React.ReactNode;
   validationSchema?: YupSchema;
@@ -62,8 +64,12 @@ export const FlowForm = ({
     initialValues: {
       [nameKey]: initialValue,
     },
-    onSubmit: (values) => {
-      handleSubmit(values[nameKey]);
+    onSubmit: async (values) => {
+      const error = await handleSubmit(values[nameKey]);
+      if (error && typeof error === "string") {
+        await formik.setFieldTouched(nameKey, true, true);
+        formik.setErrors({ [nameKey]: error });
+      }
     },
     validationSchema,
   });
@@ -80,6 +86,7 @@ export const FlowForm = ({
           placeholder={placeholder}
           value={formik.values[nameKey]}
           onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           disabled={disabled}
           className={`w-full py-2 border-b-2 bg-transparent text-xl text-black focus:outline-none placeholder-gray-300 ${
             formik.isValid ? "border-orange" : "border-red-300"

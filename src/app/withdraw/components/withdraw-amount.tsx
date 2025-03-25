@@ -11,7 +11,7 @@ export const WithdrawFlowAmount = ({
   isLoading,
 }: {
   validationSchema: Schema;
-  handleSubmit: (value: any) => void;
+  handleSubmit: (value: any) => Promise<undefined | string>;
   maxFee?: number;
   disabled?: boolean;
   isLoading: boolean;
