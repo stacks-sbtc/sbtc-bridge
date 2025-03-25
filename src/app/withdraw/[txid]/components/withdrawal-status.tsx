@@ -14,6 +14,7 @@ import { getWithdrawalInfo } from "@/actions/get-withdrawal-data";
 import { useEffect } from "react";
 import { getExplorerUrl } from "@/lib/get-explorer-url";
 import { getStacksNetwork } from "@/util/get-stacks-network";
+import { queryClient } from "@/query/client";
 
 const { useStepper, Scoped } = withdrawalStepper;
 type Props = {
@@ -85,6 +86,15 @@ function Content(initialData: Props) {
       stepper.goTo("completed");
     }
   }, [stepper, status]);
+
+  useEffect(() => {
+    if (
+      status === WithdrawalStatus.confirmed ||
+      status === WithdrawalStatus.failed
+    ) {
+      queryClient.invalidateQueries({ queryKey: ["sbtc-balance"] });
+    }
+  }, [status]);
 
   const bridgeConfig = useAtomValue(bridgeConfigAtom);
   return (
