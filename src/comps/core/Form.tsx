@@ -66,13 +66,9 @@ export const FlowForm = ({
     },
     onSubmit: async (values) => {
       const error = await handleSubmit(values[nameKey]);
-      try {
-        if (error && typeof error === "string") {
-          await formik.setFieldTouched(nameKey, true, true);
-          throw new Error(error);
-        }
-      } catch (e: any) {
-        formik.setErrors({ [nameKey]: e.message });
+      if (error && typeof error === "string") {
+        await formik.setFieldTouched(nameKey, true, true);
+        formik.setErrors({ [nameKey]: error });
       }
     },
     validationSchema,
