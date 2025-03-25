@@ -3,15 +3,19 @@ import getEmilyLimits from "@/actions/get-emily-limits";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 
+export function useEmilyLimits() {
+  return useQuery({
+    queryKey: ["deposit-max-fee"],
+    queryFn: () => getEmilyLimits(),
+  });
+}
+
 export default function useMintCaps() {
   const {
     data: emilyLimitsData,
     isFetching: isLoadingEmilyLimits,
     refetch: refetchEmilyLimits,
-  } = useQuery({
-    queryKey: ["deposit-max-fee"],
-    queryFn: () => getEmilyLimits(),
-  });
+  } = useEmilyLimits();
   const {
     data: sbtcSupplyData,
     refetch: refetchSbtcSupply,

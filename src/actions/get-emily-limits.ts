@@ -7,6 +7,8 @@ type EmilyLimits = {
   perWithdrawalCap: null | number;
   accountCaps: AccountCaps;
   perDepositMinimum: null | number;
+  rollingWithdrawalBlocks: number | null;
+  rollingWithdrawalCap: number | null;
 };
 
 type AccountCaps = {};
@@ -27,7 +29,10 @@ export default async function getEmilyLimits() {
     // if null, it means unlimited
     pegCap: json.pegCap || Infinity,
     perDepositCap: json.perDepositCap || Infinity,
-    perWithdrawalCap: json.perWithdrawalCap || Infinity,
+    perWithdrawalCap:
+      json.perWithdrawalCap === null ? Infinity : json.perWithdrawalCap,
     perDepositMinimum: json.perDepositMinimum || 0,
+    rollingWithdrawalBlocks: json.rollingWithdrawalBlocks || 144,
+    rollingWithdrawalCap: json.rollingWithdrawalCap || 0,
   };
 }
