@@ -13,6 +13,9 @@ type EmilyLimits = {
 
 type AccountCaps = {};
 
+const defaultTo = <T>(value: T | null, defaultValue: T): T =>
+  value ?? defaultValue;
+
 export default async function getEmilyLimits() {
   const res = await fetch(`${env.EMILY_URL}/limits`);
   if (!res.ok) {
@@ -26,13 +29,11 @@ export default async function getEmilyLimits() {
   const json = (await res.json()) as EmilyLimits;
   // exclude account caps
   return {
-    // if null, it means unlimited
-    pegCap: json.pegCap || Infinity,
-    perDepositCap: json.perDepositCap || Infinity,
-    perWithdrawalCap:
-      json.perWithdrawalCap === null ? Infinity : json.perWithdrawalCap,
-    perDepositMinimum: json.perDepositMinimum || 0,
-    rollingWithdrawalBlocks: json.rollingWithdrawalBlocks || 144,
-    rollingWithdrawalCap: json.rollingWithdrawalCap || 0,
+    pegCap: json.pegCap ?? Infinity,
+    perDepositCap: json.perDepositCap ?? Infinity,
+    perWithdrawalCap: json.perWithdrawalCap ?? Infinity,
+    perDepositMinimum: json.perDepositMinimum ?? 0,
+    rollingWithdrawalBlocks: json.rollingWithdrawalBlocks ?? 144,
+    rollingWithdrawalCap: json.rollingWithdrawalCap ?? 0,
   };
 }
