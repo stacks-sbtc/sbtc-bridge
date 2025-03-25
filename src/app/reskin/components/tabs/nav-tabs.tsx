@@ -11,8 +11,8 @@ export const NavTabs = ({
     <div className="fixed bottom-0 sm:sticky dark:bg-reskin-dark-gray w-full bg-white">
       <div className="flex h-20 flex-row justify-between items-center w-full sm:mx-auto max-w-5xl relative z-10">
         {tabs.map((tab, index) => {
-          const [, tabNameSpace] = tab.link.split("/");
-          const [, pathNameSpace] = pathname.split("/");
+          const [, tabNameSpace] = tab.link.replace("/reskin", "").split("/");
+          const [, pathNameSpace] = pathname.replace("/reskin", "").split("/");
 
           const isActive = pathNameSpace === tabNameSpace;
           return (
