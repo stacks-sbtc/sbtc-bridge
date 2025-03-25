@@ -13,9 +13,6 @@ type EmilyLimits = {
 
 type AccountCaps = {};
 
-const defaultTo = <T>(value: T | null, defaultValue: T): T =>
-  value ?? defaultValue;
-
 export default async function getEmilyLimits() {
   const res = await fetch(`${env.EMILY_URL}/limits`);
   if (!res.ok) {
