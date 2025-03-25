@@ -5,7 +5,7 @@ import { useCallback, useMemo } from "react";
 
 export function useEmilyLimits() {
   return useQuery({
-    queryKey: ["deposit-max-fee"],
+    queryKey: ["emily-limits"],
     queryFn: () => getEmilyLimits(),
   });
 }
