@@ -36,10 +36,10 @@
     typescript "^5.6.2"
     vite-plugin-svgr "^4.2.0"
 
-"@asigna/stx-connect@0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@asigna/stx-connect/-/stx-connect-0.0.10.tgz#25dae3dc45615240c526a534a1a60e0c669753fa"
-  integrity sha512-edHZD4wxwXdIRpB3LGeNoVjhtpC1o5qY5yNhSXhkB3GnFt9Ow1zpYnmcI66DoIw3moI3+CxXFp0QTvmkY/cJdQ==
+"@asigna/stx-connect@0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@asigna/stx-connect/-/stx-connect-0.0.15.tgz#005b029a4655b860b11090602563a638c401cb9c"
+  integrity sha512-k4jN/xxXCpBAuE26rpl1cUB8cL/GXA+jCTuoDyQtnxog5qkOlqemFjl8uLTzX9X93gmtfwPSpFZWniPePdajOA==
   dependencies:
     "@material-ui/core" "^4.12.4"
     "@stacks/transactions" "6.17.0"
