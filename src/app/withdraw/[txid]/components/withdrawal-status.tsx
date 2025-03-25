@@ -88,10 +88,7 @@ function Content(initialData: Props) {
   }, [stepper, status]);
 
   useEffect(() => {
-    if (
-      status === WithdrawalStatus.confirmed ||
-      status === WithdrawalStatus.failed
-    ) {
+    if (status === WithdrawalStatus.confirmed) {
       queryClient.invalidateQueries({ queryKey: ["sbtc-balance"] });
     }
   }, [status]);
