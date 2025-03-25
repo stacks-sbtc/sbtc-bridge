@@ -33,7 +33,7 @@ export default async function getEmilyLimits() {
     perDepositCap: json.perDepositCap ?? Infinity,
     perWithdrawalCap: json.perWithdrawalCap ?? Infinity,
     perDepositMinimum: json.perDepositMinimum ?? 0,
-    rollingWithdrawalBlocks: json.rollingWithdrawalBlocks ?? 144,
-    rollingWithdrawalCap: json.rollingWithdrawalCap ?? 0,
+    rollingWithdrawalBlocks: json.rollingWithdrawalBlocks ?? Infinity,
+    rollingWithdrawalCap: json.rollingWithdrawalCap ?? Infinity,
   };
 }
