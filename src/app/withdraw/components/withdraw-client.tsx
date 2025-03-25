@@ -252,7 +252,7 @@ const Withdraw = () => {
               if (value > maxWithdrawalCap) {
                 return getMaxError(maxWithdrawalCap);
               }
-              setFieldValue("address", value);
+              setFieldValue("amount", value);
               stepper.next();
             }}
             disabled={maxFee === undefined || emilyLimitsLoading}
