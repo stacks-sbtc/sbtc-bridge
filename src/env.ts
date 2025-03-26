@@ -28,5 +28,6 @@ export const env = {
   FEATURE_FLAGS: (process.env.FEATURE_FLAGS?.split(",") || []) as featureFlag[],
   WITHDRAWAL_FEE_MULTIPLIER: Number(process.env.WITHDRAWAL_FEE_MULTIPLIER || 4),
   HIRO_API_KEY: process.env.HIRO_API_KEY,
+  GIT_COMMIT: process.env.GIT_COMMIT || "unknown",
   WITHDRAW_MIN_AMOUNT_SATS: Number(process.env.WITHDRAW_MIN_AMOUNT_SATS || 0),
 };
