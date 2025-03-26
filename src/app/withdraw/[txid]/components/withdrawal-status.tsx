@@ -41,7 +41,7 @@ function Content(initialData: Props) {
   const { txid } = initialData;
 
   const {
-    data: { address, amount, requestId, status, bitcoinTx },
+    data: { address, amount, status, bitcoinTx },
     isFetched,
   } = useQuery({
     queryKey: ["withdrawal", txid],
