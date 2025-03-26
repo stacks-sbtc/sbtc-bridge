@@ -42,7 +42,7 @@ function Content(initialData: Props) {
 
   const {
     data: { address, amount, status, bitcoinTx },
-    isFetched,
+    isSuccess,
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
@@ -92,67 +92,77 @@ function Content(initialData: Props) {
   const shortAddress = useShortAddress(address);
 
   const bridgeConfig = useAtomValue(bridgeConfigAtom);
-  return (
-    isFetched && (
-      <FlowContainer>
-        <div className="w-full flex flex-row items-center justify-between">
-          <Heading>Review Transaction</Heading>
+  return isSuccess ? (
+    <FlowContainer>
+      <div className="w-full flex flex-row items-center justify-between">
+        <Heading>Review Transaction</Heading>
+      </div>
+      <div className="flex flex-col  gap-2">
+        <div className="flex flex-col gap-1">
+          <SubText>Amount selected to withdraw</SubText>
+          <p className="text-black font-Matter font-semibold text-sm">
+            {(amount / 1e8).toLocaleString(undefined, {
+              maximumFractionDigits: 8,
+            })}{" "}
+            BTC
+          </p>
         </div>
-        <div className="flex flex-col  gap-2">
-          <div className="flex flex-col gap-1">
-            <SubText>Amount selected to withdraw</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {(amount / 1e8).toLocaleString(undefined, {
-                maximumFractionDigits: 8,
-              })}{" "}
-              BTC
-            </p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <SubText>Bitcoin address to receive BTC</SubText>
-            <p className="text-black font-Matter font-semibold text-sm">
-              {shortAddress}
-            </p>
-          </div>
+        <div className="flex flex-col gap-1">
+          <SubText>Bitcoin address to receive BTC</SubText>
+          <p className="text-black font-Matter font-semibold text-sm">
+            {shortAddress}
+          </p>
         </div>
-        <div className="flex flex-1 items-end">
-          {status === WithdrawalStatus.failed && (
-            <SubText>Withdrawal failed</SubText>
-          )}
-          {status === WithdrawalStatus.accepted && (
-            <SubText>Withdrawal accepted, confirming...</SubText>
-          )}
-        </div>
+      </div>
+      <div className="flex flex-1 items-end">
+        {status === WithdrawalStatus.failed && (
+          <SubText>Withdrawal failed</SubText>
+        )}
+        {status === WithdrawalStatus.accepted && (
+          <SubText>Withdrawal accepted, confirming...</SubText>
+        )}
+      </div>
 
-        <div className="flex flex-1 items-end">
-          <WithdrawalStepper status={status} txId={txid} />
-        </div>
+      <div className="flex flex-1 items-end">
+        <WithdrawalStepper status={status} txId={txid} />
+      </div>
 
-        <div className="w-full flex-row flex justify-between items-center">
+      <div className="w-full flex-row flex justify-between items-center">
+        <a
+          className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
+          href={getExplorerUrl(
+            txid,
+            getStacksNetwork(bridgeConfig.WALLET_NETWORK),
+          )}
+          target="_blank"
+          rel="noreferrer"
+        >
+          View stacks tx
+        </a>
+
+        {bitcoinTx && (
           <a
             className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-            href={getExplorerUrl(
-              txid,
-              getStacksNetwork(bridgeConfig.WALLET_NETWORK),
-            )}
+            href={`${bridgeConfig.PUBLIC_MEMPOOL_URL}/tx/${bitcoinTx}`}
             target="_blank"
             rel="noreferrer"
           >
-            View stacks tx
+            View bitcoin tx
           </a>
-
-          {bitcoinTx && (
-            <a
-              className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-              href={`${bridgeConfig.PUBLIC_MEMPOOL_URL}/tx/${bitcoinTx}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              View bitcoin tx
-            </a>
-          )}
-        </div>
-      </FlowContainer>
-    )
+        )}
+      </div>
+    </FlowContainer>
+  ) : (
+    <FlowContainer>
+      <div className="w-full flex flex-row items-center justify-between">
+        <Heading>Loading withdrawal status...</Heading>
+      </div>
+      <div className="w-full flex flex-row items-center justify-between">
+        <div
+          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status"
+        ></div>
+      </div>
+    </FlowContainer>
   );
 }
