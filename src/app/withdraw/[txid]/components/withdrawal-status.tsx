@@ -18,12 +18,7 @@ import { queryClient } from "@/query/client";
 
 const { useStepper, Scoped } = withdrawalStepper;
 type Props = {
-  btcAmount: number;
-  recipient: string;
   txid: string;
-  status: WithdrawalStatus;
-  stacksTx?: string;
-  bitcoinTx?: string;
 };
 export default function TrackWithdrawalStatus(props: Props) {
   return (
@@ -46,19 +41,20 @@ function Content(initialData: Props) {
   const { txid } = initialData;
 
   const {
-    data: { address, amount, status, bitcoinTx },
+    data: { address, amount, requestId, status, bitcoinTx },
+    isFetched,
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
-      const data = await getWithdrawalInfo(txid);
+      const data = await getWithdrawalInfo(requestId || txid);
       return data;
     },
     initialData: {
-      status: initialData.status,
-      address: initialData.recipient,
-      amount: initialData.btcAmount,
-      stacksTx: initialData.stacksTx,
-      bitcoinTx: initialData.bitcoinTx,
+      status: WithdrawalStatus.pending,
+      address: "",
+      amount: 0,
+      stacksTx: "",
+      bitcoinTx: "",
       requestId: null,
     },
     refetchInterval: ({ state }) => {
@@ -93,66 +89,70 @@ function Content(initialData: Props) {
     }
   }, [status]);
 
+  const shortAddress = useShortAddress(address);
+
   const bridgeConfig = useAtomValue(bridgeConfigAtom);
   return (
-    <FlowContainer>
-      <div className="w-full flex flex-row items-center justify-between">
-        <Heading>Review Transaction</Heading>
-      </div>
-      <div className="flex flex-col  gap-2">
-        <div className="flex flex-col gap-1">
-          <SubText>Amount selected to withdraw</SubText>
-          <p className="text-black font-Matter font-semibold text-sm">
-            {(amount / 1e8).toLocaleString(undefined, {
-              maximumFractionDigits: 8,
-            })}{" "}
-            BTC
-          </p>
+    isFetched && (
+      <FlowContainer>
+        <div className="w-full flex flex-row items-center justify-between">
+          <Heading>Review Transaction</Heading>
         </div>
-        <div className="flex flex-col gap-1">
-          <SubText>Bitcoin address to receive BTC</SubText>
-          <p className="text-black font-Matter font-semibold text-sm">
-            {useShortAddress(address)}
-          </p>
+        <div className="flex flex-col  gap-2">
+          <div className="flex flex-col gap-1">
+            <SubText>Amount selected to withdraw</SubText>
+            <p className="text-black font-Matter font-semibold text-sm">
+              {(amount / 1e8).toLocaleString(undefined, {
+                maximumFractionDigits: 8,
+              })}{" "}
+              BTC
+            </p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <SubText>Bitcoin address to receive BTC</SubText>
+            <p className="text-black font-Matter font-semibold text-sm">
+              {shortAddress}
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-1 items-end">
-        {status === WithdrawalStatus.failed && (
-          <SubText>Withdrawal failed</SubText>
-        )}
-        {status === WithdrawalStatus.accepted && (
-          <SubText>Withdrawal accepted, confirming...</SubText>
-        )}
-      </div>
-
-      <div className="flex flex-1 items-end">
-        <WithdrawalStepper status={status} txId={txid} />
-      </div>
-
-      <div className="w-full flex-row flex justify-between items-center">
-        <a
-          className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-          href={getExplorerUrl(
-            txid,
-            getStacksNetwork(bridgeConfig.WALLET_NETWORK),
+        <div className="flex flex-1 items-end">
+          {status === WithdrawalStatus.failed && (
+            <SubText>Withdrawal failed</SubText>
           )}
-          target="_blank"
-          rel="noreferrer"
-        >
-          View stacks tx
-        </a>
+          {status === WithdrawalStatus.accepted && (
+            <SubText>Withdrawal accepted, confirming...</SubText>
+          )}
+        </div>
 
-        {bitcoinTx && (
+        <div className="flex flex-1 items-end">
+          <WithdrawalStepper status={status} txId={txid} />
+        </div>
+
+        <div className="w-full flex-row flex justify-between items-center">
           <a
             className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
-            href={`${bridgeConfig.PUBLIC_MEMPOOL_URL}/tx/${bitcoinTx}`}
+            href={getExplorerUrl(
+              txid,
+              getStacksNetwork(bridgeConfig.WALLET_NETWORK),
+            )}
             target="_blank"
             rel="noreferrer"
           >
-            View bitcoin tx
+            View stacks tx
           </a>
-        )}
-      </div>
-    </FlowContainer>
+
+          {bitcoinTx && (
+            <a
+              className="w-40 rounded-lg py-3 flex justify-center items-center flex-row bg-orange"
+              href={`${bridgeConfig.PUBLIC_MEMPOOL_URL}/tx/${bitcoinTx}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View bitcoin tx
+            </a>
+          )}
+        </div>
+      </FlowContainer>
+    )
   );
 }
