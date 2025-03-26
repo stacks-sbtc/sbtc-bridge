@@ -24,7 +24,7 @@ export default async function getSbtcTotalBalance({
   const response = (await fetchCallReadOnlyFunction({
     contractAddress: SBTC_CONTRACT_DEPLOYER!,
     contractName: "sbtc-token",
-    functionName: "get-balance",
+    functionName: "get-balance-available",
     functionArgs: [Cl.address(address)],
     network: network,
     senderAddress: address,

@@ -103,17 +103,18 @@ const Withdraw = () => {
     isLoading: emilyLimitsLoading,
   } = useEmilyLimits();
 
-  const maxWithdrawal = (emilyLimits?.perWithdrawalCap || 0) / 1e8;
   const getMaxError = (maxWithdrawal: number) => {
     return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
   };
   const amountValidationSchema = useMemo(() => {
+    const maxWithdrawal = (emilyLimits?.perWithdrawalCap || 0) / 1e8;
     const btcBalance = Number(satsBalance) / 1e8;
     const fee = maxFee! / 1e8;
     return yup.object().shape({
       amount: yup
         .number()
         .min(0)
+        .max(maxWithdrawal, getMaxError(maxWithdrawal))
         .max(
           btcBalance - fee,
           `The withdrawal + max fees (${fee.toLocaleString(undefined, { maximumFractionDigits: 8 })}) amount exceeds your current balance of ${btcBalance.toLocaleString(
@@ -123,10 +124,9 @@ const Withdraw = () => {
             },
           )} sBTC`,
         )
-        .max(maxWithdrawal, getMaxError(maxWithdrawal))
         .required(),
     });
-  }, [satsBalance, maxFee, maxWithdrawal]);
+  }, [emilyLimits?.perWithdrawalCap, satsBalance, maxFee]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
