@@ -97,13 +97,8 @@ const Withdraw = () => {
     },
   });
 
-  const {
-    data: emilyLimits,
-    refetch,
-    isLoading: emilyLimitsLoading,
-  } = useEmilyLimits();
+  const { refetch, isLoading: emilyLimitsLoading } = useEmilyLimits();
 
-  const maxWithdrawal = (emilyLimits?.perWithdrawalCap || 0) / 1e8;
   const getMaxError = (maxWithdrawal: number) => {
     return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
   };
@@ -123,10 +118,9 @@ const Withdraw = () => {
             },
           )} sBTC`,
         )
-        .max(maxWithdrawal, getMaxError(maxWithdrawal))
         .required(),
     });
-  }, [satsBalance, maxFee, maxWithdrawal]);
+  }, [satsBalance, maxFee]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
