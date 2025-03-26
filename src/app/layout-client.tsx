@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { bridgeConfigAtom } from "@/util/atoms";
 import { AsignaSignActionModals } from "@asigna/btc-connect";
 import * as bitcoin from "bitcoinjs-lib";
+import { AsignaSignActionModals as StxConnectActionModals } from "@asigna/stx-connect";
 
 // globally init ecc lib for client
 import ecc from "@bitcoinerlab/secp256k1";
@@ -34,6 +35,7 @@ export default function LayoutClient({
         <RenderNotifications />
         {children}
         <AsignaSignActionModals />
+        <StxConnectActionModals />
       </QueryClientProvider>
     </Provider>
   );

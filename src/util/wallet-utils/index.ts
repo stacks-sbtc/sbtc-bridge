@@ -6,5 +6,4 @@ export {
   callContractFordefi,
   callContractLeather,
   callContractXverse,
-  callContractAsigna,
 } from "./src/callContract";

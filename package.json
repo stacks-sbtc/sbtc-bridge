@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@asigna/btc-connect": "0.0.25",
+    "@asigna/stx-connect": "0.0.15",
+    "@stacks/transactions-v6": "npm:@stacks/transactions@6.16.0",
     "@bitcoinerlab/secp256k1": "1.1.1",
     "@heroicons/react": "2.1.5",
     "@radix-ui/react-separator": "1.1.2",

@@ -14,7 +14,6 @@ import {
 } from "@stacks/transactions";
 import { serverBroadcastTx } from "@/actions/server-broadcast-tx";
 import {
-  callContractAsigna,
   callContractFordefi,
   callContractLeather,
   callContractXverse,
@@ -38,6 +37,16 @@ import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
 import { useQuery } from "@tanstack/react-query";
 import { getWithdrawalMaxFee } from "@/actions/get-withdrawal-max-fee";
 import { useEmilyLimits } from "@/hooks/use-mint-caps";
+import { useAsignaConnect } from "@asigna/stx-connect";
+import { StacksNetwork, StacksNetworkName } from "@stacks/network";
+
+import {
+  createFungiblePostCondition,
+  createAssetInfo,
+  AnchorMode,
+  Cl as Cl6,
+  FungibleConditionCode,
+} from "@stacks/transactions-v6";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -135,7 +144,7 @@ const Withdraw = () => {
 
   const { WALLET_NETWORK, SBTC_CONTRACT_DEPLOYER } =
     useAtomValue(bridgeConfigAtom);
-
+  const { openAsignaContractCall } = useAsignaConnect();
   const handleSubmit = async (values: Record<string, string>) => {
     const { address, amount } = values;
 
@@ -204,7 +213,44 @@ const Withdraw = () => {
       [WalletProvider.XVERSE]: callContractXverse,
       [WalletProvider.LEATHER]: callContractLeather,
       [WalletProvider.FORDEFI]: callContractFordefi,
-      [WalletProvider.ASIGNA]: callContractAsigna,
+      [WalletProvider.ASIGNA]: async ({}: {
+        txHex: string;
+        network: StacksNetworkName | StacksNetwork;
+      }) => {
+        const txid = await openAsignaContractCall(
+          {
+            contractName: opts.contractName!,
+            contractAddress: opts.contractAddress!,
+            functionName: opts.functionName!,
+            functionArgs: [
+              Cl6.uint(satoshiAmount),
+              Cl6.tuple({
+                version: Cl6.bufferFromHex(recipient.type),
+                hashbytes: Cl6.buffer(recipient.hash),
+              }),
+              Cl6.uint(satoshiFee),
+            ],
+            anchorMode: AnchorMode.Any,
+            postConditions: [
+              createFungiblePostCondition(
+                addresses.stacks!.address!,
+                FungibleConditionCode.LessEqual,
+                satoshiAmount + satoshiFee,
+                createAssetInfo(
+                  SBTC_CONTRACT_DEPLOYER,
+                  "sbtc-token",
+                  "sbtc-token",
+                ),
+              ),
+            ],
+          },
+          {
+            execute: true,
+          },
+        );
+
+        return txid!;
+      },
     }[selectedWallet!];
 
     const signedTx = await signTx({
