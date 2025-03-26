@@ -21,6 +21,7 @@ export const bridgeConfigAtom = atom<BridgeConfig>({
   POLLING_INTERVAL: 5000,
   MEMPOOL_API_URL: "",
   FEATURE_FLAGS: [],
+  WITHDRAW_MIN_AMOUNT_SATS: 0,
 });
 export const depositMaxFeeAtom = atom(80000);
 
