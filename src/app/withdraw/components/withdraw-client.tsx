@@ -107,13 +107,14 @@ const Withdraw = () => {
   const getMaxError = (maxWithdrawal: number) => {
     return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
   };
+  const config = useAtomValue(bridgeConfigAtom);
   const amountValidationSchema = useMemo(() => {
     const btcBalance = Number(satsBalance) / 1e8;
     const fee = maxFee! / 1e8;
     return yup.object().shape({
       amount: yup
         .number()
-        .min(0)
+        .min(config.WITHDRAW_MIN_AMOUNT_SATS)
         .max(
           btcBalance - fee,
           `The withdrawal + max fees (${fee.toLocaleString(undefined, { maximumFractionDigits: 8 })}) amount exceeds your current balance of ${btcBalance.toLocaleString(
@@ -126,7 +127,7 @@ const Withdraw = () => {
         .max(maxWithdrawal, getMaxError(maxWithdrawal))
         .required(),
     });
-  }, [satsBalance, maxFee, maxWithdrawal]);
+  }, [satsBalance, maxFee, maxWithdrawal, config.WITHDRAW_MIN_AMOUNT_SATS]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>

@@ -17,6 +17,7 @@ export default cache(async function getSbtcBridgeConfig() {
   const SUPPORT_LINK = env.SUPPORT_LINK;
   const POLLING_INTERVAL = env.POLLING_INTERVAL;
   const FEATURE_FLAGS = env.FEATURE_FLAGS;
+  const WITHDRAW_MIN_AMOUNT_SATS = env.WITHDRAW_MIN_AMOUNT_SATS;
 
   return {
     EMILY_URL,
@@ -29,5 +30,6 @@ export default cache(async function getSbtcBridgeConfig() {
     POLLING_INTERVAL,
     MEMPOOL_API_URL,
     FEATURE_FLAGS,
+    WITHDRAW_MIN_AMOUNT_SATS,
   };
 });
