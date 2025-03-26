@@ -8,6 +8,7 @@ export async function GET(_: NextRequest) {
       result: {
         version: packageJson.version,
         contracts_deployer: env.SBTC_CONTRACT_DEPLOYER,
+        git_commit: env.GIT_COMMIT || "unknown",
       },
     },
     { status: 200 },
