@@ -103,13 +103,19 @@ const Withdraw = () => {
     return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
   };
   const config = useAtomValue(bridgeConfigAtom);
+  const min = config.WITHDRAW_MIN_AMOUNT_SATS / 1e8;
   const amountValidationSchema = useMemo(() => {
     const btcBalance = Number(satsBalance) / 1e8;
     const fee = maxFee! / 1e8;
     return yup.object().shape({
       amount: yup
         .number()
-        .min(config.WITHDRAW_MIN_AMOUNT_SATS)
+        .min(
+          min,
+          `Minimum withdrawal amount is ${min.toLocaleString(undefined, {
+            maximumFractionDigits: 8,
+          })} BTC`,
+        )
         .max(
           btcBalance - fee,
           `The withdrawal + max fees (${fee.toLocaleString(undefined, { maximumFractionDigits: 8 })}) amount exceeds your current balance of ${btcBalance.toLocaleString(
