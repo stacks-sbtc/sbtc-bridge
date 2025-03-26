@@ -11,7 +11,8 @@ type mempoolFeesRes = {
   minimumFee: number;
 };
 
-const MAX_WITHDRAWAL_TX_SIZE = 320;
+// this is the case of a sweep tx fulfilling a single withdrawal to a p2wsh (32 bytes hash)
+const MAX_WITHDRAWAL_TX_SIZE = 180;
 
 export const getWithdrawalMaxFee = async () => {
   const currentMempoolFees = (await mempoolFetchUntilOk(

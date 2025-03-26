@@ -10,6 +10,7 @@ import {
 import { Cl, PrincipalCV } from "@stacks/transactions";
 import { useRouter } from "next/navigation";
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
+import { queryClient } from "@/query/client";
 
 export enum DepositStatus {
   PendingConfirmation = "pending",
@@ -86,6 +87,7 @@ export function useDepositStatus(txId: string) {
 
         if (info.status.confirmed) {
           if (txInfo.status === DepositStatus.Completed) {
+            queryClient.invalidateQueries({ queryKey: ["sbtc-balance"] });
             setTransferTxStatus(DepositStatus.Completed);
             clearInterval(interval);
             return;

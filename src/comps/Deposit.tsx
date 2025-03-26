@@ -236,6 +236,7 @@ const DepositFlowAddress = ({
         </div>
         <SubText>STX Address to receive sBTC</SubText>
         <FlowForm
+          initialNote="This address has been automatically retrieved from your connected wallet. To deposit to a different wallet, copy the address here"
           nameKey="address"
           requiredConnection="btc"
           initialValue={stacks?.address}

@@ -26,6 +26,7 @@ export const WithdrawFlowAddress = ({
       </div>
       <SubText>Address selected to withdraw</SubText>
       <FlowForm
+        initialNote="This address has been automatically retrieved from your connected wallet. To withdraw to a different wallet, copy the address here"
         nameKey="address"
         requiredConnection="stx"
         initialValue={payment?.address}

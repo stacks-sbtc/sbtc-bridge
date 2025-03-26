@@ -2,19 +2,23 @@ import { useFormik } from "formik";
 import { PrimaryButton } from "./FlowButtons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Schema as YupSchema } from "yup";
+import { SubText } from "./Heading";
 // this is supposed to be as reusable as possible given all the flows are very similar in order and action
 type FlowFormProps = {
   nameKey: string;
   placeholder: string;
   initialValue?: string;
-  handleSubmit: (value: string | undefined) => void;
+  handleSubmit: (
+    value: string | undefined,
+  ) => Promise<void | undefined | string> | void;
   type?: "text" | "number";
   children?: React.ReactNode;
   validationSchema?: YupSchema;
   disabled?: boolean;
   requiredConnection?: "stx" | "btc" | "both";
+  initialNote?: string;
 };
 // tailwind div that reset all default form styles
 
@@ -28,6 +32,7 @@ export const FlowForm = ({
   validationSchema,
   disabled,
   requiredConnection = "btc",
+  initialNote,
 }: FlowFormProps) => {
   const walletInfo = useAtomValue(walletInfoAtom);
   const isConnected = useMemo(() => {
@@ -62,11 +67,22 @@ export const FlowForm = ({
     initialValues: {
       [nameKey]: initialValue,
     },
-    onSubmit: (values) => {
-      handleSubmit(values[nameKey]);
+    onSubmit: async (values) => {
+      const error = await handleSubmit(values[nameKey]);
+      if (error && typeof error === "string") {
+        await formik.setFieldTouched(nameKey, true, true);
+        formik.setErrors({ [nameKey]: error });
+      }
     },
     validationSchema,
   });
+
+  const [dirty, setDirty] = useState(false);
+  useEffect(() => {
+    if (!dirty) {
+      setDirty(formik.dirty);
+    }
+  }, [dirty, formik.dirty]);
 
   return (
     <form
@@ -74,12 +90,21 @@ export const FlowForm = ({
       onSubmit={formik.handleSubmit}
     >
       <div className="relative ">
+        {initialNote && (
+          <div
+            className={`${!dirty && initialValue ? "visible" : "invisible"}`}
+          >
+            <SubText>{initialNote}</SubText>
+          </div>
+        )}
+
         <input
           type={type}
           name={nameKey}
           placeholder={placeholder}
           value={formik.values[nameKey]}
           onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           disabled={disabled}
           className={`w-full py-2 border-b-2 bg-transparent text-xl text-black focus:outline-none placeholder-gray-300 ${
             formik.isValid ? "border-orange" : "border-red-300"

@@ -36,6 +36,7 @@ import { WithdrawConfirm } from "./withdraw-confirm";
 import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
 import { useQuery } from "@tanstack/react-query";
 import { getWithdrawalMaxFee } from "@/actions/get-withdrawal-max-fee";
+import { useEmilyLimits } from "@/hooks/use-mint-caps";
 import { useAsignaConnect } from "@asigna/stx-connect";
 import { StacksNetwork, StacksNetworkName } from "@stacks/network";
 
@@ -85,13 +86,27 @@ const Withdraw = () => {
     address: addresses.stacks?.address,
   });
 
-  const { data: maxFee } = useQuery({
+  const {
+    data: maxFee,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: ["maxFee"],
     queryFn: async () => {
       return getWithdrawalMaxFee();
     },
   });
 
+  const {
+    data: emilyLimits,
+    refetch,
+    isLoading: emilyLimitsLoading,
+  } = useEmilyLimits();
+
+  const maxWithdrawal = (emilyLimits?.perWithdrawalCap || 0) / 1e8;
+  const getMaxError = (maxWithdrawal: number) => {
+    return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
+  };
   const amountValidationSchema = useMemo(() => {
     const btcBalance = Number(satsBalance) / 1e8;
     const fee = maxFee! / 1e8;
@@ -108,9 +123,10 @@ const Withdraw = () => {
             },
           )} sBTC`,
         )
+        .max(maxWithdrawal, getMaxError(maxWithdrawal))
         .required(),
     });
-  }, [maxFee, satsBalance]);
+  }, [satsBalance, maxFee, maxWithdrawal]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
@@ -269,12 +285,23 @@ const Withdraw = () => {
       {stepper.switch({
         amount: () => (
           <WithdrawFlowAmount
-            validationSchema={amountValidationSchema as any}
-            handleSubmit={(value) => {
+            isFailed={isError}
+            isLoading={isLoading}
+            maxFee={maxFee}
+            validationSchema={amountValidationSchema}
+            handleSubmit={async (value) => {
+              const limits = await refetch();
+
+              const maxWithdrawalCap =
+                (limits.data?.perWithdrawalCap || 0) / 1e8;
+
+              if (value > maxWithdrawalCap) {
+                return getMaxError(maxWithdrawalCap);
+              }
               setFieldValue("amount", value);
               stepper.next();
             }}
-            disabled={maxFee === undefined}
+            disabled={maxFee === undefined || emilyLimitsLoading}
           />
         ),
         address: () => (
