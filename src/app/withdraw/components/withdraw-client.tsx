@@ -217,7 +217,7 @@ const Withdraw = () => {
         txHex: string;
         network: StacksNetworkName | StacksNetwork;
       }) => {
-        const signedTxHex = await openAsignaContractCall(
+        const txid = await openAsignaContractCall(
           {
             contractName: opts.contractName!,
             contractAddress: opts.contractAddress!,
@@ -245,11 +245,11 @@ const Withdraw = () => {
             ],
           },
           {
-            execute: false,
+            execute: true,
           },
         );
 
-        return signedTxHex!;
+        return txid!;
       },
     }[selectedWallet!];
 
