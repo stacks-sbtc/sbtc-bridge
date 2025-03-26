@@ -18,12 +18,7 @@ import { queryClient } from "@/query/client";
 
 const { useStepper, Scoped } = withdrawalStepper;
 type Props = {
-  btcAmount: number;
-  recipient: string;
   txid: string;
-  status: WithdrawalStatus;
-  stacksTx?: string;
-  bitcoinTx?: string;
 };
 export default function TrackWithdrawalStatus(props: Props) {
   return (
@@ -47,6 +42,7 @@ function Content(initialData: Props) {
 
   const {
     data: { address, amount, status, bitcoinTx },
+    isSuccess,
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
@@ -54,11 +50,11 @@ function Content(initialData: Props) {
       return data;
     },
     initialData: {
-      status: initialData.status,
-      address: initialData.recipient,
-      amount: initialData.btcAmount,
-      stacksTx: initialData.stacksTx,
-      bitcoinTx: initialData.bitcoinTx,
+      status: WithdrawalStatus.pending,
+      address: "",
+      amount: 0,
+      stacksTx: "",
+      bitcoinTx: "",
       requestId: null,
     },
     refetchInterval: ({ state }) => {
@@ -93,8 +89,10 @@ function Content(initialData: Props) {
     }
   }, [status]);
 
+  const shortAddress = useShortAddress(address);
+
   const bridgeConfig = useAtomValue(bridgeConfigAtom);
-  return (
+  return isSuccess ? (
     <FlowContainer>
       <div className="w-full flex flex-row items-center justify-between">
         <Heading>Review Transaction</Heading>
@@ -112,7 +110,7 @@ function Content(initialData: Props) {
         <div className="flex flex-col gap-1">
           <SubText>Bitcoin address to receive BTC</SubText>
           <p className="text-black font-Matter font-semibold text-sm">
-            {useShortAddress(address)}
+            {shortAddress}
           </p>
         </div>
       </div>
@@ -152,6 +150,18 @@ function Content(initialData: Props) {
             View bitcoin tx
           </a>
         )}
+      </div>
+    </FlowContainer>
+  ) : (
+    <FlowContainer>
+      <div className="w-full flex flex-row items-center justify-between">
+        <Heading>Loading withdrawal status...</Heading>
+      </div>
+      <div className="w-full flex flex-row items-center justify-between">
+        <div
+          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status"
+        ></div>
       </div>
     </FlowContainer>
   );
