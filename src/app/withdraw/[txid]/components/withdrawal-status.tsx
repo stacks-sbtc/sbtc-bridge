@@ -46,7 +46,7 @@ function Content(initialData: Props) {
   } = useQuery({
     queryKey: ["withdrawal", txid],
     queryFn: async () => {
-      const data = await getWithdrawalInfo(requestId || txid);
+      const data = await getWithdrawalInfo(txid);
       return data;
     },
     initialData: {
