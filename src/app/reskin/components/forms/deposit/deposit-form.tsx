@@ -1,7 +1,7 @@
 "use client";
 import useMintCaps from "@/hooks/use-mint-caps";
 import { bridgeConfigAtom, walletInfoAtom } from "@/util/atoms";
-import { Form, Formik, FormikHelpers } from "formik";
+import { Form, Formik } from "formik";
 import { useAtomValue } from "jotai";
 import { useMemo, useRef } from "react";
 import * as yup from "yup";
@@ -17,6 +17,7 @@ import { AddressInput } from "./address-input";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { useRouter } from "next/navigation";
 import { elide } from "@/util";
+import { useSendDeposit } from "@/app/reskin/hooks/use-send-deposit";
 
 const { useStepper, utils } = depositStepper;
 
@@ -26,6 +27,8 @@ export const DepositForm = () => {
   const minDepositAmount = (perDepositMinimum || 10_000) / 1e8;
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
   const router = useRouter();
+
+  const { depositToAddress } = useSendDeposit();
 
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
@@ -112,11 +115,15 @@ export const DepositForm = () => {
       }}
       enableReinitialize={true}
       validationSchema={depositSchema}
-      onSubmit={(values: Values, { setSubmitting }: FormikHelpers<Values>) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 500);
+      onSubmit={async (values: Values) => {
+        const depositInfo = await depositToAddress({
+          stxAddress: values.address,
+          amount: Number(values.amount) * 1e8,
+        });
+
+        if (depositInfo) {
+          router.push(`/reskin/${depositInfo.bitcoinTxid}`);
+        }
       }}
     >
       {({ errors, touched, isValid, values, submitForm, getFieldMeta }) => (

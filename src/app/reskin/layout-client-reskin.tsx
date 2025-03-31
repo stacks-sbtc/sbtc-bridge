@@ -6,6 +6,7 @@ import { themeAtom } from "@/util/atoms";
 import { useState, useEffect } from "react";
 import { NavTabs } from "./components/tabs/nav-tabs";
 import { Footer } from "./components/footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const tabs = [
   {
@@ -42,6 +43,7 @@ export default function LayoutClientReskin({
           <NavTabs tabs={tabs} />
           {children}
           <Footer />
+          <Toaster />
         </div>
       </main>
     </div>

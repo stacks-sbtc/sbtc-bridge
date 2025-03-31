@@ -12,11 +12,11 @@ export const AmountInput = ({
   isEditable,
 }: {
   isReadonly: boolean;
-  onClickEdit: () => void;
+  onClickEdit?: () => void;
   value: string;
   error?: string | boolean;
   onPressEnter?: () => void;
-  isEditable: boolean;
+  isEditable?: boolean;
 }) => {
   return (
     <InputContainer

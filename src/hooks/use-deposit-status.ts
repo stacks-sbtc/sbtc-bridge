@@ -66,7 +66,6 @@ export function useDepositStatus(txId: string) {
 
         const txInfo = await getEmilyDepositInfo({
           txId,
-          emilyURL: emilyUrl!,
         });
         setEmilyResponse(txInfo);
 

@@ -14,7 +14,7 @@ export function InputContainer({
   value: string;
   title: string;
   onClickEdit?: () => void;
-  isEditable: boolean;
+  isEditable?: boolean;
 }) {
   return isReadonly ? (
     <div className="flex items-center justify-center">

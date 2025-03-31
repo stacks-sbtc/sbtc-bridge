@@ -40,16 +40,9 @@ type Parameters = {
   lockTime: number;
 };
 
-export const getEmilyDepositInfo = async ({
-  txId,
-  emilyURL,
-}: {
-  txId: string;
-  emilyURL: string;
-}) => {
+export const getEmilyDepositInfo = async ({ txId }: { txId: string }) => {
   const searchParams = new URLSearchParams();
   searchParams.append("bitcoinTxid", txId);
-  searchParams.append("url", emilyURL);
   searchParams.append("vout", "0");
   const response = await fetch(`/api/emilyDeposit?${searchParams.toString()}`, {
     method: "GET",

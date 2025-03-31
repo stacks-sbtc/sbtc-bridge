@@ -310,15 +310,11 @@ const DepositFlowConfirm = ({
       );
       // convert buffer to hex
       const depositScriptHexPreHash = uint8ArrayToHexString(depositScript);
-      const p2trAddress = createDepositAddress(
-        serializedAddress,
-        signersAggregatePubKey!,
-        maxFee,
-        parsedLockTime,
-        getBitcoinNetwork(config.WALLET_NETWORK),
-        reclaimPublicKeys,
-        signatureThreshold,
-      );
+      const p2trAddress = createDepositAddress({
+        network: getBitcoinNetwork(config.WALLET_NETWORK),
+        depositScript,
+        reclaimScript,
+      });
 
       let txId = "";
       let txHex = "";

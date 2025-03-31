@@ -12,7 +12,7 @@ export const AddressInput = ({
   isEditable,
 }: {
   isReadonly: boolean;
-  onClickEdit: () => void;
+  onClickEdit?: () => void;
   value: string;
   error?: string | boolean;
   onPressEnter?: () => void;

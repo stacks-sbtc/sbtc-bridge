@@ -1,7 +1,11 @@
 import { LoadingIndicator } from "../../../assets/loading-indicator";
-import { useEffect, useState } from "react";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { Stepper } from "@stepperize/react";
+import { useParams } from "next/navigation";
+import { useReskinDepositStatus } from "@/app/reskin/hooks/use-reskin-deposit-status";
+import { DepositStatus } from "@/hooks/use-deposit-status";
+import { useAtomValue } from "jotai";
+import { bridgeConfigAtom } from "@/util/atoms";
 
 function HyperLink({
   href,
@@ -22,7 +26,8 @@ function HyperLink({
   );
 }
 
-function TxPendingStatus() {
+function TxPendingStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
+  const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
   return (
     <div className="flex flex-col items-center justify-center mt-4 h-28">
       <LoadingIndicator />
@@ -31,7 +36,7 @@ function TxPendingStatus() {
       </div>
       <div>
         ( Estimation{" "}
-        <HyperLink href="https://mempool.space/tx/4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b">
+        <HyperLink href={`${PUBLIC_MEMPOOL_URL}/tx/${bitcoinTxId}`}>
           5min
         </HyperLink>{" "}
         )
@@ -40,12 +45,30 @@ function TxPendingStatus() {
   );
 }
 
-function TxCompleteStatus() {
+function TxCompleteStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
+  const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
+
   return (
     <div className="flex flex-col items-center justify-center mt-4 h-28">
       <CheckCircleIcon className="h-8 w-8 text-green-500 dark:text-green-700" />
       <div className="h-8 flex items-center text-xl leading-normal tracking-[-0.02em] text-center text-reskin-dark-gray dark:text-midGray uppercase mt-2 font-matter-mono">
         Completed
+      </div>
+      <div>
+        <HyperLink href={`${PUBLIC_MEMPOOL_URL}/tx/${bitcoinTxId}`}>
+          mempool tx
+        </HyperLink>
+      </div>
+    </div>
+  );
+}
+
+function TxFailedStatus() {
+  return (
+    <div className="flex flex-col items-center justify-center mt-4 h-28">
+      <XCircleIcon className="h-8 w-8 text-red-500 dark:text-red-700" />
+      <div className="h-8 flex items-center text-xl leading-normal tracking-[-0.02em] text-center text-reskin-dark-gray dark:text-midGray uppercase mt-2 font-matter-mono">
+        Failed
       </div>
       <div>
         <HyperLink href="https://mempool.space/tx/4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b">
@@ -57,24 +80,24 @@ function TxCompleteStatus() {
 }
 
 export function StatusDescription({ stepper }: { stepper: Stepper }) {
-  const [isCompleted, setIsCompleted] = useState(false);
+  const { slug } = useParams<{ slug?: string }>();
+  const { status } = useReskinDepositStatus(slug);
   const isCurrentStep = stepper.current.id === "status";
-  useEffect(() => {
-    if (isCurrentStep) {
-      const interval = setInterval(() => {
-        // this is just for demo
-        setIsCompleted((prev) => !prev);
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [isCurrentStep]);
+
   return !isCurrentStep ? (
     <span className="opacity-60">
       We will confirm the transaction status once the transaction is confirmed.
     </span>
-  ) : isCompleted ? (
-    <TxCompleteStatus />
   ) : (
-    <TxPendingStatus />
+    <>
+      {status === DepositStatus.Completed && (
+        <TxCompleteStatus bitcoinTxId={slug!} />
+      )}
+      {status === DepositStatus.Failed && <TxFailedStatus />}
+      {(status === DepositStatus.PendingConfirmation ||
+        status === DepositStatus.PendingMint) && (
+        <TxPendingStatus bitcoinTxId={slug!} />
+      )}
+    </>
   );
 }
