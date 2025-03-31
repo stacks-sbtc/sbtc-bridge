@@ -114,14 +114,17 @@ export function useSendDeposit() {
             )) as string;
             break;
         }
-      } catch (error) {
+      } catch (error: any) {
         let errorMessage = error;
         // eslint-disable-next-line no-console
         console.warn(error);
-        if (error instanceof Error) {
+        if (error.error) {
+          error = error.error;
+        }
+        if (error.message) {
           errorMessage = error.message;
         }
-        toast.error(`Issue with Transaction ${errorMessage}`);
+        toast.error(`Issue with Transaction: ${errorMessage}`);
       }
 
       const emilyReqPayload = {
