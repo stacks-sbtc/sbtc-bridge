@@ -10,7 +10,7 @@ const MobileStepper = () => {
   const currentStep = stepper.current;
   const index = utils.getIndex(currentStep.id);
   return (
-    <div className={`px-6 w-full flex flex-col gap-3 max-w-lg`}>
+    <div className={`px-6 w-full flex flex-col gap-3 max-w-xl`}>
       <h1 className="dark:bg-dark-reskin-border-gray py-2 px-3 rounded-lg">
         <span className="font-matter-mono">{index + 1}.</span>{" "}
         {currentStep.title}
