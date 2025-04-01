@@ -1,7 +1,7 @@
 import { elide } from "@/util";
 import { FormButton } from "../components/form-button";
 import { AddressInput } from "../components/forms/deposit/address-input";
-import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useAtomValue } from "jotai";
 import { walletInfoAtom } from "@/util/atoms";
@@ -13,9 +13,8 @@ import { useReskinDepositStatus } from "../hooks/use-reskin-deposit-status";
 const { useStepper } = depositStepper;
 
 export function DepositInfo() {
-  const pathname = usePathname();
+  const { slug: depositTxId } = useParams<{ slug: string }>();
   const stepper = useStepper();
-  const [, , depositTxId] = pathname.split("/");
 
   const { recipient, bitcoinTxInfo } = useReskinDepositStatus(depositTxId);
   const { addresses } = useAtomValue(walletInfoAtom);
