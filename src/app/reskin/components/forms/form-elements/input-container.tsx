@@ -21,7 +21,7 @@ export function InputContainer({
       <div className="flex flex-col md:flex-row md:items-center md:gap-7 w-full gap-2">
         <div className="md:hidden text-sm -tracking-tight ml-8">{title}</div>
         <CheckIcon className="hidden md:block h-6 md:h-8 text-orange dark:text-dark-reskin-orange" />
-        <div className="flex items-center w-full gap-2 rounded-2xl md:h-20 md:border md:border-orange">
+        <div className="flex items-center w-full gap-2 rounded-2xl md:h-20 md:border md:border-orange md:dark:border-dark-reskin-orange">
           <CheckIcon className="md:hidden h-6 text-orange dark:text-dark-reskin-orange" />
           <div className="md:bg-transparent bg-orange bg-opacity-10 dark:dark-reskin-orange pl-5 md:px-6 rounded-3xl flex justify-between items-center flex-1">
             <div className="hidden md:block text-sm -tracking-tight ml-8 md:ml-0">

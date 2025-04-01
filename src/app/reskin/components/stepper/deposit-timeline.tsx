@@ -31,7 +31,7 @@ export function DepositTimeline() {
   }
 
   return isDesktop ? (
-    <div className="pt-6 pb-10 px-8 border rounded-2xl border-black border-opacity-20 dark:border-white lg:w-96">
+    <div className="pt-6 pb-10 px-8 border rounded-2xl border-black border-opacity-20 dark:border-white dark:border-opacity-20 lg:w-96">
       <h2 className="uppercase text-xl leading-normal text-timeline-active-step-text dark:text-white font-matter-mono">
         Timeline
       </h2>

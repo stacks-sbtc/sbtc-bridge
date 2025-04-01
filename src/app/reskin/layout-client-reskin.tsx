@@ -38,7 +38,7 @@ export default function LayoutClientReskin({
   return (
     <div className={theme}>
       <main className="flex flex-col items-center bg-white text-black dark:bg-reskin-dark-gray dark:text-white">
-        <div className="flex flex-col w-full h-screen">
+        <div className="flex flex-col w-full min-h-screen">
           <Header />
           <NavTabs tabs={tabs} />
           {children}
