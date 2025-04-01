@@ -13,7 +13,6 @@ import {
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { Cl } from "@stacks/transactions";
-import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { bytesToHex, hexToBytes } from "@stacks/common";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
@@ -24,13 +23,6 @@ import { toast } from "sonner";
 export function useSendDeposit() {
   const { WALLET_NETWORK: walletNetwork, RECLAIM_LOCK_TIME: lockTime } =
     useAtomValue(bridgeConfigAtom);
-
-  const { data: signersAggregatePubKey } = useQuery({
-    queryKey: ["signers-aggregate-key"],
-    queryFn: async () => {
-      return (await getAggregateKey()).slice(2);
-    },
-  });
   const maxFee = useAtomValue(depositMaxFeeAtom);
   const config = useAtomValue(bridgeConfigAtom);
   const { notifyEmily, isPending } = useEmilyDeposit();
@@ -66,9 +58,21 @@ export function useSendDeposit() {
       const serializedAddress = hexToBytes(
         Cl.serialize(Cl.principal(stxAddress)),
       );
+      // although we can reuse this it might happen after a dkg
+      let signersAggregatePubKey = (await getAggregateKey()).slice(2);
 
+      // at init the aggregate key is 0 or in this case 0 sliced 2 => ""
+      if (!signersAggregatePubKey) {
+        // for devs
+        // eslint-disable-next-line no-console
+        console.warn("No sigers aggregate key found, in the contract");
+        // for users
+        throw new Error(
+          "Deposits are temporarily down, please check back later.",
+        );
+      }
       const depositScript = createDepositScript(
-        hexToBytes(signersAggregatePubKey!),
+        hexToBytes(signersAggregatePubKey),
         maxFee,
         serializedAddress,
       );

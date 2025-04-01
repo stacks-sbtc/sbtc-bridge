@@ -179,7 +179,6 @@ export const DepositForm = () => {
                 stepper.current.id === "confirm"
                   ? async () => {
                       await submitForm();
-                      handleNextClick();
                     }
                   : handleNextClick
               }
