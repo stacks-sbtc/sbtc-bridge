@@ -2,15 +2,30 @@
 
 ## Getting Started
 
+Clone sBTC and run the dev env, this runs a devnet deployment of stacks and a regtest deployment of bitcoin and installs and runs sBTC against them
+Must have [docker](https://docs.docker.com/get-started/get-docker/) installed
+```
+git clone https://github.com/stacks-sbtc/sbtc.git
+cd sbtc
+make devenv-up
+```
+
 Install dependencies and run the development server:
 
 ```bash
-cp .env.example .env
+cp .env.sample .env
 yarn && yarn dev
 ```
 
 The development server will be running at [http://localhost:3000](http://localhost:3000)
 
+## Feature flags
+
+Some features will be gated by feature flags. These flags can be enabled in the .env file like so:
+
+```
+FEATURE_FLAGS=reskin,feature1,feature2
+```
 
 ## Learn More
 
