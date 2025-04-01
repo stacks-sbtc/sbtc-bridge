@@ -21,7 +21,9 @@ The development server will be running at [http://localhost:3000](http://localho
 
 ## Feature flags
 
-Some features will be gated by feature flags. These flags can be enabled in the .env file like so:
+Some feature flags must be set at build time, so if you are building the image with docker and you want some specific feature flags you must pass them also when building to ensure they are in effect
+
+These flags can be enabled in the .env file like so:
 
 ```
 FEATURE_FLAGS=reskin,feature1,feature2
