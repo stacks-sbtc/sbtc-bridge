@@ -23,8 +23,8 @@ const { useStepper, utils } = depositStepper;
 
 export const DepositForm = () => {
   const { currentCap, perDepositMinimum } = useMintCaps();
-  const maxDepositAmount = (currentCap || 1e8) / 1e8;
-  const minDepositAmount = (perDepositMinimum || 10_000) / 1e8;
+  const maxDepositAmount = currentCap / 1e8;
+  const minDepositAmount = perDepositMinimum / 1e8;
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
   const router = useRouter();
 
