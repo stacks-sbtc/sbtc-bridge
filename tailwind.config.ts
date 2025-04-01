@@ -31,6 +31,7 @@ const config: Config = {
         "timeline-inactive-gray": "#ededed",
         "timeline-inactive-step-text": "#808080",
         "timeline-active-step-text": "#141414",
+        "dark-timeline-inactive-step-text": "#FAFAFA",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
