@@ -8,7 +8,7 @@ export const NavTabs = ({
 }) => {
   const pathname = usePathname();
   return (
-    <div className="fixed bottom-0 md:sticky dark:bg-reskin-dark-gray w-full">
+    <div className="fixed bottom-0 md:sticky dark:bg-reskin-dark-gray w-full z-50">
       <div className="flex h-20 flex-row justify-between items-center w-full md:mx-auto max-w-5xl relative z-10">
         {tabs.map((tab, index) => {
           const [, tabNameSpace] = tab.link.replace("/reskin", "").split("/");
