@@ -12,7 +12,6 @@ import {
   bytesToHex as uint8ArrayToHexString,
   hexToBytes as hexToUint8Array,
 } from "@stacks/common";
-import * as yup from "yup";
 import {
   createDepositAddress,
   createDepositScript,
@@ -48,6 +47,7 @@ import { useEmilyDeposit } from "@/util/use-emily-deposit";
 import { sendBTCFordefi } from "../util/wallet-utils/src/sendBTC";
 import { getExplorerUrl } from "@/lib/get-explorer-url";
 import { getStacksNetwork } from "@/util/get-stacks-network";
+import { useValidateDepositAmount } from "@/hooks/use-validate-deposit-amount";
 
 /*
   deposit flow has 3 steps
@@ -97,26 +97,11 @@ const DepositFlowAmount = ({
   const minDepositAmount = perDepositMinimum / 1e8;
   const isMintCapReached = currentCap <= 0;
 
-  const validationSchema = useMemo(
-    () =>
-      yup.object({
-        amount: yup
-          .number()
-          // dust amount is in sats
-          .min(
-            minDepositAmount,
-            `Minimum deposit amount is ${minDepositAmount} BTC`,
-          )
-          .max(
-            Math.min(btcBalance, maxDepositAmount),
-            btcBalance < maxDepositAmount
-              ? `The deposit amount exceeds your current balance of ${btcBalance} BTC`
-              : `Current deposit cap is ${maxDepositAmount} BTC`,
-          )
-          .required(),
-      }),
-    [btcBalance, maxDepositAmount, minDepositAmount],
-  );
+  const validationSchema = useValidateDepositAmount({
+    btcBalance,
+    maxDepositAmount,
+    minDepositAmount,
+  });
   const handleSubmit = async (value: string | undefined) => {
     if (value) {
       const sats = Math.floor(Number(value) * 1e8);
@@ -325,15 +310,11 @@ const DepositFlowConfirm = ({
       );
       // convert buffer to hex
       const depositScriptHexPreHash = uint8ArrayToHexString(depositScript);
-      const p2trAddress = createDepositAddress(
-        serializedAddress,
-        signersAggregatePubKey!,
-        maxFee,
-        parsedLockTime,
-        getBitcoinNetwork(config.WALLET_NETWORK),
-        reclaimPublicKeys,
-        signatureThreshold,
-      );
+      const p2trAddress = createDepositAddress({
+        network: getBitcoinNetwork(config.WALLET_NETWORK),
+        depositScript,
+        reclaimScript,
+      });
 
       let txId = "";
       let txHex = "";

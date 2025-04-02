@@ -1,52 +1,44 @@
 "use client";
 import { StepContent, StepTitle } from "./timeline";
-import { defineStepper } from "@stepperize/react";
+import { depositStepper } from "./deposit/util";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
-import { AmountDescription } from "./deposit/amount";
-import { StatusDescription } from "./deposit/status";
-import { useMediaQuery } from "@/hooks/use-media-query";
+const { useStepper, utils } = depositStepper;
 
-function AddressDescription({}) {
+const MobileStepper = () => {
+  const stepper = useStepper();
+  const currentStep = stepper.current;
+  const index = utils.getIndex(currentStep.id);
   return (
-    <span className="opacity-60">
-      sBTC will be sent to a STX address. Connecting a wallet will auto-fill
-      this in, but feel free to submit another address.
-    </span>
+    <div className={`px-6 w-full flex flex-col gap-3 max-w-xl`}>
+      <h1 className="dark:bg-dark-reskin-border-gray py-2 px-3 rounded-lg">
+        <span className="font-matter-mono">{index + 1}.</span>{" "}
+        {currentStep.title}
+      </h1>
+      <currentStep.description />
+    </div>
   );
-}
+};
 
-const { useStepper, utils } = defineStepper(
-  {
-    id: "amount",
-    title: "Select Deposit Amount",
-    description: AmountDescription,
-  },
-  {
-    id: "address",
-    title: "Provide a Deposit Address",
-    description: AddressDescription,
-  },
-  {
-    id: "status",
-    title: "Operation Status:",
-    description: StatusDescription,
-  },
-);
-
-function DepositTimeline() {
+export function DepositTimeline() {
   const stepper = useStepper();
 
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const currentIndex = utils.getIndex(stepper.current.id);
+  const isDesktop = !useIsMobile();
+  let currentIndex = utils.getIndex(stepper.current.id);
 
-  return (
-    isDesktop && (
-      <div className="pt-6 pb-10 px-8 border rounded-2xl border-black border-opacity-20 dark:border-white w-96">
-        <h2 className="uppercase text-xl leading-normal text-timeline-active-step-text dark:text-white">
-          Timeline
-        </h2>
-        <ol className="mt-4 flex flex-col gap-3">
-          {stepper.all.map((step, index) => (
+  if (currentIndex > utils.getIndex("address")) {
+    currentIndex -= 1;
+  }
+
+  return isDesktop ? (
+    <div className="pt-6 pb-10 px-8 border rounded-2xl border-black border-opacity-20 dark:border-white dark:border-opacity-20 lg:w-96">
+      <h2 className="uppercase text-xl leading-normal text-timeline-active-step-text dark:text-white font-matter-mono">
+        Timeline
+      </h2>
+      <ol className="mt-4 flex flex-col gap-3">
+        {stepper.all
+          .filter((step) => step.id !== "confirm")
+          .map((step, index) => (
             <div className="flex flex-col gap-1" key={step.id}>
               <StepTitle
                 step={step}
@@ -61,10 +53,9 @@ function DepositTimeline() {
               />
             </div>
           ))}
-        </ol>
-      </div>
-    )
+      </ol>
+    </div>
+  ) : (
+    <MobileStepper />
   );
 }
-
-export default DepositTimeline;

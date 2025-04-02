@@ -6,6 +6,7 @@ import { themeAtom } from "@/util/atoms";
 import { useState, useEffect } from "react";
 import { NavTabs } from "./components/tabs/nav-tabs";
 import { Footer } from "./components/footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const tabs = [
   {
@@ -36,12 +37,15 @@ export default function LayoutClientReskin({
 
   return (
     <div className={theme}>
-      <main className="flex flex-col items-center min-h-screen bg-white text-black dark:bg-reskin-dark-gray dark:text-white">
-        <div className="flex flex-col w-full h-screen">
+      <main className="flex flex-col items-center bg-white text-black dark:bg-reskin-dark-gray dark:text-white">
+        <div className="flex flex-col w-full min-h-screen">
           <Header />
           <NavTabs tabs={tabs} />
           {children}
+          {/* placeholder for bottom nav */}
+          <div className="h-20 bottom-0 md:hidden" />
           <Footer />
+          <Toaster />
         </div>
       </main>
     </div>

@@ -20,7 +20,7 @@ export function StepTitle<T extends Step[]>({
         className={`flex text-xs size-6 items-center justify-center rounded-full ${
           index <= currentIndex
             ? "bg-orange dark:bg-dark-reskin-orange text-timeline-active-step-text"
-            : "bg-timeline-inactive-gray text-timeline-inactive-step-text"
+            : "bg-timeline-inactive-gray text-timeline-inactive-step-text dark:bg-dark-reskin-dark-gray dark:text-dark-timeline-inactive-step-text"
         }`}
       >
         {index + 1}
@@ -38,7 +38,7 @@ export function StepContent({
   step: {
     id: string;
     title: string;
-    description: ({}: { currentIndex: number }) => React.ReactNode;
+    description: ({}: {}) => React.ReactNode;
   };
   currentIndex: number;
   index: number;
@@ -61,7 +61,7 @@ export function StepContent({
         />
       </div>
       <div className="flex-1 text-xs leading-tight ml-3 max-w-52">
-        <step.description currentIndex={currentIndex} />
+        <step.description />
       </div>
     </div>
   );

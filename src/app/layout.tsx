@@ -9,8 +9,32 @@ import ecc from "@bitcoinerlab/secp256k1";
 bitcoin.initEccLib(ecc);
 
 const matter = localFont({
-  src: "../../public/fonts/Matter-Regular.ttf",
+  src: [
+    {
+      path: "../assets/fonts/Matter-Regular.woff2",
+      style: "normal",
+      weight: "400",
+    },
+  ],
   display: "swap",
+  variable: "--font-matter",
+});
+
+const matterMono = localFont({
+  src: [
+    {
+      path: "../assets/fonts/MatterMono-Regular.woff2",
+      style: "normal",
+      weight: "400",
+    },
+    {
+      path: "../assets/fonts/MatterMono-Medium.woff2",
+      style: "normal",
+      weight: "600",
+    },
+  ],
+  display: "swap",
+  variable: "--font-matter-mono",
 });
 
 export default function RootLayout({
@@ -20,7 +44,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={matter.className}>{children}</body>
+      <body
+        className={`${matter.className} ${matter.variable} ${matterMono.variable}`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

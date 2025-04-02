@@ -1,7 +1,5 @@
 import * as bitcoin from "bitcoinjs-lib";
 
-import { hexToBytes as hexToUint8Array } from "@stacks/common";
-
 import { Taptree } from "bitcoinjs-lib/src/types";
 
 import * as bip341 from "bitcoinjs-lib/src/payments/bip341";
@@ -98,29 +96,15 @@ export const createReclaimScript = (
   return buildScript;
 };
 
-export const createDepositAddress = (
-  stxAddress: Uint8Array,
-  signerPubKey: string,
-  maxFee: number,
-  lockTime: number,
-  network: bitcoin.networks.Network,
-  reclaimPublicKeys: string[],
-  threshold: number = 1,
-): string => {
-  const internalPubkey = hexToUint8Array(signerPubKey);
-
-  // Create the reclaim script and convert to Buffer
-  const reclaimScript = Buffer.from(
-    createReclaimScript(lockTime, reclaimPublicKeys, threshold),
-  );
-
-  // Create the deposit script and convert to Buffer
-
-  const recipientBytes = stxAddress;
-  const depositScript = Buffer.from(
-    createDepositScript(internalPubkey, maxFee, recipientBytes),
-  );
-
+export const createDepositAddress = ({
+  network,
+  reclaimScript,
+  depositScript,
+}: {
+  network: bitcoin.networks.Network;
+  reclaimScript: Uint8Array;
+  depositScript: Uint8Array;
+}): string => {
   // Combine the leaves into a Merkle root
   const merkleRoot = bip341.toHashTree([
     { output: depositScript },

@@ -8,8 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        "matter-mono": "var(--font-matter-mono)",
+        matter: "var(--font-matter)",
+      },
       animation: {
-        'spin-slow': 'spin 15s linear infinite',
+        "spin-slow": "spin 15s linear infinite",
       },
       colors: {
         orange: "#FD9D41",
@@ -23,9 +27,11 @@ const config: Config = {
         "dark-reskin-border-gray": "#333135",
         "light-reskin-border-gray": "rgba(0, 0, 0, 0.2)",
         "dark-reskin-orange": "#FC6432",
+        "dark-reskin-dark-gray": "#525153",
         "timeline-inactive-gray": "#ededed",
         "timeline-inactive-step-text": "#808080",
         "timeline-active-step-text": "#141414",
+        "dark-timeline-inactive-step-text": "#FAFAFA",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -66,6 +72,8 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        "input-label-dark": "#1E1E1E",
+        "button-secondary-text-light": "#333333",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
