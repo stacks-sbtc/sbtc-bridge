@@ -23,9 +23,13 @@ The development server will be running at [http://localhost:3000](http://localho
 
 Some feature flags must be set at build time, so if you are building the image with docker and you want some specific feature flags you must pass them also when building to ensure they are in effect
 
-These flags can be enabled in the .env file like so:
+Currently supported flags are:
 
-```
+- `reskin`: is for the bridge reskin that can be accessed at /reskin
+
+These flags can be enabled in the .env file comma separated values style like so:
+
+```bash
 FEATURE_FLAGS=reskin,feature1,feature2
 ```
 
