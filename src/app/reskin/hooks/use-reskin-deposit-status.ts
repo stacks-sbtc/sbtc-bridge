@@ -12,6 +12,7 @@ import { useEmilyDeposit } from "@/util/use-emily-deposit";
 import { queryClient } from "@/query/client";
 import { useQuery } from "@tanstack/react-query";
 import { DepositStatus } from "@/hooks/use-deposit-status";
+import { useRouter } from "next/navigation";
 
 // Better logic for better ui
 // you might ask: why not use the same logic as useDepositStatus?
@@ -21,6 +22,7 @@ export function useReskinDepositStatus(txId?: string) {
   const { notifyEmily } = useEmilyDeposit();
   const { RECLAIM_LOCK_TIME, POLLING_INTERVAL } =
     useAtomValue(bridgeConfigAtom);
+  const router = useRouter();
 
   const [transferTxStatus, setStatus] = useState(
     DepositStatus.PendingConfirmation,
@@ -75,6 +77,7 @@ export function useReskinDepositStatus(txId?: string) {
           depositScript: emilyDepositInfo.depositScript,
         };
         await notifyEmily(emilyReqPayload);
+        router.push(`/reskin/${rbfTxId}`);
       }
 
       return info;
