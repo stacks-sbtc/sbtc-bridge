@@ -63,7 +63,8 @@ function TxCompleteStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
   );
 }
 
-function TxFailedStatus() {
+function TxFailedStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
+  const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
   return (
     <div className="flex flex-col items-center justify-center mt-4 h-28">
       <XCircleIcon className="h-8 w-8 text-red-500 dark:text-red-700" />
@@ -71,7 +72,7 @@ function TxFailedStatus() {
         Failed
       </div>
       <div>
-        <HyperLink href="https://mempool.space/tx/4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b">
+        <HyperLink href={`${PUBLIC_MEMPOOL_URL}/tx/${bitcoinTxId}`}>
           mempool tx
         </HyperLink>
       </div>
@@ -93,7 +94,9 @@ export function StatusDescription({ stepper }: { stepper: Stepper }) {
       {status === DepositStatus.Completed && (
         <TxCompleteStatus bitcoinTxId={slug!} />
       )}
-      {status === DepositStatus.Failed && <TxFailedStatus />}
+      {status === DepositStatus.Failed && (
+        <TxFailedStatus bitcoinTxId={slug!} />
+      )}
       {(status === DepositStatus.PendingConfirmation ||
         status === DepositStatus.PendingMint) && (
         <TxPendingStatus bitcoinTxId={slug!} />
