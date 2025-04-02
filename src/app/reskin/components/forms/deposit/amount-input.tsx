@@ -24,7 +24,7 @@ export const AmountInput = ({
       isEditable={isEditable}
       onClickEdit={onClickEdit}
       title="Selected Deposit Amount"
-      value={value}
+      readonlyValue={value}
     >
       <div
         className={`md:ml-14 text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}

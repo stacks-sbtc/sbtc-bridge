@@ -28,7 +28,7 @@ export const AddressInput = ({
       onClickEdit={onClickEdit}
       isEditable={isEditable}
       title="Selected Deposit Address"
-      value={elide(value, isMobile ? 20 : 8)}
+      readonlyValue={elide(value, isMobile ? 20 : 8)}
     >
       <div
         className={`md:ml-14 text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
