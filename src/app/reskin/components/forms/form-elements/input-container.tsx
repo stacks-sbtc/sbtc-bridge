@@ -1,5 +1,6 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { CheckIcon } from "@heroicons/react/24/outline";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function InputContainer({
   children,
@@ -31,7 +32,7 @@ export function InputContainer({
               onClick={onClickEdit}
               className="flex gap-2 font-matter-mono items-center rounded-3xl md:h-10 md:px-5 md:bg-lightOrange md:cursor-pointer md:dark:bg-input-label-dark"
             >
-              <div>{value}</div>
+              <div>{value || <Skeleton className="w-24 h-4" />}</div>
               {isEditable && (
                 <PencilIcon className="hidden md:block h-4 text-orange dark:text-dark-reskin-orange" />
               )}

@@ -2,6 +2,8 @@ import { Field, FieldProps } from "formik";
 import { InputContainer } from "../form-elements/input-container";
 
 import { Textarea } from "@/components/ui/textarea";
+import { elide } from "@/util";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export const AddressInput = ({
   isReadonly,
@@ -18,13 +20,15 @@ export const AddressInput = ({
   onPressEnter?: () => void;
   isEditable: boolean;
 }) => {
+  const isMobile = useIsMobile();
+
   return (
     <InputContainer
       isReadonly={isReadonly}
       onClickEdit={onClickEdit}
       isEditable={isEditable}
       title="Selected Deposit Address"
-      value={value}
+      value={elide(value, isMobile ? 20 : 8)}
     >
       <div
         className={`md:ml-14 text-black min-h-48 rounded-2xl bg-transparent border p-3 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
