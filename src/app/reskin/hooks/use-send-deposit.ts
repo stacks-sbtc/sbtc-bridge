@@ -77,7 +77,7 @@ export function useSendDeposit() {
         serializedAddress,
       );
 
-      const depositScriptHexPreHash = bytesToHex(depositScript);
+      const depositScriptHex = bytesToHex(depositScript);
       const p2trAddress = createDepositAddress({
         depositScript,
         reclaimScript,
