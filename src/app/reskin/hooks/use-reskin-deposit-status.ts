@@ -26,24 +26,6 @@ export function useReskinDepositStatus(txId?: string) {
     DepositStatus.PendingConfirmation,
   );
 
-  const { data: currentBlockHeight } = useQuery({
-    queryKey: ["current-block-height"],
-    queryFn: async () => {
-      return getCurrentBlockHeight();
-    },
-    refetchInterval: () => {
-      const isPending =
-        transferTxStatus !== DepositStatus.Completed &&
-        transferTxStatus !== DepositStatus.Failed;
-      // keep polling until the deposit is completed or failed
-      if (isPending) {
-        return POLLING_INTERVAL;
-      }
-      return false;
-    },
-    enabled: !!txId,
-  });
-
   const { data: emilyDepositInfo } = useQuery({
     queryKey: ["emily-deposit-info", txId],
 
@@ -106,6 +88,31 @@ export function useReskinDepositStatus(txId?: string) {
       return POLLING_INTERVAL;
     },
     enabled: !!txId && !!emilyDepositInfo,
+  });
+
+  const { data: currentBlockHeight } = useQuery({
+    queryKey: ["current-block-height"],
+    queryFn: async () => {
+      return getCurrentBlockHeight();
+    },
+    refetchInterval: () => {
+      const isPending =
+        transferTxStatus !== DepositStatus.Completed &&
+        transferTxStatus !== DepositStatus.Failed;
+      // keep polling until the deposit is completed or failed
+      if (isPending) {
+        return POLLING_INTERVAL;
+      }
+      return false;
+    },
+    enabled: () =>
+      // need the transaction to check the locktime against
+      !!bitcoinTxInfo &&
+      // need the status to be pending success or failure
+      transferTxStatus === DepositStatus.PendingConfirmation &&
+      // need the deposit transaction to be confirmed
+      // to check the locktime expiration against confirmation block height
+      bitcoinTxInfo.status.confirmed,
   });
 
   const recipient = useMemo(() => {
