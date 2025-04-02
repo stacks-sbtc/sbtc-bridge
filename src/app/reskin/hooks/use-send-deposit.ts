@@ -96,7 +96,7 @@ export function useSendDeposit() {
         console.log({
           preSendParams: {
             reclaimScript: reclaimScriptHex,
-            depositScript: depositScriptHexPreHash,
+            depositScript: depositScriptHex,
           },
         });
 
@@ -135,7 +135,7 @@ export function useSendDeposit() {
         bitcoinTxid: txId,
         bitcoinTxOutputIndex: 0,
         reclaimScript: reclaimScriptHex,
-        depositScript: depositScriptHexPreHash,
+        depositScript: depositScriptHex,
       };
 
       // make emily post request
