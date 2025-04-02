@@ -18,11 +18,13 @@ import { useIsMobile } from "@/hooks/use-is-mobile";
 import { useRouter } from "next/navigation";
 import { elide } from "@/util";
 import { useSendDeposit } from "@/app/reskin/hooks/use-send-deposit";
+import { DepositTimeline } from "../../stepper/deposit-timeline";
 
 const { useStepper, utils } = depositStepper;
 
 export const DepositForm = () => {
   const { currentCap, perDepositMinimum } = useMintCaps();
+  const isMintCapReached = currentCap <= 0;
   const maxDepositAmount = currentCap / 1e8;
   const minDepositAmount = perDepositMinimum / 1e8;
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
@@ -107,6 +109,21 @@ export const DepositForm = () => {
     }
   };
 
+  if (isMintCapReached) {
+    return (
+      <div className="flex flex-col justify-center items-center gap-4 md:gap-8 w-full px-6 lg:w-1/2 max-w-xl flex-1 md:ml-14 text-black max-h-48 rounded-2xl bg-transparent p-3 dark:text-lightGray text-center">
+        <p className="text-4xl">Mint cap reached!</p>
+        <p className="text-xl w-full">
+          Stay tuned for further capacity being released!
+        </p>
+        <p className="text-xl w-full">
+          Please note that due to the cap being filled, there is currently no
+          way to peg new Bitcoin into sBTC.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <Formik
       initialValues={{
@@ -127,74 +144,77 @@ export const DepositForm = () => {
       }}
     >
       {({ errors, touched, isValid, values, submitForm, getFieldMeta }) => (
-        <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
-          <div
-            className={`flex flex-col gap-2 flex-1 justify-center md:justify-normal w-full h-full`}
-          >
-            {(!isMobile ||
-              stepper.current.id === "amount" ||
-              stepper.current.id === "confirm" ||
-              stepper.current.id === "status") && (
-              <AmountInput
-                value={`${values.amount} BTC`}
-                isReadonly={stepper.current.id !== "amount"}
-                onClickEdit={() => handleEdit("amount")}
-                isEditable={stepper.current.id !== "status"}
-                onPressEnter={() => {
-                  return touched.amount && handleEnter(errors.amount);
-                }}
-                error={touched.amount && errors.amount}
-              />
-            )}
-
-            {(stepper.current.id === "address" ||
-              stepper.current.id === "confirm" ||
-              stepper.current.id === "status") && (
-              <AddressInput
-                value={elide(values.address, isMobile ? 20 : 8)}
-                isReadonly={stepper.current.id !== "address"}
-                isEditable={stepper.current.id !== "status"}
-                onPressEnter={() => handleEnter(errors.address)}
-                onClickEdit={() => handleEdit("address")}
-                error={touched.address && errors.address}
-              />
-            )}
-          </div>
-
-          <div className="flex gap-5 w-full md:pl-14 self-end">
-            {!stepper.isFirst && !stepper.isLast && (
-              <FormButton
-                onClick={handlePrevClick}
-                type="button"
-                variant="secondary"
-                className={"flex-1 md:flex-[4]"}
-              >
-                back
-              </FormButton>
-            )}
-
-            <FormButton
-              buttonRef={nextButtonRef}
-              onClick={
-                stepper.current.id === "confirm"
-                  ? async () => {
-                      await submitForm();
-                    }
-                  : handleNextClick
-              }
-              disabled={!!getFieldMeta(stepper.current.id).error && !isValid}
-              type="button"
-              className="flex-1 md:flex-[8]"
+        <>
+          <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
+            <div
+              className={`flex flex-col gap-2 flex-1 justify-center md:justify-normal w-full h-full`}
             >
-              {stepper.switch({
-                address: () => (isValid ? "review" : "next"),
-                amount: () => "next",
-                confirm: () => "confirm",
-                status: () => "view history",
-              })}
-            </FormButton>
-          </div>
-        </Form>
+              {(!isMobile ||
+                stepper.current.id === "amount" ||
+                stepper.current.id === "confirm" ||
+                stepper.current.id === "status") && (
+                <AmountInput
+                  value={`${values.amount} BTC`}
+                  isReadonly={stepper.current.id !== "amount"}
+                  onClickEdit={() => handleEdit("amount")}
+                  isEditable={stepper.current.id !== "status"}
+                  onPressEnter={() => {
+                    return touched.amount && handleEnter(errors.amount);
+                  }}
+                  error={touched.amount && errors.amount}
+                />
+              )}
+
+              {(stepper.current.id === "address" ||
+                stepper.current.id === "confirm" ||
+                stepper.current.id === "status") && (
+                <AddressInput
+                  value={elide(values.address, isMobile ? 20 : 8)}
+                  isReadonly={stepper.current.id !== "address"}
+                  isEditable={stepper.current.id !== "status"}
+                  onPressEnter={() => handleEnter(errors.address)}
+                  onClickEdit={() => handleEdit("address")}
+                  error={touched.address && errors.address}
+                />
+              )}
+            </div>
+
+            <div className="flex gap-5 w-full md:pl-14 self-end">
+              {!stepper.isFirst && !stepper.isLast && (
+                <FormButton
+                  onClick={handlePrevClick}
+                  type="button"
+                  variant="secondary"
+                  className={"flex-1 md:flex-[4]"}
+                >
+                  back
+                </FormButton>
+              )}
+
+              <FormButton
+                buttonRef={nextButtonRef}
+                onClick={
+                  stepper.current.id === "confirm"
+                    ? async () => {
+                        await submitForm();
+                      }
+                    : handleNextClick
+                }
+                disabled={!!getFieldMeta(stepper.current.id).error && !isValid}
+                type="button"
+                className="flex-1 md:flex-[8]"
+              >
+                {stepper.switch({
+                  address: () => (isValid ? "review" : "next"),
+                  amount: () => "next",
+                  confirm: () => "confirm",
+                  status: () => "view history",
+                })}
+              </FormButton>
+            </div>
+          </Form>
+          <DepositTimeline />
+        </>
       )}
     </Formik>
   );
