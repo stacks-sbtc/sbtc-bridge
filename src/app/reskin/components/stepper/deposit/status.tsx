@@ -6,6 +6,9 @@ import { useReskinDepositStatus } from "@/app/reskin/hooks/use-reskin-deposit-st
 import { DepositStatus } from "@/hooks/use-deposit-status";
 import { useAtomValue } from "jotai";
 import { bridgeConfigAtom } from "@/util/atoms";
+import { getExplorerUrl } from "@/lib/get-explorer-url";
+import { getStacksNetwork } from "@/util/get-stacks-network";
+import { EmilyTxConfirmed } from "@/util/tx-utils";
 
 function HyperLink({
   href,
@@ -45,8 +48,14 @@ function TxPendingStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
   );
 }
 
-function TxCompleteStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
-  const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
+function TxCompleteStatus({
+  bitcoinTxId,
+  stacksTxId,
+}: {
+  bitcoinTxId: string;
+  stacksTxId: string;
+}) {
+  const { PUBLIC_MEMPOOL_URL, WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
 
   return (
     <div className="flex flex-col items-center justify-center mt-4 h-28">
@@ -57,6 +66,13 @@ function TxCompleteStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
       <div>
         <HyperLink href={`${PUBLIC_MEMPOOL_URL}/tx/${bitcoinTxId}`}>
           mempool tx
+        </HyperLink>
+      </div>
+      <div>
+        <HyperLink
+          href={getExplorerUrl(stacksTxId, getStacksNetwork(WALLET_NETWORK))}
+        >
+          stacks tx
         </HyperLink>
       </div>
     </div>
@@ -82,7 +98,7 @@ function TxFailedStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
 
 export function StatusDescription({ stepper }: { stepper: Stepper }) {
   const { slug } = useParams<{ slug?: string }>();
-  const { status } = useReskinDepositStatus(slug);
+  const { status, emilyDepositInfo } = useReskinDepositStatus(slug);
   const isCurrentStep = stepper.current.id === "status";
 
   return !isCurrentStep ? (
@@ -92,7 +108,13 @@ export function StatusDescription({ stepper }: { stepper: Stepper }) {
   ) : (
     <>
       {status === DepositStatus.Completed && (
-        <TxCompleteStatus bitcoinTxId={slug!} />
+        <TxCompleteStatus
+          bitcoinTxId={slug!}
+          stacksTxId={
+            // THIS WILL BE FOR SURE the confirmed type
+            (emilyDepositInfo as EmilyTxConfirmed).fulfillment.StacksTxid
+          }
+        />
       )}
       {status === DepositStatus.Failed && (
         <TxFailedStatus bitcoinTxId={slug!} />

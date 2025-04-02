@@ -19,7 +19,7 @@ type EmilyTxAccepted = EmilyTxBase & {
   status: "accepted";
 };
 
-type EmilyTxConfirmed = EmilyTxBase & {
+export type EmilyTxConfirmed = EmilyTxBase & {
   status: "confirmed";
   fulfillment: Fulfillment;
 };

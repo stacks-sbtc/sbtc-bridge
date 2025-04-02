@@ -158,5 +158,6 @@ export function useReskinDepositStatus(txId?: string) {
     recipient: recipient && (Cl.deserialize(recipient) as PrincipalCV).value,
     stacksTxId,
     bitcoinTxInfo,
+    emilyDepositInfo,
   };
 }
