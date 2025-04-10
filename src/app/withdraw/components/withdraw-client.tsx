@@ -47,6 +47,7 @@ import {
   Cl as Cl6,
   FungibleConditionCode,
 } from "@stacks/transactions-v6";
+import { validateWithdrawal } from "./util/validate-withdraw-amount";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -97,7 +98,11 @@ const Withdraw = () => {
     },
   });
 
-  const { refetch, isLoading: emilyLimitsLoading } = useEmilyLimits();
+  const {
+    refetch,
+    isLoading: emilyLimitsLoading,
+    data: emilyLimits,
+  } = useEmilyLimits();
 
   const getMaxError = (maxWithdrawal: number) => {
     return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
@@ -116,18 +121,18 @@ const Withdraw = () => {
             maximumFractionDigits: 8,
           })} BTC`,
         )
-        .max(
-          btcBalance - fee,
-          `The withdrawal + max fees (${fee.toLocaleString(undefined, { maximumFractionDigits: 8 })}) amount exceeds your current balance of ${btcBalance.toLocaleString(
-            undefined,
-            {
-              maximumFractionDigits: 8,
-            },
-          )} sBTC`,
-        )
+        .test("capsAndBalanceValidation", function (value) {
+          return validateWithdrawal.call(
+            this,
+            value,
+            emilyLimits,
+            btcBalance,
+            fee,
+          );
+        })
         .required(),
     });
-  }, [satsBalance, maxFee, config.WITHDRAW_MIN_AMOUNT_SATS]);
+  }, [satsBalance, maxFee, min, emilyLimits]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
@@ -293,8 +298,10 @@ const Withdraw = () => {
             handleSubmit={async (value) => {
               const limits = await refetch();
 
-              const maxWithdrawalCap =
-                (limits.data?.perWithdrawalCap || 0) / 1e8;
+              const maxWithdrawalCap = Math.min(
+                (limits.data?.perWithdrawalCap || 0) / 1e8,
+                (limits.data?.availableToWithdraw || 0) / 1e8,
+              );
 
               if (value > maxWithdrawalCap) {
                 return getMaxError(maxWithdrawalCap);

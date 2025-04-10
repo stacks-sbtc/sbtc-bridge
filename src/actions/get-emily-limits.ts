@@ -9,6 +9,7 @@ type EmilyLimits = {
   perDepositMinimum: null | number;
   rollingWithdrawalBlocks: number | null;
   rollingWithdrawalCap: number | null;
+  availableToWithdraw: number | null;
 };
 
 type AccountCaps = {};
@@ -21,6 +22,7 @@ export default async function getEmilyLimits() {
       perDepositCap: 0,
       perWithdrawalCap: 0,
       perDepositMinimum: Infinity,
+      availableToWithdraw: 0,
     };
   }
   const json = (await res.json()) as EmilyLimits;
@@ -30,7 +32,6 @@ export default async function getEmilyLimits() {
     perDepositCap: json.perDepositCap ?? Infinity,
     perWithdrawalCap: json.perWithdrawalCap ?? Infinity,
     perDepositMinimum: json.perDepositMinimum ?? 0,
-    rollingWithdrawalBlocks: json.rollingWithdrawalBlocks ?? Infinity,
-    rollingWithdrawalCap: json.rollingWithdrawalCap ?? Infinity,
+    availableToWithdraw: json.availableToWithdraw ?? Infinity,
   };
 }
