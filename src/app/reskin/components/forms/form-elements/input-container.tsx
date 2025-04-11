@@ -10,7 +10,7 @@ export function InputContainer({
   onClickEdit,
   isEditable,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   isReadonly: boolean;
   readonlyValue: string;
   title: string;

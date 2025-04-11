@@ -6,13 +6,16 @@ import { AmountInput } from "../components/forms/deposit/amount-input";
 
 import { depositStepper } from "../components/stepper/deposit/util";
 import { useReskinDepositStatus } from "../hooks/use-reskin-deposit-status";
+import { DepositStatus } from "@/hooks/use-deposit-status";
+import Link from "next/link";
 const { useStepper } = depositStepper;
 
 export function DepositInfo() {
   const { slug: depositTxId } = useParams<{ slug: string }>();
   const stepper = useStepper();
 
-  const { recipient, bitcoinTxInfo } = useReskinDepositStatus(depositTxId);
+  const { recipient, bitcoinTxInfo, status } =
+    useReskinDepositStatus(depositTxId);
   useEffect(() => {
     stepper.goTo("status");
   }, [stepper]);
@@ -42,9 +45,17 @@ export function DepositInfo() {
       </div>
 
       <div className="flex gap-5 w-full md:pl-14 self-end">
-        <FormButton type="button" className="flex-1">
-          view history{" "}
-        </FormButton>
+        {status === DepositStatus.Failed ? (
+          <Link href={`/reskin/${depositTxId}/reclaim`} className="flex-1 flex">
+            <FormButton type="button" className="flex-1">
+              Reclaim
+            </FormButton>
+          </Link>
+        ) : (
+          <FormButton type="button" className="flex-1">
+            view history
+          </FormButton>
+        )}
       </div>
     </div>
   );
