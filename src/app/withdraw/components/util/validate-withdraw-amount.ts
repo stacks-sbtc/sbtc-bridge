@@ -2,9 +2,18 @@ import getEmilyLimits from "@/actions/get-emily-limits";
 import yup from "yup";
 type EmilyLimits = Awaited<ReturnType<typeof getEmilyLimits>>;
 
-const getMaxError = (maxWithdrawal: number) => {
-  return `Withdrawal exceeds current cap of ${maxWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`;
+export function formatBTC(value: number) {
+  return value.toLocaleString(undefined, { maximumFractionDigits: 8 });
+}
+
+const getCapError = (maxWithdrawal: number) => {
+  return `Withdrawal exceeds current cap of ${formatBTC(maxWithdrawal)} BTC`;
 };
+
+const getAvailableError = (available: number) => {
+  return `Withdrawal exceeds available quota of ${formatBTC(available)} BTC for this period`;
+};
+
 function convertBTCtoSats(btcValue: number) {
   return btcValue * 1e8;
 }
@@ -12,15 +21,12 @@ function convertBTCtoSats(btcValue: number) {
 function checkWithdrawalCap(
   this: yup.TestContext<yup.AnyObject>,
   satsValue: number,
-  emilyLimits: EmilyLimits | undefined,
+  emilyLimits: EmilyLimits,
 ) {
-  if (
-    emilyLimits?.perWithdrawalCap &&
-    satsValue > emilyLimits.perWithdrawalCap
-  ) {
+  if (satsValue > emilyLimits.perWithdrawalCap) {
     return this.createError({
       path: this.path,
-      message: getMaxError(emilyLimits.perWithdrawalCap / 1e8),
+      message: getCapError(emilyLimits.perWithdrawalCap / 1e8),
     });
   }
   return true;
@@ -29,15 +35,12 @@ function checkWithdrawalCap(
 function checkAvailableToWithdraw(
   this: yup.TestContext<yup.AnyObject>,
   satsValue: number,
-  emilyLimits: EmilyLimits | undefined,
+  emilyLimits: EmilyLimits,
 ) {
-  if (
-    emilyLimits?.availableToWithdraw &&
-    satsValue > emilyLimits.availableToWithdraw
-  ) {
+  if (satsValue > emilyLimits.availableToWithdraw) {
     return this.createError({
       path: this.path,
-      message: getMaxError(emilyLimits.availableToWithdraw / 1e8),
+      message: getAvailableError(emilyLimits.availableToWithdraw / 1e8),
     });
   }
   return true;
@@ -60,17 +63,9 @@ function checkWithdrawableBalance(
 }
 
 function formatBalanceError(btcValue: number, fee: number, btcBalance: number) {
-  return `The withdrawal + max fees (${(fee + btcValue).toLocaleString(
-    undefined,
-    {
-      maximumFractionDigits: 8,
-    },
-  )}) amount exceeds your current balance of ${btcBalance.toLocaleString(
-    undefined,
-    {
-      maximumFractionDigits: 8,
-    },
-  )} sBTC`;
+  return `The withdrawal + max fees (${formatBTC(
+    fee + btcValue,
+  )}) amount exceeds your current balance of ${formatBTC(btcBalance)} sBTC`;
 }
 
 // Main validation function
@@ -84,6 +79,13 @@ export function validateWithdrawal(
   if (!btcValue) return true;
 
   const satsValue = convertBTCtoSats(btcValue);
+
+  if (!emilyLimits) {
+    return this.createError({
+      path: this.path,
+      message: "Could not fetch withdrawal limits, please try again later",
+    });
+  }
 
   const capCheck = checkWithdrawalCap.call(this, satsValue, emilyLimits);
   if (capCheck !== true) return capCheck;

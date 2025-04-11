@@ -7,8 +7,6 @@ type EmilyLimits = {
   perWithdrawalCap: null | number;
   accountCaps: AccountCaps;
   perDepositMinimum: null | number;
-  rollingWithdrawalBlocks: number | null;
-  rollingWithdrawalCap: number | null;
   availableToWithdraw: number | null;
 };
 
