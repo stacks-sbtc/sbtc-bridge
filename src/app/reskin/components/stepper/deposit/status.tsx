@@ -10,7 +10,7 @@ import { getExplorerUrl } from "@/lib/get-explorer-url";
 import { getStacksNetwork } from "@/util/get-stacks-network";
 import { EmilyTxConfirmed } from "@/util/tx-utils";
 
-function HyperLink({
+export function HyperLink({
   href,
   children,
 }: {
@@ -29,7 +29,7 @@ function HyperLink({
   );
 }
 
-function TxPendingStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
+export function TxPendingStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
   const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
   return (
     <div className="flex flex-col items-center justify-center mt-4 h-28">
@@ -48,12 +48,12 @@ function TxPendingStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
   );
 }
 
-function TxCompleteStatus({
+export function TxCompleteStatus({
   bitcoinTxId,
   stacksTxId,
 }: {
   bitcoinTxId: string;
-  stacksTxId: string;
+  stacksTxId?: string;
 }) {
   const { PUBLIC_MEMPOOL_URL, WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
 
@@ -68,18 +68,20 @@ function TxCompleteStatus({
           mempool tx
         </HyperLink>
       </div>
-      <div>
-        <HyperLink
-          href={getExplorerUrl(stacksTxId, getStacksNetwork(WALLET_NETWORK))}
-        >
-          stacks tx
-        </HyperLink>
-      </div>
+      {stacksTxId && (
+        <div>
+          <HyperLink
+            href={getExplorerUrl(stacksTxId, getStacksNetwork(WALLET_NETWORK))}
+          >
+            stacks tx
+          </HyperLink>
+        </div>
+      )}
     </div>
   );
 }
 
-function TxFailedStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
+export function TxFailedStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
   const { PUBLIC_MEMPOOL_URL } = useAtomValue(bridgeConfigAtom);
   return (
     <div className="flex flex-col items-center justify-center mt-4 h-28">

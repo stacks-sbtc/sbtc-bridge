@@ -6,7 +6,7 @@ import {
   getLeatherBTCProviderOrThrow,
 } from "./util/btc-provider";
 
-type SignPSBTParams = {
+export type SignPSBTParams = {
   hex: string;
   network?: DefaultNetworkConfigurations;
   address: string;
