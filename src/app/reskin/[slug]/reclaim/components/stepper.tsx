@@ -6,6 +6,7 @@ import {
 import { ReclaimStatus, useReclaimStatus } from "@/hooks/use-reclaim-status";
 import { defineStepper, Stepper } from "@stepperize/react";
 import { useSearchParams } from "next/navigation";
+import { RECLAIM_TX_ID_SEARCH_KEY } from "../hooks/useSubmitReclaim";
 
 function SubmitReclaim({}) {
   return (
@@ -18,7 +19,7 @@ function SubmitReclaim({}) {
 
 function StatusDescription({ stepper }: { stepper: Stepper }) {
   const searchParams = useSearchParams();
-  const reclaimTxId = searchParams.get("reclaim_tx_id");
+  const reclaimTxId = searchParams.get(RECLAIM_TX_ID_SEARCH_KEY);
 
   const status = useReclaimStatus(reclaimTxId);
   const isCurrentStep = stepper.current.id === "status";

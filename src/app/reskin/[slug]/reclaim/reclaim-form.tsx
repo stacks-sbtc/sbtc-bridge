@@ -3,7 +3,10 @@ import { useEffect, useMemo } from "react";
 import { reclaimStepper } from "./components/stepper";
 import { useReskinDepositStatus } from "../../hooks/use-reskin-deposit-status";
 import { FormButton } from "../../components/form-button";
-import { useSubmitReclaim } from "./hooks/useSubmitReclaim";
+import {
+  RECLAIM_TX_ID_SEARCH_KEY,
+  useSubmitReclaim,
+} from "./hooks/useSubmitReclaim";
 import { InputContainer } from "../../components/forms/form-elements/input-container";
 import { useAtomValue } from "jotai";
 import { walletInfoAtom } from "@/util/atoms";
@@ -15,31 +18,33 @@ export function ReclaimForm() {
   const { slug: depositTxId } = useParams<{ slug: string }>();
   const stepper = useStepper();
 
-  const { bitcoinTxInfo } = useReskinDepositStatus(depositTxId);
+  const { bitcoinTxInfo, emilyDepositInfo } =
+    useReskinDepositStatus(depositTxId);
   const {
     addresses: { payment },
   } = useAtomValue(walletInfoAtom);
 
   const searchParams = useSearchParams();
-  const reclaimTxId = searchParams.get("reclaim_tx_id");
+  const reclaimTxId = searchParams.get(RECLAIM_TX_ID_SEARCH_KEY);
 
   useEffect(() => {
     if (reclaimTxId) {
       stepper.goTo("status");
     }
-  }, [reclaimTxId, searchParams, stepper]);
+  }, [reclaimTxId, stepper]);
 
   const { mutate } = useSubmitReclaim(depositTxId);
 
   const initialAmount = useMemo(() => {
-    const value = bitcoinTxInfo?.vout[0].value;
+    const value =
+      bitcoinTxInfo?.vout[emilyDepositInfo?.bitcoinTxOutputIndex || 0].value;
     if (value) {
       return (value / 1e8).toLocaleString(undefined, {
         maximumFractionDigits: 8,
       });
     }
     return "";
-  }, [bitcoinTxInfo?.vout]);
+  }, [bitcoinTxInfo?.vout, emilyDepositInfo?.bitcoinTxOutputIndex]);
 
   return (
     <div className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">

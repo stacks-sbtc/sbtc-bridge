@@ -19,7 +19,7 @@ import { useAtomValue } from "jotai";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-// const MAX_TX_SIZE = 180;
+export const RECLAIM_TX_ID_SEARCH_KEY = "reclaim_tx_id";
 
 export function useSubmitReclaim(depositTxId: string) {
   const { emilyDepositInfo } = useReskinDepositStatus(depositTxId);
@@ -70,7 +70,6 @@ export function useSubmitReclaim(depositTxId: string) {
     mutationKey: ["sendReclaimTransaction", depositTxId],
     mutationFn: async () => {
       try {
-        // FIXME: move to env
         const maxReclaimFee = 5000;
 
         if (!emilyDepositInfo) {
@@ -81,7 +80,6 @@ export function useSubmitReclaim(depositTxId: string) {
           return toast.error("Please connect your wallet");
         }
 
-        // FIXME: move to util or its own file
         const unsignedTxHex = constructPsbtForReclaim({
           depositAmount: emilyDepositInfo.amount,
           feeAmount: maxReclaimFee,
@@ -108,7 +106,7 @@ export function useSubmitReclaim(depositTxId: string) {
         // set a query params to the transaction id as reclaimTxId and updated the status
 
         const search = new URLSearchParams(searchParams);
-        search.set("reclaim_tx_id", transactionId);
+        search.set(RECLAIM_TX_ID_SEARCH_KEY, transactionId);
         router.push(pathname + "?" + search.toString());
       } catch (err: any) {
         // expected debug info
