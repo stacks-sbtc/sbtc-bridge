@@ -116,7 +116,7 @@ function StatusDescription({ stepper }: { stepper: Stepper }) {
   const isCurrentStep = stepper.current.id === "status";
 
   const {
-    data: { status, bitcoinTx, stacksTx },
+    data: { status, bitcoinTx },
   } = useWithdrawalInfo({ txid: withdrawTxId });
 
   const isFinal =
