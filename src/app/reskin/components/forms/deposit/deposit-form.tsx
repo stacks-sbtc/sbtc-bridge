@@ -143,7 +143,7 @@ export const DepositForm = () => {
         }
       }}
     >
-      {({ errors, touched, isValid, values, submitForm, getFieldMeta }) => (
+      {({ errors, touched, isValid, values, submitForm, validateForm }) => (
         <>
           <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
             <div
@@ -193,14 +193,19 @@ export const DepositForm = () => {
 
               <FormButton
                 buttonRef={nextButtonRef}
-                onClick={
-                  stepper.current.id === "confirm"
-                    ? async () => {
-                        await submitForm();
-                      }
-                    : handleNextClick
-                }
-                disabled={!!getFieldMeta(stepper.current.id).error && !isValid}
+                onClick={async () => {
+                  const result = await validateForm();
+
+                  // if any field is invalid halt
+                  if (Object.entries(result).length) {
+                    return;
+                  }
+                  if (stepper.current.id === "confirm") {
+                    await submitForm();
+                  } else {
+                    handleNextClick();
+                  }
+                }}
                 type="button"
                 className="flex-1 md:flex-[8]"
               >
