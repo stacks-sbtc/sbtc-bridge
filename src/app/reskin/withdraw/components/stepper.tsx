@@ -13,7 +13,7 @@ import { getStacksNetwork } from "@/util/get-stacks-network";
 function SubmitWithdraw({}) {
   return (
     <span className="md:opacity-60 px-4 md:px-0">
-      How much BTC are you transferring back to BTC? Enter an amount that’s
+      How much sBTC are you transferring back to BTC? Enter an amount that’s
       above the dust requirement (546 sats)
     </span>
   );
@@ -104,7 +104,7 @@ export function TxFailedStatus({ stacksTxId }: { stacksTxId: string }) {
         <HyperLink
           href={getExplorerUrl(stacksTxId, getStacksNetwork(WALLET_NETWORK))}
         >
-          mempool tx
+          stacks tx
         </HyperLink>
       </div>
     </div>
