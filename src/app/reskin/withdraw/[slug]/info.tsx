@@ -5,6 +5,7 @@ import { AmountInput } from "../components/form/amount-input";
 import { AddressInput } from "../components/form/address-input";
 import { FormButton } from "../../components/form-button";
 import { withdrawStepper } from "../components/stepper";
+import Link from "next/link";
 const { useStepper } = withdrawStepper;
 
 export function WithdrawInfo() {
@@ -42,9 +43,11 @@ export function WithdrawInfo() {
       </div>
 
       <div className="flex gap-5 w-full md:pl-14 self-end">
-        <FormButton type="button" className="flex-1">
-          view history
-        </FormButton>
+        <Link href="/reskin/history" className="flex-1">
+          <FormButton type="button" className="w-full">
+            view history
+          </FormButton>
+        </Link>
       </div>
     </div>
   );
