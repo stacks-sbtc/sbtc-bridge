@@ -25,6 +25,7 @@ import { LoadingRow } from "./loading-state";
 import { ArrowUpRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 enum HistoryType {
   DEPOSIT = "deposit",
@@ -40,34 +41,33 @@ function HistoryEntry({ data, type }: HistoryItem) {
   const amount = formatBTC(data.amount / 1e8);
   const router = useRouter();
   const isConfirmed = data.status === "confirmed";
-  const handleClick = () => {
-    if (type === HistoryType.DEPOSIT) {
-      router.push(`/reskin/${data.bitcoinTxid}`);
-    } else if (type === HistoryType.WITHDRAWAL) {
-      router.push(`/reskin/withdraw/${data.txid}`);
-    }
-  };
+
+  let link =
+    type === HistoryType.DEPOSIT
+      ? `/reskin/${data.bitcoinTxid}`
+      : `/reskin/withdraw/${data.txid}`;
   return (
-    <TableRow
-      className="font-matter-mono h-16 border-y border-light-reskin-border-gray dark:border-dark-reskin-border-gray cursor-pointer"
-      onClick={handleClick}
-    >
-      <TableCell className="dark:text-midGray w-44 p-0 pl-4">
-        {amount} {amountPostFix}
-      </TableCell>
-      <TableCell className="dark:text-midGray uppercase">{type}</TableCell>
-      <TableCell className="dark:text-midGray">
-        <div
-          className={`flex items-center font-medium ${isConfirmed ? "text-chateau-green" : "text-confetti"}`}
-        >
-          {isConfirmed ? "Complete" : "Pending"}
-          <ArrowUpRight className="h-6 w-6 ml-1" />
-        </div>
-      </TableCell>
-      <TableCell className="dark:text-midGray hidden md:table-cell uppercase underline">
-        Open {"->"}
-      </TableCell>
-    </TableRow>
+    <Link href={link} className="contents">
+      <TableRow className="font-matter-mono h-16 border-y border-light-reskin-border-gray dark:border-dark-reskin-border-gray cursor-pointer">
+        <TableCell className="dark:text-midGray w-1/2 md:w-44 p-0 pl-4">
+          {amount} {amountPostFix}
+        </TableCell>
+        <TableCell className="dark:text-midGray uppercase md:w-44">
+          {type}
+        </TableCell>
+        <TableCell className="dark:text-midGray">
+          <div
+            className={`flex items-center font-medium ${isConfirmed ? "text-chateau-green" : "text-confetti"}`}
+          >
+            {isConfirmed ? "Complete" : "Pending"}
+            <ArrowUpRight className="h-6 w-6 ml-1" />
+          </div>
+        </TableCell>
+        <TableCell className="dark:text-midGray hidden md:table-cell uppercase underline">
+          Open {"->"}
+        </TableCell>
+      </TableRow>
+    </Link>
   );
 }
 
