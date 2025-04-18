@@ -21,9 +21,10 @@ export interface Deposit {
 }
 
 export async function getDepositsHistory(reclaimPubkeys: string[]) {
-  console.log(
-    `${env.EMILY_URL}/deposit/reclaim-pubkeys/${reclaimPubkeys.join("-")}`,
-  );
+  if (!reclaimPubkeys.length) {
+    return [];
+  }
+
   const response = await fetch(
     `${env.EMILY_URL}/deposit/reclaim-pubkeys/${reclaimPubkeys.join("-")}`,
   );

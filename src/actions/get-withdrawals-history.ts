@@ -19,7 +19,10 @@ export interface Withdrawal {
   txid: string;
 }
 
-export const getWithdrawalsHistory = async (stxAddress: string) => {
+export const getWithdrawalsHistory = async (stxAddress?: string) => {
+  if (!stxAddress) {
+    return [];
+  }
   const response = await fetch(
     `${env.EMILY_URL}/withdrawal/sender/${stxAddress}`,
   );
