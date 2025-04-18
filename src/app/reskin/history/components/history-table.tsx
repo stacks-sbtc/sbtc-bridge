@@ -24,8 +24,64 @@ import { LoadingRow } from "./loading-state";
 
 import { ArrowUpRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+import { getStacksTx } from "@/actions/get-stacks-tx";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getRawTransaction } from "@/actions/bitcoinClient";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+
+function MobileStatus({ isConfirmed }: { isConfirmed: boolean }) {
+  return (
+    <TableCell className="dark:text-midGray">
+      <div
+        className={`flex items-center font-medium ${isConfirmed ? "text-chateau-green" : "text-confetti"}`}
+      >
+        {isConfirmed ? "Complete" : "Pending"}
+        <ArrowUpRight className="h-6 w-6 ml-1" />
+      </div>
+    </TableCell>
+  );
+}
+
+function DesktopStatus({ type, data }: HistoryItem) {
+  const isConfirmed = data.status === "confirmed";
+  const { data: timestamp } = useQuery({
+    queryKey: [
+      "blocktime",
+      type,
+      type === HistoryType.DEPOSIT ? data.bitcoinTxid : data.txid,
+    ],
+    queryFn: async () => {
+      if (type === HistoryType.DEPOSIT) {
+        const tx = await getRawTransaction(data.bitcoinTxid);
+        const timestamp = tx?.status.block_time || null;
+        return timestamp
+          ? formatDistanceToNow(new Date(timestamp * 1000), { addSuffix: true })
+          : null;
+      }
+      const timestamp = await getStacksTx(data.txid);
+      return formatDistanceToNow(new Date(timestamp * 1000), {
+        addSuffix: true,
+      });
+    },
+  });
+
+  return (
+    <TableCell className="dark:text-midGray hidden md:table-cell uppercase ">
+      {isConfirmed ? (
+        timestamp ? (
+          timestamp
+        ) : (
+          <Skeleton className="w-4 h-2" />
+        )
+      ) : (
+        "Pending"
+      )}
+    </TableCell>
+  );
+}
 
 enum HistoryType {
   DEPOSIT = "deposit",
@@ -35,17 +91,18 @@ type HistoryItem =
   | { type: HistoryType.DEPOSIT; data: Deposit }
   | { type: HistoryType.WITHDRAWAL; data: Withdrawal };
 
-function HistoryEntry({ data, type }: HistoryItem) {
+function HistoryEntry(props: HistoryItem) {
+  const { type, data } = props;
   const amountPostFix =
     type === HistoryType.DEPOSIT ? "BTC -> sBTC" : "sBTC -> BTC";
   const amount = formatBTC(data.amount / 1e8);
-  const router = useRouter();
   const isConfirmed = data.status === "confirmed";
 
   let link =
     type === HistoryType.DEPOSIT
       ? `/reskin/${data.bitcoinTxid}`
       : `/reskin/withdraw/${data.txid}`;
+  const isMobile = useIsMobile();
   return (
     <Link href={link} className="contents">
       <TableRow className="font-matter-mono h-16 border-y border-light-reskin-border-gray dark:border-dark-reskin-border-gray cursor-pointer">
@@ -55,14 +112,11 @@ function HistoryEntry({ data, type }: HistoryItem) {
         <TableCell className="dark:text-midGray uppercase md:w-44">
           {type}
         </TableCell>
-        <TableCell className="dark:text-midGray">
-          <div
-            className={`flex items-center font-medium ${isConfirmed ? "text-chateau-green" : "text-confetti"}`}
-          >
-            {isConfirmed ? "Complete" : "Pending"}
-            <ArrowUpRight className="h-6 w-6 ml-1" />
-          </div>
-        </TableCell>
+        {isMobile ? (
+          <MobileStatus isConfirmed={isConfirmed} />
+        ) : (
+          <DesktopStatus {...props} />
+        )}
         <TableCell className="dark:text-midGray hidden md:table-cell uppercase underline">
           Open {"->"}
         </TableCell>
