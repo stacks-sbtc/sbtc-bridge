@@ -1,69 +1,35 @@
 "use client";
-import useMintCaps from "@/hooks/use-mint-caps";
-import { bridgeConfigAtom, walletInfoAtom } from "@/util/atoms";
+import { walletInfoAtom } from "@/util/atoms";
 import { Form, Formik } from "formik";
 import { useAtomValue } from "jotai";
 import { useMemo, useRef } from "react";
 import * as yup from "yup";
-import { FormButton } from "../../form-button";
-import { useValidateDepositAmount } from "@/hooks/use-validate-deposit-amount";
-import { useQuery } from "@tanstack/react-query";
-import getBtcBalance from "@/actions/get-btc-balance";
 
-import { depositStepper } from "../../stepper/deposit/util";
 import { AmountInput } from "./amount-input";
-import { testStxAddress } from "@/util/yup/test-stx-address";
 import { AddressInput } from "./address-input";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { useRouter } from "next/navigation";
 import { elide } from "@/util";
-import { useSendDeposit } from "@/app/reskin/hooks/use-send-deposit";
-import { DepositTimeline } from "../../stepper/deposit-timeline";
 
-const { useStepper, utils } = depositStepper;
+import { withdrawStepper } from "../stepper";
+import { WithdrawTimeline } from "../withdraw-stepper";
+import { FormButton } from "@/app/reskin/components/form-button";
+import { useSubmitWithdraw } from "../../hooks/use-submit-withdraw";
+import { useWithdrawalValidation } from "../../hooks/withdrawal-validation";
 
-export const DepositForm = () => {
-  const { currentCap, perDepositMinimum } = useMintCaps();
-  const isMintCapReached = currentCap <= 0;
-  const maxDepositAmount = currentCap / 1e8;
-  const minDepositAmount = perDepositMinimum / 1e8;
-  const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
+const { useStepper, utils } = withdrawStepper;
+
+export const WithdrawForm = () => {
   const router = useRouter();
 
-  const { depositToAddress } = useSendDeposit();
+  const submitWithdraw = useSubmitWithdraw();
 
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
-  const { data: btcBalance } = useQuery({
-    queryKey: ["btcBalance", btcAddress],
-    queryFn: async () => {
-      if (!btcAddress) {
-        return 0;
-      }
-      return getBtcBalance(btcAddress);
-    },
-    initialData: btcAddress ? Infinity : 0,
-    enabled: !!btcAddress,
-  });
 
-  const amountValidationSchema = useValidateDepositAmount({
-    maxDepositAmount,
-    btcBalance,
-    minDepositAmount,
-  });
-  const addressValidationSchema = useMemo(
-    () =>
-      yup
-        .string()
-        .test("stx-address", "Invalid STX address", function (value) {
-          return testStxAddress.call(this, value, WALLET_NETWORK!);
-        })
-        .required(),
-
-    [WALLET_NETWORK],
-  );
-
-  const depositSchema = useMemo(() => {
+  const { addressValidationSchema, amountValidationSchema } =
+    useWithdrawalValidation();
+  const withdrawalSchema = useMemo(() => {
     return yup.object().shape({
       amount: amountValidationSchema,
       address: addressValidationSchema,
@@ -109,37 +75,21 @@ export const DepositForm = () => {
     }
   };
 
-  if (isMintCapReached) {
-    return (
-      <div className="flex flex-col justify-center items-center gap-4 md:gap-8 w-full px-6 lg:w-1/2 max-w-xl flex-1 md:ml-14 text-black max-h-48 rounded-2xl bg-transparent p-3 dark:text-lightGray text-center">
-        <p className="text-4xl">Mint cap reached!</p>
-        <p className="text-xl w-full">
-          Stay tuned for further capacity being released!
-        </p>
-        <p className="text-xl w-full">
-          Please note that due to the cap being filled, there is currently no
-          way to peg new Bitcoin into sBTC.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <Formik
       initialValues={{
         amount: "",
-        address: addresses.stacks?.address || "",
+        address: btcAddress || "",
       }}
       enableReinitialize={true}
-      validationSchema={depositSchema}
+      validationSchema={withdrawalSchema}
       onSubmit={async (values: Values) => {
-        const depositInfo = await depositToAddress({
-          stxAddress: values.address,
-          amount: Number(values.amount) * 1e8,
+        const txId = await submitWithdraw({
+          address: values.address,
+          amount: values.amount,
         });
-
-        if (depositInfo) {
-          router.push(`/reskin/${depositInfo.bitcoinTxid}`);
+        if (txId) {
+          router.push(`/reskin/withdraw/${txId}`);
         }
       }}
     >
@@ -154,7 +104,7 @@ export const DepositForm = () => {
                 stepper.current.id === "confirm" ||
                 stepper.current.id === "status") && (
                 <AmountInput
-                  value={`${values.amount} BTC`}
+                  value={`${values.amount} sBTC`}
                   isReadonly={stepper.current.id !== "amount"}
                   onClickEdit={() => handleEdit("amount")}
                   isEditable={stepper.current.id !== "status"}
@@ -194,10 +144,9 @@ export const DepositForm = () => {
               <FormButton
                 buttonRef={nextButtonRef}
                 onClick={async () => {
-                  const result = await validateForm();
-
-                  // if any field is invalid halt
-                  if (Object.entries(result).length) {
+                  const errors = await validateForm();
+                  const isInvalid = Object.keys(errors).length > 0;
+                  if (isInvalid) {
                     return;
                   }
                   if (stepper.current.id === "confirm") {
@@ -218,7 +167,7 @@ export const DepositForm = () => {
               </FormButton>
             </div>
           </Form>
-          <DepositTimeline />
+          <WithdrawTimeline />
         </>
       )}
     </Formik>
