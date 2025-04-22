@@ -1,5 +1,5 @@
 "use server";
-import { WithdrawalStatus } from "@/app/withdraw/[txid]/components/util";
+import { WithdrawalStatus } from "@/app/_withdraw/[txid]/components/util";
 import { env } from "@/env";
 export interface withdrawlsResponse {
   nextToken: any;

@@ -26,16 +26,6 @@ const nextConfig = {
           ]
         : [];
 
-    redirects = !process.env.FEATURE_FLAGS?.includes("reskin")
-      ? [
-          ...redirects,
-          {
-            source: "/reskin",
-            destination: "/",
-            permanent: false,
-          },
-        ]
-      : redirects;
     return redirects;
   },
   async headers() {
