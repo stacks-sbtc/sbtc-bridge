@@ -27,5 +27,6 @@ export function useWithdrawalInfo({ txid }: { txid: string }) {
       }
       return 5000;
     },
+    enabled: !!txid,
   });
 }

@@ -10,6 +10,7 @@ async function hiroFetch(url: string, options: RequestInit = {}) {
   return fetch(url, {
     ...options,
     headers: { ...options.headers, ...apiHeaders },
+    cache: "no-store",
   });
 }
 
