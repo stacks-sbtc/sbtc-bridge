@@ -52,9 +52,11 @@ export function DepositInfo() {
             </FormButton>
           </Link>
         ) : (
-          <FormButton type="button" className="flex-1">
-            view history
-          </FormButton>
+          <Link href="/reskin/history" className="flex-1">
+            <FormButton type="button" className="w-full">
+              view history
+            </FormButton>
+          </Link>
         )}
       </div>
     </div>

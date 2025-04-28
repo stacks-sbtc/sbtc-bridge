@@ -25,6 +25,7 @@ const config: Config = {
         sand: "#F3F2F0",
         "reskin-dark-gray": "#272628",
         "dark-reskin-border-gray": "#333135",
+        "ship-gray": "#333135",
         "light-reskin-border-gray": "rgba(0, 0, 0, 0.2)",
         "dark-reskin-orange": "#FC6432",
         "dark-reskin-dark-gray": "#525153",
@@ -32,6 +33,10 @@ const config: Config = {
         "timeline-inactive-step-text": "#808080",
         "timeline-active-step-text": "#141414",
         "dark-timeline-inactive-step-text": "#FAFAFA",
+        alabastar: "#FAFAFA",
+        tundora: "#4A4A4A",
+        confetti: "#E5D660",
+        "chateau-green": "#34A853",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

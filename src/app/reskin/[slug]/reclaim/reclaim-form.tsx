@@ -11,6 +11,7 @@ import { InputContainer } from "../../components/forms/form-elements/input-conta
 import { useAtomValue } from "jotai";
 import { walletInfoAtom } from "@/util/atoms";
 import { elide } from "@/util";
+import Link from "next/link";
 
 const { useStepper } = reclaimStepper;
 
@@ -74,9 +75,11 @@ export function ReclaimForm() {
         )}
 
         {stepper.current.id === "status" && (
-          <FormButton type="button" className="flex-1">
-            view history
-          </FormButton>
+          <Link href="/reskin/history">
+            <FormButton type="button" className="flex-1">
+              view history
+            </FormButton>
+          </Link>
         )}
       </div>
     </div>
