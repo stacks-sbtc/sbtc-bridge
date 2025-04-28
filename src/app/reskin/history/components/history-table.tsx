@@ -27,7 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import { getStacksTx } from "@/actions/get-stacks-tx";
+import { getStacksTxTime } from "@/actions/get-stacks-tx-time";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRawTransaction } from "@/actions/bitcoinClient";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
@@ -61,7 +61,7 @@ function DesktopStatus({ type, data }: HistoryItem) {
           ? formatDistanceToNow(new Date(timestamp * 1000), { addSuffix: true })
           : null;
       }
-      const timestamp = await getStacksTx(data.txid);
+      const timestamp = await getStacksTxTime(data.txid);
       return formatDistanceToNow(new Date(timestamp * 1000), {
         addSuffix: true,
       });

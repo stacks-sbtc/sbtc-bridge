@@ -3,7 +3,7 @@
 import { env } from "@/env";
 import { hiroClient } from "./hiro-fetch";
 
-export async function getStacksTx(txid: string): Promise<number> {
+export async function getStacksTxTime(txid: string): Promise<number> {
   const response = await hiroClient.fetch(
     `${env.STACKS_API_URL}/extended/v1/tx/${txid}`,
     {
