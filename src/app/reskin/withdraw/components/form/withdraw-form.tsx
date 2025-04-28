@@ -93,7 +93,15 @@ export const WithdrawForm = () => {
         }
       }}
     >
-      {({ errors, touched, isValid, values, submitForm, validateForm }) => (
+      {({
+        errors,
+        touched,
+        isValid,
+        values,
+        submitForm,
+        validateForm,
+        isSubmitting,
+      }) => (
         <>
           <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
             <div
@@ -157,11 +165,12 @@ export const WithdrawForm = () => {
                 }}
                 type="button"
                 className="flex-1 md:flex-[8]"
+                disabled={isSubmitting}
               >
                 {stepper.switch({
                   address: () => (isValid ? "review" : "next"),
                   amount: () => "next",
-                  confirm: () => "confirm",
+                  confirm: () => (isSubmitting ? "confirming..." : "confirm"),
                   status: () => "view history",
                 })}
               </FormButton>

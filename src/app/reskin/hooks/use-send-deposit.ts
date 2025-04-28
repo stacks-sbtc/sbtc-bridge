@@ -129,6 +129,7 @@ export function useSendDeposit() {
           errorMessage = error.message;
         }
         toast.error(`Issue with Transaction: ${errorMessage}`);
+        return;
       }
 
       const emilyReqPayload = {
