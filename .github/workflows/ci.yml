@@ -15,14 +15,18 @@ jobs:
         node-version: [18.x]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: stacks-sbtc/actions/checkout@main
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Install Node.js ${{ matrix.node-version }}
+        id: install_node
+        uses: stacks-sbtc/actions/setup-node@main
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Build
+      - name: Yarn Build
+        id: yarn_build
         run: |
           yarn install --frozen-lockfile
           yarn build

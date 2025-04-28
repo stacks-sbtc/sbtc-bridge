@@ -29,6 +29,7 @@ import {
 import { useAsignaConnect } from "@asigna/stx-connect";
 import { serverBroadcastTx } from "@/actions/server-broadcast-tx";
 import { toast } from "sonner";
+import Decimal from "decimal.js";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -79,7 +80,7 @@ export function useSubmitWithdraw() {
     }
 
     // convert the amount to satoshis
-    const satoshiAmount = Math.round(Number(amount) * 1e8);
+    const satoshiAmount = new Decimal(amount).times(1e8).toNumber();
 
     // convert the fee to satoshis
     const satoshiFee = Math.round(maxFee!);
