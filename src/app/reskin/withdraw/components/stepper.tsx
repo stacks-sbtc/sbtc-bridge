@@ -51,7 +51,7 @@ export function TxPendingStatus({
               : getExplorerUrl(stacksTxId, getStacksNetwork(WALLET_NETWORK))
           }
         >
-          5min
+          1 hour
         </HyperLink>{" "}
         )
       </div>

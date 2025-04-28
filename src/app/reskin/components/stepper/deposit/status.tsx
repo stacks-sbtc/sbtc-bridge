@@ -40,7 +40,7 @@ export function TxPendingStatus({ bitcoinTxId }: { bitcoinTxId: string }) {
       <div>
         ( Estimation{" "}
         <HyperLink href={`${PUBLIC_MEMPOOL_URL}/tx/${bitcoinTxId}`}>
-          5min
+          1 hour
         </HyperLink>{" "}
         )
       </div>
