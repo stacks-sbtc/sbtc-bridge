@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { elide } from "@/util";
 import { useSendDeposit } from "@/app/reskin/hooks/use-send-deposit";
 import { DepositTimeline } from "../../stepper/deposit-timeline";
+import Decimal from "decimal.js";
 
 const { useStepper, utils } = depositStepper;
 
@@ -135,7 +136,7 @@ export const DepositForm = () => {
       onSubmit={async (values: Values) => {
         const depositInfo = await depositToAddress({
           stxAddress: values.address,
-          amount: Number(values.amount) * 1e8,
+          amount: new Decimal(values.amount).times(1e8).toNumber(),
         });
 
         if (depositInfo) {
