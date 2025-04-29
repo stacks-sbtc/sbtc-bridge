@@ -5,7 +5,7 @@ import { BridgeConfig } from "@/util/atoms";
 import Header from "@/comps/Header";
 
 import LayoutClient from "./layout-client";
-import { NavTabs } from "./reskin/components/tabs/nav-tabs";
+import { NavTabs } from "./(reskin)/components/tabs/nav-tabs";
 
 const tabs = [
   {

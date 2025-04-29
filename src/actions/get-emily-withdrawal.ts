@@ -4,7 +4,7 @@ import { env } from "@/env";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
 import { hexToBytes } from "@stacks/common";
 import * as bitcoin from "bitcoinjs-lib";
-import { WithdrawalStatus } from "@/app/withdraw/[txid]/components/util";
+import { WithdrawalStatus } from "@/app/_withdraw/[txid]/components/util";
 
 type EmilyWithdrawal = {
   requestId: number;

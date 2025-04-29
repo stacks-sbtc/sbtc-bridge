@@ -4,7 +4,7 @@ import { env } from "@/env";
 import { BufferCV, Cl, TupleCV, UIntCV } from "@stacks/transactions";
 
 import { encodeBitcoinAddress } from "@/util/decode-bitcoin-address";
-import { WithdrawalStatus } from "@/app/withdraw/[txid]/components/util";
+import { WithdrawalStatus } from "@/app/_withdraw/[txid]/components/util";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
 
 import { hiroClient } from "./hiro-fetch";
