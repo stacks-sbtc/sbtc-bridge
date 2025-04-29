@@ -1,7 +1,7 @@
 // MUST NOT BE USED BY CLIENT
 import "server-only";
 import { DefaultNetworkConfigurations } from "@leather.io/models";
-
+export const MAX_WITHDRAWAL_TX_SIZE = 180;
 type featureFlag = "withdrawals" | "reskin";
 
 export const env = {
