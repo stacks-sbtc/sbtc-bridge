@@ -23,7 +23,10 @@ export const bridgeConfigAtom = atom<BridgeConfig>({
   FEATURE_FLAGS: [],
   WITHDRAW_MIN_AMOUNT_SATS: 0,
 });
-export const depositMaxFeeAtom = atom(80000);
+export const DEPOSIT_MAX_FEE = 80000;
+export const RECLAIM_FEE = 5000;
+
+export const depositMaxFeeAtom = atom(DEPOSIT_MAX_FEE);
 
 export const showConnectWalletAtom = atom<boolean>(false);
 

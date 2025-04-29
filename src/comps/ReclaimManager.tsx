@@ -12,6 +12,7 @@ import {
   walletInfoAtom,
   showConnectWalletAtom,
   WalletProvider,
+  RECLAIM_FEE,
 } from "@/util/atoms";
 
 import { useNotifications } from "@/hooks/use-notifications";
@@ -338,9 +339,6 @@ const ReclaimDeposit = ({
 
   const buildReclaimTransaction = async () => {
     try {
-      // FIXME: move to env
-      const maxReclaimFee = 5000;
-
       const btcAddress = getWalletAddress();
 
       if (!btcAddress) {
@@ -350,7 +348,7 @@ const ReclaimDeposit = ({
       // FIXME: move to util or its own file
       const unsignedTxHex = constructPsbtForReclaim({
         depositAmount: Math.floor(amount * 1e8),
-        feeAmount: maxReclaimFee,
+        feeAmount: RECLAIM_FEE,
         lockTime: depositTransaction.parameters.lockTime,
         depositScript: depositTransaction.depositScript,
         reclaimScript: depositTransaction.reclaimScript,

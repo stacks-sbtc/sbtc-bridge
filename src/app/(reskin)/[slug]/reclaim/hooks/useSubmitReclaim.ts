@@ -1,6 +1,11 @@
 import { transmitRawTransaction } from "@/actions/bitcoinClient";
 import { useReskinDepositStatus } from "@/app/(reskin)/hooks/use-reskin-deposit-status";
-import { bridgeConfigAtom, walletInfoAtom, WalletProvider } from "@/util/atoms";
+import {
+  bridgeConfigAtom,
+  RECLAIM_FEE,
+  walletInfoAtom,
+  WalletProvider,
+} from "@/util/atoms";
 import {
   constructPsbtForReclaim,
   createTransactionFromHex,
@@ -70,8 +75,6 @@ export function useSubmitReclaim(depositTxId: string) {
     mutationKey: ["sendReclaimTransaction", depositTxId],
     mutationFn: async () => {
       try {
-        const maxReclaimFee = 5000;
-
         if (!emilyDepositInfo) {
           return toast.error("Deposit not found, please refresh the page");
         }
@@ -82,7 +85,7 @@ export function useSubmitReclaim(depositTxId: string) {
 
         const unsignedTxHex = constructPsbtForReclaim({
           depositAmount: emilyDepositInfo.amount,
-          feeAmount: maxReclaimFee,
+          feeAmount: RECLAIM_FEE,
           lockTime: emilyDepositInfo.parameters.lockTime,
           depositScript: emilyDepositInfo.depositScript,
           reclaimScript: emilyDepositInfo.reclaimScript,
