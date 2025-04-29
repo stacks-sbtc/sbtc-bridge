@@ -24,7 +24,12 @@ export function useValidateDepositAmount({
       yup
         .number()
         .positive()
-
+        .test("maxDigits", "BTC can have up to 8 decimal places", (number) => {
+          if (!number) return true;
+          const numberString = String(number);
+          const [, decimalPart] = numberString.split(".");
+          return decimalPart?.length <= 8 || decimalPart === undefined;
+        })
         .min(
           minDepositAmount,
           `Minimum deposit amount is ${minDepositAmount} BTC`,
