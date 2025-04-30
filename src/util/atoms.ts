@@ -1,5 +1,3 @@
-"use client";
-
 import { atom, createStore } from "jotai";
 import { NotificationEventType } from "@/comps/Notifications";
 import getSbtcBridgeConfig from "@/actions/get-sbtc-bridge-config";
