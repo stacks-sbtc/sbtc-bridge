@@ -10,6 +10,7 @@ export const AmountInput = ({
   error,
   onPressEnter,
   isEditable,
+  isDisabled,
 }: {
   isReadonly: boolean;
   onClickEdit?: () => void;
@@ -17,6 +18,7 @@ export const AmountInput = ({
   error?: string | boolean;
   onPressEnter?: () => void;
   isEditable?: boolean;
+  isDisabled?: boolean;
 }) => {
   return (
     <InputContainer
@@ -37,6 +39,7 @@ export const AmountInput = ({
             return (
               <>
                 <Textarea
+                  disabled={isDisabled}
                   onKeyUp={(e) => {
                     if (e.key === "Enter") {
                       onPressEnter?.();

@@ -116,6 +116,7 @@ export const WithdrawForm = () => {
                 stepper.current.id === "confirm" ||
                 stepper.current.id === "status") && (
                 <AmountInput
+                  isDisabled={!isConnected}
                   value={`${values.amount} sBTC`}
                   isReadonly={stepper.current.id !== "amount"}
                   onClickEdit={() => handleEdit("amount")}
