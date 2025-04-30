@@ -1,7 +1,7 @@
 "use client";
-import { walletInfoAtom } from "@/util/atoms";
+import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
 import { Form, Formik } from "formik";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useRef } from "react";
 import * as yup from "yup";
 
@@ -26,6 +26,10 @@ export const WithdrawForm = () => {
 
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
+  const stxAddress = addresses.stacks?.address;
+
+  const isConnected = !!stxAddress;
+  const setShowConnectWallet = useSetAtom(showConnectWalletAtom);
 
   const { addressValidationSchema, amountValidationSchema } =
     useWithdrawalValidation();
@@ -154,6 +158,10 @@ export const WithdrawForm = () => {
                 onClick={async () => {
                   const currentStep = stepper.current.id;
 
+                  if (!isConnected) {
+                    return setShowConnectWallet(true);
+                  }
+
                   if (currentStep === "status") {
                     return;
                   }
@@ -174,7 +182,7 @@ export const WithdrawForm = () => {
               >
                 {stepper.switch({
                   address: () => (isValid ? "review" : "next"),
-                  amount: () => "next",
+                  amount: () => (isConnected ? "next" : "connect wallet"),
                   confirm: () => (isSubmitting ? "confirming..." : "confirm"),
                   status: () => "view history",
                 })}
