@@ -105,5 +105,14 @@ export function validateWithdrawal(
   );
   if (balanceCheck !== true) return balanceCheck;
 
+  const numberString = String(btcValue);
+  const [, decimalPart] = numberString.split(".");
+  if (decimalPart?.length > 8) {
+    return this.createError({
+      path: this.path,
+      message: "BTC can have up to 8 decimal places",
+    });
+  }
+
   return true;
 }
