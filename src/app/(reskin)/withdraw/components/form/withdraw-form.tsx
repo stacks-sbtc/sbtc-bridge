@@ -152,16 +152,21 @@ export const WithdrawForm = () => {
               <FormButton
                 buttonRef={nextButtonRef}
                 onClick={async () => {
+                  const currentStep = stepper.current.id;
+
+                  if (currentStep === "status") {
+                    return;
+                  }
+                  if (currentStep === "confirm") {
+                    return await submitForm();
+                  }
+
                   const errors = await validateForm();
-                  const isInvalid = Object.keys(errors).length > 0;
+                  const isInvalid = errors[currentStep];
                   if (isInvalid) {
                     return;
                   }
-                  if (stepper.current.id === "confirm") {
-                    await submitForm();
-                  } else {
-                    handleNextClick();
-                  }
+                  handleNextClick();
                 }}
                 type="button"
                 className="flex-1 md:flex-[8]"
