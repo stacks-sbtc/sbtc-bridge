@@ -203,16 +203,24 @@ export const DepositForm = () => {
                 buttonRef={nextButtonRef}
                 onClick={async () => {
                   const result = await validateForm();
+                  const currentStep = stepper.current.id;
 
-                  // if any field is invalid halt
-                  if (Object.entries(result).length) {
+                  if (currentStep === "status") {
                     return;
                   }
-                  if (stepper.current.id === "confirm") {
-                    await submitForm();
-                  } else {
-                    handleNextClick();
+
+                  if (currentStep === "confirm") {
+                    return await submitForm();
                   }
+
+                  const error = result[currentStep];
+
+                  // if current field is invalid halt
+                  if (error) {
+                    return;
+                  }
+
+                  handleNextClick();
                 }}
                 type="button"
                 className="flex-1 md:flex-[8]"
