@@ -1,6 +1,6 @@
 "use server";
 
-import { env } from "@/env";
+import { env, MAX_WITHDRAWAL_TX_SIZE } from "@/env";
 import { mempoolFetchUntilOk } from "./mempool-api";
 
 type mempoolFeesRes = {
@@ -12,7 +12,6 @@ type mempoolFeesRes = {
 };
 
 // this is the case of a sweep tx fulfilling a single withdrawal to a p2wsh (32 bytes hash)
-const MAX_WITHDRAWAL_TX_SIZE = 180;
 
 export const getWithdrawalMaxFee = async () => {
   const currentMempoolFees = (await mempoolFetchUntilOk(
