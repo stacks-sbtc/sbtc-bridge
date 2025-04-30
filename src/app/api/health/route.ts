@@ -15,6 +15,7 @@ export async function GET(_: NextRequest) {
         reclaim_lock_time: env.RECLAIM_LOCK_TIME,
         reclaim_fee: RECLAIM_FEE,
         deposit_max_fee: DEPOSIT_MAX_FEE,
+        instance_id: env.INSTANCE_ID,
       },
     },
     { status: 200 },
