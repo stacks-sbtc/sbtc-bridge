@@ -30,4 +30,5 @@ export const env = {
   HIRO_API_KEY: process.env.HIRO_API_KEY,
   GIT_COMMIT: process.env.GIT_COMMIT || "unknown",
   WITHDRAW_MIN_AMOUNT_SATS: Number(process.env.WITHDRAW_MIN_AMOUNT_SATS || 0),
+  INSTANCE_ID: process.env.INSTANCE_ID || "unknown",
 };
