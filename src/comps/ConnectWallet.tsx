@@ -67,6 +67,24 @@ const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
   return null;
 };
 
+const getWalletConnectErrorMessage = (error: unknown): string => {
+  // Handle the case where error object is wrapped in another object
+  if (error != null && typeof error === "object" && "error" in error) {
+    error = error.error;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === "string") {
+    return error;
+  }
+  if (error != null && typeof error === "object" && "message" in error) {
+    return String(error.message);
+  }
+  return "Unknown error.";
+};
+
 type ConnectWalletProps = {
   onClose: () => void;
 };
@@ -121,11 +139,8 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
       setShowTos(true);
     } catch (error) {
       console.warn(error);
-      if (error instanceof Error) {
-        error = error.message;
-      }
       notify({
-        message: String(error),
+        message: getWalletConnectErrorMessage(error),
         type: NotificationStatusType.ERROR,
         expire: 10000,
       });
