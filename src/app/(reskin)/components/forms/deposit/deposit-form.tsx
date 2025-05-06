@@ -202,7 +202,6 @@ export const DepositForm = () => {
               <FormButton
                 buttonRef={nextButtonRef}
                 onClick={async () => {
-                  const result = await validateForm();
                   const currentStep = stepper.current.id;
 
                   if (currentStep === "status") {
@@ -212,6 +211,8 @@ export const DepositForm = () => {
                   if (currentStep === "confirm") {
                     return await submitForm();
                   }
+
+                  const result = await validateForm();
 
                   const error = result[currentStep];
 
