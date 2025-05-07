@@ -19,6 +19,7 @@ import getBitcoinNetwork from "@/util/get-bitcoin-network";
 import { sendBTCLeather, sendBTCXverse } from "@/util/wallet-utils";
 import { sendBTCFordefi } from "@/util/wallet-utils/src/sendBTC";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/util";
 
 export function useSendDeposit() {
   const { WALLET_NETWORK: walletNetwork, RECLAIM_LOCK_TIME: lockTime } =
@@ -153,11 +154,7 @@ export function useSendDeposit() {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.warn(error);
-      let errorMessage = error;
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
+      let errorMessage = getErrorMessage(error);
       toast.error(`Error while depositing funds: ${errorMessage}`);
     }
   };

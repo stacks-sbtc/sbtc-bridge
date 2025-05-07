@@ -13,8 +13,6 @@ import {
   getAddressesXverse,
 } from "@/util/wallet-utils";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useNotifications } from "@/hooks/use-notifications";
-import { NotificationStatusType } from "./Notifications";
 import {
   getAddresses,
   getAddressesAsigna,
@@ -22,6 +20,8 @@ import {
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { getStacksAddressInfo } from "@/util/get-stacks-address-info";
+import { getErrorMessage } from "@/util";
+import { toast } from "sonner";
 
 const WALLET_PROVIDERS = [
   {
@@ -67,24 +67,6 @@ const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
   return null;
 };
 
-const getWalletConnectErrorMessage = (error: unknown): string => {
-  // Handle the case where error object is wrapped in another object
-  if (error != null && typeof error === "object" && "error" in error) {
-    error = error.error;
-  }
-
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if (typeof error === "string") {
-    return error;
-  }
-  if (error != null && typeof error === "object" && "message" in error) {
-    return String(error.message);
-  }
-  return "Unknown error.";
-};
-
 type ConnectWalletProps = {
   onClose: () => void;
 };
@@ -95,7 +77,6 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
 
   const setShowTos = useSetAtom(showTosAtom);
 
-  const { notify } = useNotifications();
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
   const { connect: asignaConnect } = useAsignaConnect();
 
@@ -139,11 +120,7 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
       setShowTos(true);
     } catch (error) {
       console.warn(error);
-      notify({
-        message: getWalletConnectErrorMessage(error),
-        type: NotificationStatusType.ERROR,
-        expire: 10000,
-      });
+      toast.error(getErrorMessage(error));
     }
   };
 
