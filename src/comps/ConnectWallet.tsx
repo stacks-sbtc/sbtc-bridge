@@ -1,12 +1,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ArrowRightIcon, ArrowUpRightIcon } from "@heroicons/react/20/solid";
-import {
-  bridgeConfigAtom,
-  showTosAtom,
-  walletInfoAtom,
-  WalletProvider,
-} from "@/util/atoms";
+import { bridgeConfigAtom, walletInfoAtom, WalletProvider } from "@/util/atoms";
 import {
   checkAvailableWallets,
   getAddressesLeather,
@@ -116,8 +111,6 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
         addresses: addresses,
       });
       onClose();
-
-      setShowTos(true);
     } catch (error) {
       console.warn(error);
       toast.error(getErrorMessage(error));
