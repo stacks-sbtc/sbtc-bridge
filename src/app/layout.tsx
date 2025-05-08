@@ -51,7 +51,7 @@ export default function RootLayout({
       >
         {env.BANNER_CONTENT && (
           <div
-            className="w-full bg-[#F26969] text-white text-center py-2"
+            className="sticky top-0 z-10 w-full bg-[#F26969] text-white text-center py-2"
             dangerouslySetInnerHTML={{ __html: env.BANNER_CONTENT }}
           />
         )}
