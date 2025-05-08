@@ -70,8 +70,6 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
 
   const setWalletInfo = useSetAtom(walletInfoAtom);
 
-  const setShowTos = useSetAtom(showTosAtom);
-
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
   const { connect: asignaConnect } = useAsignaConnect();
 
