@@ -20,6 +20,7 @@ import { elide } from "@/util";
 import { useSendDeposit } from "@/app/(reskin)/hooks/use-send-deposit";
 import { DepositTimeline } from "../../stepper/deposit-timeline";
 import Decimal from "decimal.js";
+import { LearnAboutSBTC } from "@/app/(reskin)/components/learn-about-sbtc";
 
 const { useStepper, utils } = depositStepper;
 
@@ -235,6 +236,7 @@ export const DepositForm = () => {
                 })}
               </FormButton>
             </div>
+            {isMobile && <LearnAboutSBTC />}
           </Form>
           <DepositTimeline />
         </>

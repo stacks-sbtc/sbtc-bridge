@@ -16,6 +16,7 @@ import { WithdrawTimeline } from "../withdraw-stepper";
 import { FormButton } from "@/app/(reskin)/components/form-button";
 import { useSubmitWithdraw } from "../../hooks/use-submit-withdraw";
 import { useWithdrawalValidation } from "../../hooks/withdrawal-validation";
+import { LearnAboutSBTC } from "@/app/(reskin)/components/learn-about-sbtc";
 
 const { useStepper, utils } = withdrawStepper;
 
@@ -189,6 +190,7 @@ export const WithdrawForm = () => {
                 })}
               </FormButton>
             </div>
+            {isMobile && <LearnAboutSBTC />}
           </Form>
           <WithdrawTimeline />
         </>
