@@ -8,8 +8,6 @@ import {
   getAddressesXverse,
 } from "@/util/wallet-utils";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useNotifications } from "@/hooks/use-notifications";
-import { NotificationStatusType } from "./Notifications";
 import {
   getAddresses,
   getAddressesAsigna,
@@ -17,6 +15,8 @@ import {
 } from "@/util/wallet-utils/src/getAddress";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { getStacksAddressInfo } from "@/util/get-stacks-address-info";
+import { getErrorMessage } from "@/util";
+import { toast } from "sonner";
 
 const WALLET_PROVIDERS = [
   {
@@ -70,7 +70,6 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
 
   const setWalletInfo = useSetAtom(walletInfoAtom);
 
-  const { notify } = useNotifications();
   const { WALLET_NETWORK } = useAtomValue(bridgeConfigAtom);
   const { connect: asignaConnect } = useAsignaConnect();
 
@@ -112,14 +111,7 @@ const ConnectWallet = ({ onClose }: ConnectWalletProps) => {
       onClose();
     } catch (error) {
       console.warn(error);
-      if (error instanceof Error) {
-        error = error.message;
-      }
-      notify({
-        message: String(error),
-        type: NotificationStatusType.ERROR,
-        expire: 10000,
-      });
+      toast.error(getErrorMessage(error));
     }
   };
 
