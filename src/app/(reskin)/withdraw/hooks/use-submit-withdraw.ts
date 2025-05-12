@@ -30,6 +30,7 @@ import { useAsignaConnect } from "@asigna/stx-connect";
 import { serverBroadcastTx } from "@/actions/server-broadcast-tx";
 import { toast } from "sonner";
 import Decimal from "decimal.js";
+import { getErrorMessage } from "@/util";
 
 const decodeBitcoinAddressToClarityRecipient = (
   address: string,
@@ -174,15 +175,9 @@ export function useSubmitWithdraw() {
       }
       return txId;
     } catch (error: any) {
-      let errorMessage = error;
       // eslint-disable-next-line no-console
       console.warn(error);
-      if (error.error) {
-        error = error.error;
-      }
-      if (error.message) {
-        errorMessage = error.message;
-      }
+      let errorMessage = getErrorMessage(error);
       toast.error(`Issue with Transaction: ${errorMessage}`);
     }
   };
