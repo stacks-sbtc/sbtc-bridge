@@ -42,9 +42,9 @@ export default function LayoutClientReskin({
           <Header />
           <NavTabs tabs={tabs} />
           {children}
+          <Footer />
           {/* placeholder for bottom nav */}
           <div className="h-20 bottom-0 md:hidden" />
-          <Footer />
           <Toaster />
         </div>
       </main>
