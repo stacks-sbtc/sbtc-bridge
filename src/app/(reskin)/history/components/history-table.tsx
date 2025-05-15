@@ -28,7 +28,6 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { getStacksTxTime } from "@/actions/get-stacks-tx-time";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getRawTransaction } from "@/actions/bitcoinClient";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
@@ -36,7 +35,9 @@ function MobileStatus({ isConfirmed }: { isConfirmed: boolean }) {
   return (
     <TableCell className="dark:text-midGray">
       <div
-        className={`flex items-center font-medium ${isConfirmed ? "text-chateau-green" : "text-confetti"}`}
+        className={`flex items-center font-medium ${
+          isConfirmed ? "text-chateau-green" : "text-confetti"
+        }`}
       >
         {isConfirmed ? "Complete" : "Pending"}
         <ArrowUpRight className="h-6 w-6 ml-1" />
@@ -69,16 +70,11 @@ function DesktopStatus({ type, data }: HistoryItem) {
   });
 
   return (
-    <TableCell className="dark:text-midGray hidden md:table-cell uppercase ">
-      {isConfirmed ? (
-        timestamp ? (
-          timestamp
-        ) : (
-          <Skeleton className="w-4 h-2" />
-        )
-      ) : (
-        "Pending"
-      )}
+    <TableCell className=" dark:text-midGray hidden md:table-cell">
+      <div className={timestamp ? "pt-[1lh]" : ""}>
+        <div className="uppercase">{isConfirmed ? "Complete" : "Pending"}</div>
+        {timestamp && <div className="pt-1 text-xs">{timestamp}</div>}
+      </div>
     </TableCell>
   );
 }
@@ -106,7 +102,7 @@ function HistoryEntry(props: HistoryItem) {
   return (
     <Link href={link} className="contents">
       <TableRow className="font-matter-mono h-16 border-y border-light-reskin-border-gray dark:border-dark-reskin-border-gray cursor-pointer">
-        <TableCell className="dark:text-midGray w-1/2 md:w-44 p-0 pl-4">
+        <TableCell className="dark:text-midGray w-1/2 md:w-64 p-0 pl-4">
           {amount} {amountPostFix}
         </TableCell>
         <TableCell className="dark:text-midGray uppercase md:w-44">
@@ -136,7 +132,6 @@ export function HistoryTable() {
   const { data, isLoading } = useQuery({
     queryKey: ["history", currentTab, stxAddress, btcAddress],
     queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       let reclaimPubkeys: string[] = [];
       if (addresses.payment?.publicKey) {
         reclaimPubkeys.push(addresses.payment.publicKey.slice(2));
@@ -209,7 +204,7 @@ export function HistoryTable() {
               <TableHead className="text-sm">type</TableHead>
               <TableHead className="text-sm">status</TableHead>
               <TableHead className="text-sm hidden md:table-cell">
-                action
+                details
               </TableHead>
             </TableRow>
           </TableHeader>
