@@ -12,7 +12,7 @@ function LoadingCell({ className }: { className?: string }) {
 export function LoadingRow() {
   return (
     <TableRow className="h-16 border-y border-light-reskin-border-gray dark:border-dark-reskin-border-gray">
-      <LoadingCell className="w-44" />
+      <LoadingCell className="w-64" />
       <LoadingCell />
       <LoadingCell />
       <LoadingCell className="hidden md:table-cell" />
