@@ -1,10 +1,8 @@
-import { NotificationStatusType } from "@/comps/Notifications";
-import { useNotifications } from "@/hooks/use-notifications";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const expBackoff = (attempt: number) => Math.min(2 ** attempt, 30) * 1000;
 export const useEmilyDeposit = () => {
-  const { notify } = useNotifications();
   const { mutateAsync, failureCount, isPending } = useMutation({
     mutationFn: async (params: {
       bitcoinTxid: string;
@@ -22,10 +20,7 @@ export const useEmilyDeposit = () => {
       });
       if (!res.ok) {
         if (failureCount > 2) {
-          notify({
-            message: "Error creating deposit retrying...",
-            type: NotificationStatusType.ERROR,
-          });
+          toast.error("Error creating deposit. Retrying...");
         }
         throw res;
       }
