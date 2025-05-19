@@ -37,12 +37,12 @@ const WALLET_PROVIDERS = [
     walletProvider: WalletProvider.ASIGNA,
     installUrl: "https://btc.asigna.io",
   },
-  {
-    image: "/images/fordefi.svg",
-    name: "Fordefi",
-    walletProvider: WalletProvider.FORDEFI,
-    installUrl: "https://www.fordefi.com/",
-  },
+  // {
+  //   image: "/images/fordefi.svg",
+  //   name: "Fordefi",
+  //   walletProvider: WalletProvider.FORDEFI,
+  //   installUrl: "https://www.fordefi.com/",
+  // },
 ];
 
 const isMainnetWallet = (addresses: Awaited<ReturnType<getAddresses>>) => {
