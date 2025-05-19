@@ -54,7 +54,7 @@ type WalletInfo = {
   };
 };
 
-export const walletInfoAtom = atomWithStorage<WalletInfo>("walletInfoV3", {
+export const walletInfoAtom = atomWithStorage<WalletInfo>("walletInfoV4", {
   selectedWallet: null,
   addresses: {
     payment: null,
