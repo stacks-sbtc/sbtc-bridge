@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
 import { useSetAtom } from "jotai";
 import { showTosAtom } from "@/util/atoms";
 import { classNames } from "@/util";
