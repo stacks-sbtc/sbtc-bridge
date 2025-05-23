@@ -52,9 +52,7 @@ const TOS = () => {
           <div className="bg-orange w-full h-[3px] dark:bg-dark-reskin-orange" />
           <div className="flex flex-col gap-1">
             <p className="text-darkGray dark:text-white font-thin text-base">
-              please read the TOS of below before proceeding.
-              <br />
-              sBTC is very much early beta software with many risks.
+              Please read the TOS below before proceeding.
             </p>
           </div>
         </div>
