@@ -1,23 +1,19 @@
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
 import { useSetAtom } from "jotai";
 import { showTosAtom } from "@/util/atoms";
 import { classNames } from "@/util";
+import { useInView } from "react-intersection-observer";
 
 const TOS = () => {
-  const scrollContainerRef = useRef<any>(null);
-  const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
+  const {
+    ref: lastItemRef,
+
+    inView: isScrolledToBottom
+  } = useInView()
+
 
   const setShowTos = useSetAtom(showTosAtom);
 
-  const handleScroll = () => {
-    const container = scrollContainerRef.current;
-    if (container) {
-      const isBottom =
-        container.scrollTop + container.clientHeight >= container.scrollHeight;
-      setIsScrolledToBottom(isBottom);
-    }
-  };
 
   const downloadPDF = () => {
     const link = document.createElement("a");
@@ -55,15 +51,11 @@ const TOS = () => {
           <div className="bg-orange w-full h-[3px] dark:bg-dark-reskin-orange" />
           <div className="flex flex-col gap-1">
             <p className="text-darkGray dark:text-white font-thin text-base">
-              please read the TOS of below before proceeding.
-              <br />
-              sBTC is very much early beta software with many risks.
+              Please read the TOS below before proceeding.
             </p>
           </div>
         </div>
         <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
           className="px-4 py-4  rounded-2xl w-full h-full overflow-y-auto bg-white dark:bg-reskin-dark-gray dark:text-white"
         >
           <p>
@@ -265,7 +257,7 @@ const TOS = () => {
             will never request your private keys or passwords through any
             channel.
           </p>
-          <p>
+          <p ref={lastItemRef}>
             By continuing, you acknowledge that you have read, understood, and
             agreed to these terms. If you do not agree, please discontinue your
             use of the User Interface immediately.
