@@ -16,6 +16,8 @@ import { WithdrawTimeline } from "../withdraw-stepper";
 import { FormButton } from "@/app/(reskin)/components/form-button";
 import { useSubmitWithdraw } from "../../hooks/use-submit-withdraw";
 import { useWithdrawalValidation } from "../../hooks/withdrawal-validation";
+import { LabeledSlider } from "@/components/ui/labeled-slider";
+import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
 
 const { useStepper, utils } = withdrawStepper;
 
@@ -30,6 +32,12 @@ export const WithdrawForm = () => {
 
   const isConnected = !!stxAddress;
   const setShowConnectWallet = useSetAtom(showConnectWalletAtom);
+
+  const { data: satsBalance } = useSBTCBalance({
+    address: addresses.stacks?.address,
+  });
+
+  const sbtcBalance = Number(satsBalance) / 1e8;
 
   const { addressValidationSchema, amountValidationSchema } =
     useWithdrawalValidation();
@@ -105,6 +113,7 @@ export const WithdrawForm = () => {
         submitForm,
         validateForm,
         isSubmitting,
+        setFieldValue,
       }) => (
         <>
           <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
@@ -126,6 +135,22 @@ export const WithdrawForm = () => {
                   }}
                   error={touched.amount && errors.amount}
                 />
+              )}
+
+              {stepper.current.id === "amount" && (
+                <div className="my-3 md:ml-14">
+                  <LabeledSlider
+                    value={[values.amount ? parseFloat(values.amount) : 0]}
+                    onValueChange={(value) => {
+                      setFieldValue("amount", value[0]);
+                    }}
+                    min={0}
+                    max={sbtcBalance}
+                    step={0.0001}
+                    minLabel="0"
+                    maxLabel={`${String(sbtcBalance)} sBTC`}
+                  />
+                </div>
               )}
 
               {(stepper.current.id === "address" ||
