@@ -20,6 +20,7 @@ import { elide } from "@/util";
 import { useSendDeposit } from "@/app/(reskin)/hooks/use-send-deposit";
 import { DepositTimeline } from "../../stepper/deposit-timeline";
 import Decimal from "decimal.js";
+import { LabeledSlider } from "@/components/ui/labeled-slider";
 
 const { useStepper, utils } = depositStepper;
 
@@ -151,6 +152,7 @@ export const DepositForm = () => {
         submitForm,
         validateForm,
         isSubmitting,
+        setFieldValue,
       }) => (
         <>
           <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
@@ -171,6 +173,22 @@ export const DepositForm = () => {
                   }}
                   error={touched.amount && errors.amount}
                 />
+              )}
+
+              {stepper.current.id === "amount" && (
+                <div className="my-3 md:ml-14">
+                  <LabeledSlider
+                    value={[values.amount ? parseFloat(values.amount) : 0]}
+                    onValueChange={(value) => {
+                      setFieldValue("amount", value[0]);
+                    }}
+                    min={0}
+                    max={btcBalance}
+                    step={0.0001}
+                    minLabel="0"
+                    maxLabel={`${String(btcBalance)} BTC`}
+                  />
+                </div>
               )}
 
               {(stepper.current.id === "address" ||
