@@ -20,11 +20,16 @@ import { elide } from "@/util";
 import { useSendDeposit } from "@/app/(reskin)/hooks/use-send-deposit";
 import { DepositTimeline } from "../../stepper/deposit-timeline";
 import Decimal from "decimal.js";
+import { LoadingIndicator } from "@/app/(reskin)/assets/loading-indicator";
 
 const { useStepper, utils } = depositStepper;
 
 export const DepositForm = () => {
-  const { currentCap, perDepositMinimum } = useMintCaps();
+  const {
+    currentCap,
+    perDepositMinimum,
+    isLoading: isMintCapLoading,
+  } = useMintCaps();
   const isMintCapReached = currentCap <= 0;
   const maxDepositAmount = currentCap / 1e8;
   const minDepositAmount = perDepositMinimum / 1e8;
@@ -109,6 +114,7 @@ export const DepositForm = () => {
     }
   };
 
+  if (isMintCapLoading) return <LoadingIndicator />;
   if (isMintCapReached) {
     return (
       <div className="flex flex-col justify-center items-center gap-4 md:gap-8 w-full px-6 lg:w-1/2 max-w-xl flex-1 md:ml-14 text-black max-h-48 rounded-2xl bg-transparent p-3 dark:text-lightGray text-center">
