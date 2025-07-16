@@ -14,6 +14,7 @@ import { depositStepper } from "../../stepper/deposit/util";
 import { AmountInput } from "./amount-input";
 import { testStxAddress } from "@/util/yup/test-stx-address";
 import { AddressInput } from "./address-input";
+import { DepositFormValues } from "./deposit-form-values";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { useRouter } from "next/navigation";
 import { elide } from "@/util";
@@ -21,6 +22,7 @@ import { useSendDeposit } from "@/app/(reskin)/hooks/use-send-deposit";
 import { DepositTimeline } from "../../stepper/deposit-timeline";
 import Decimal from "decimal.js";
 import { LoadingIndicator } from "@/app/(reskin)/assets/loading-indicator";
+import { testBNSName } from "@/util/yup/bns-name";
 
 const { useStepper, utils } = depositStepper;
 
@@ -61,11 +63,33 @@ export const DepositForm = () => {
     () =>
       yup
         .string()
-        .test("stx-address", "Invalid STX address", function (value) {
-          return testStxAddress.call(this, value, WALLET_NETWORK!);
+        .test("stx-address", "Invalid STX address", async function (value) {
+          if (this.parent.addressType === "stx")
+            return testStxAddress.call(this, value, WALLET_NETWORK!);
+          return testBNSName.call(this, value);
         })
         .required(),
 
+    [WALLET_NETWORK],
+  );
+
+  const resolvedAddressValidationSchema = useMemo(
+    () =>
+      yup.string().test("stx-address", "", async function (value) {
+        if (this.parent.addressType === "bns") {
+          if (this.parent.resolveStatus === "error") {
+            const path = this.path;
+            return this.createError({
+              path,
+              message: "Address not found",
+            });
+          }
+
+          if (!value) return false;
+          return testStxAddress.call(this, value, WALLET_NETWORK!);
+        }
+        return true;
+      }),
     [WALLET_NETWORK],
   );
 
@@ -73,15 +97,16 @@ export const DepositForm = () => {
     return yup.object().shape({
       amount: amountValidationSchema,
       address: addressValidationSchema,
+      resolvedAddress: resolvedAddressValidationSchema,
     });
-  }, [addressValidationSchema, amountValidationSchema]);
+  }, [
+    amountValidationSchema,
+    addressValidationSchema,
+    resolvedAddressValidationSchema,
+  ]);
 
-  type Values = {
-    amount: string;
-    address: string;
-  };
   const stepper = useStepper();
-  const handleEdit = (fieldName: keyof Values) => {
+  const handleEdit = (fieldName: "address" | "amount") => {
     if (stepper.current.id !== "status") {
       stepper.goTo(fieldName);
     }
@@ -135,12 +160,18 @@ export const DepositForm = () => {
       initialValues={{
         amount: "",
         address: addresses.stacks?.address || "",
+        resolveStatus: "",
+        resolvedAddress: "",
+        addressType: "stx", // "stx or bns"
       }}
       enableReinitialize={true}
       validationSchema={depositSchema}
-      onSubmit={async (values: Values) => {
+      onSubmit={async (values: DepositFormValues) => {
         const depositInfo = await depositToAddress({
-          stxAddress: values.address,
+          stxAddress:
+            values.addressType === "bns"
+              ? values.resolvedAddress
+              : values.address,
           amount: new Decimal(values.amount).times(1e8).toNumber(),
         });
 
@@ -157,94 +188,122 @@ export const DepositForm = () => {
         submitForm,
         validateForm,
         isSubmitting,
-      }) => (
-        <>
-          <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
-            <div
-              className={`flex flex-col gap-2 flex-1 justify-center md:justify-normal w-full h-full`}
-            >
-              {(!isMobile ||
-                stepper.current.id === "amount" ||
-                stepper.current.id === "confirm" ||
-                stepper.current.id === "status") && (
-                <AmountInput
-                  value={`${values.amount} BTC`}
-                  isReadonly={stepper.current.id !== "amount"}
-                  onClickEdit={() => handleEdit("amount")}
-                  isEditable={stepper.current.id !== "status"}
-                  onPressEnter={() => {
-                    return touched.amount && handleEnter(errors.amount);
-                  }}
-                  error={touched.amount && errors.amount}
-                />
-              )}
+      }) => {
+        const address =
+          values.addressType === "bns"
+            ? values.resolvedAddress
+            : values.address;
 
-              {(stepper.current.id === "address" ||
-                stepper.current.id === "confirm" ||
-                stepper.current.id === "status") && (
-                <AddressInput
-                  value={elide(values.address, isMobile ? 20 : 8)}
-                  isReadonly={stepper.current.id !== "address"}
-                  isEditable={stepper.current.id !== "status"}
-                  onPressEnter={() => handleEnter(errors.address)}
-                  onClickEdit={() => handleEdit("address")}
-                  error={touched.address && errors.address}
-                />
-              )}
-            </div>
-
-            <div className="flex gap-5 w-full md:pl-14 self-end">
-              {!stepper.isFirst && !stepper.isLast && (
-                <FormButton
-                  onClick={handlePrevClick}
-                  type="button"
-                  variant="secondary"
-                  className={"flex-1 md:flex-[4]"}
-                >
-                  back
-                </FormButton>
-              )}
-
-              <FormButton
-                buttonRef={nextButtonRef}
-                onClick={async () => {
-                  const currentStep = stepper.current.id;
-
-                  if (currentStep === "status") {
-                    return;
-                  }
-
-                  if (currentStep === "confirm") {
-                    return await submitForm();
-                  }
-
-                  const result = await validateForm();
-
-                  const error = result[currentStep];
-
-                  // if current field is invalid halt
-                  if (error) {
-                    return;
-                  }
-
-                  handleNextClick();
-                }}
-                type="button"
-                className="flex-1 md:flex-[8]"
-                disabled={isSubmitting}
+        const addressError =
+          values.addressType === "bns"
+            ? touched.resolvedAddress && errors.resolvedAddress
+            : touched.address && errors.address;
+        return (
+          <>
+            <Form className="flex flex-col justify-center items-center md:justify-normal gap-2 w-full px-6 lg:w-1/2 max-w-xl flex-1">
+              <div
+                className={`flex flex-col gap-2 flex-1 justify-center md:justify-normal w-full h-full`}
               >
-                {stepper.switch({
-                  address: () => (isValid ? "review" : "next"),
-                  amount: () => "next",
-                  confirm: () => (isSubmitting ? "confirming..." : "confirm"),
-                  status: () => "view history",
-                })}
-              </FormButton>
-            </div>
-          </Form>
-          <DepositTimeline />
-        </>
-      )}
+                {(!isMobile ||
+                  stepper.current.id === "amount" ||
+                  stepper.current.id === "confirm" ||
+                  stepper.current.id === "status") && (
+                  <AmountInput
+                    value={`${values.amount} BTC`}
+                    isReadonly={stepper.current.id !== "amount"}
+                    onClickEdit={() => handleEdit("amount")}
+                    isEditable={stepper.current.id !== "status"}
+                    onPressEnter={() => {
+                      return touched.amount && handleEnter(errors.amount);
+                    }}
+                    error={touched.amount && errors.amount}
+                  />
+                )}
+
+                {(stepper.current.id === "address" ||
+                  stepper.current.id === "confirm" ||
+                  stepper.current.id === "status") && (
+                  <AddressInput
+                    value={elide(address, isMobile ? 20 : 8)}
+                    isReadonly={stepper.current.id !== "address"}
+                    isEditable={stepper.current.id !== "status"}
+                    onPressEnter={() => {
+                      if (address) handleEnter(errors.address);
+                    }}
+                    onClickEdit={() => handleEdit("address")}
+                    error={addressError}
+                  >
+                    {values.addressType === "bns" && (
+                      <>
+                        {address && (
+                          <span className="dark:text-white font-matter-mono tracking-wide break-all">
+                            {address}
+                          </span>
+                        )}
+                        {touched.resolvedAddress &&
+                        errors.resolvedAddress &&
+                        values.resolveStatus != "resolving" ? (
+                          <div className="text-red-500">
+                            {errors.resolvedAddress}
+                          </div>
+                        ) : null}
+                      </>
+                    )}
+                  </AddressInput>
+                )}
+              </div>
+
+              <div className="flex gap-5 w-full md:pl-14 self-end">
+                {!stepper.isFirst && !stepper.isLast && (
+                  <FormButton
+                    onClick={handlePrevClick}
+                    type="button"
+                    variant="secondary"
+                    className={"flex-1 md:flex-[4]"}
+                  >
+                    back
+                  </FormButton>
+                )}
+
+                <FormButton
+                  buttonRef={nextButtonRef}
+                  onClick={async () => {
+                    const currentStep = stepper.current.id;
+
+                    if (currentStep === "status") {
+                      return;
+                    }
+
+                    if (currentStep === "confirm") {
+                      return await submitForm();
+                    }
+
+                    const result = await validateForm();
+                    const error = result[currentStep];
+                    // if current field is invalid halt
+                    if (error || (currentStep === "address" && !address)) {
+                      return;
+                    }
+
+                    handleNextClick();
+                  }}
+                  type="button"
+                  className="flex-1 md:flex-[8]"
+                  disabled={isSubmitting}
+                >
+                  {stepper.switch({
+                    address: () => (isValid ? "review" : "next"),
+                    amount: () => "next",
+                    confirm: () => (isSubmitting ? "confirming..." : "confirm"),
+                    status: () => "view history",
+                  })}
+                </FormButton>
+              </div>
+            </Form>
+            <DepositTimeline />
+          </>
+        );
+      }}
     </Formik>
   );
 };
