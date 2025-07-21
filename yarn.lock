@@ -920,7 +920,7 @@
     cross-fetch "^3.1.5"
     jsontokens "^4.0.1"
 
-"@stacks/common@^6.0.0", "@stacks/common@^6.16.0":
+"@stacks/common@^6.16.0":
   version "6.16.0"
   resolved "https://registry.yarnpkg.com/@stacks/common/-/common-6.16.0.tgz#1b980acf29fd66f34b26757e85d45c6abd2e4d32"
   integrity sha512-PnzvhrdGRMVZvxTulitlYafSK4l02gPCBBoI9QEoTqgSnv62oaOXhYAUUkTMFKxdHW1seVEwZsrahuXiZPIAwg==
@@ -977,7 +977,7 @@
     "@stacks/common" "^6.16.0"
     cross-fetch "^3.1.5"
 
-"@stacks/network@^6.0.0", "@stacks/network@^6.16.0", "@stacks/network@^6.17.0":
+"@stacks/network@^6.16.0", "@stacks/network@^6.17.0":
   version "6.17.0"
   resolved "https://registry.yarnpkg.com/@stacks/network/-/network-6.17.0.tgz#9e0eefb8d72cb2243744beaf1e17673737290a49"
   integrity sha512-numHbfKjwco/rbkGPOEz8+FcJ2nBnS/tdJ8R422Q70h3SiA9eqk9RjSzB8p4JP8yW1SZvW+eihADHfMpBuZyfw==
@@ -1062,18 +1062,6 @@
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.0.5.tgz#e8ddfe90395ab05316f93f86657fecb86e458e75"
   integrity sha512-mHsv7lUbZ5w4MKJ3NAirtdClIXLNKMqWIqT2rLjbIHzlYBqvZaELJSYD+km6E7Cm9G3yUYszorhruQmSTgilbg==
-  dependencies:
-    "@noble/hashes" "1.1.5"
-    "@noble/secp256k1" "1.7.1"
-    "@stacks/common" "^7.0.2"
-    "@stacks/network" "^7.0.2"
-    c32check "^2.0.0"
-    lodash.clonedeep "^4.5.0"
-
-"@stacks/transactions@^7.0.2":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.1.0.tgz#acfbd549137d68e74fdad79ab658d848e1643e99"
-  integrity sha512-/4n5h+ka5N3mq16f1Zo0O0g2gyOYhaXFdGN8ifLz38NJmkjnCDXqi/ogB6NFNpSKGonyqyF5Vz1UPaQHwO8+IA==
   dependencies:
     "@noble/hashes" "1.1.5"
     "@noble/secp256k1" "1.7.1"
@@ -1570,15 +1558,6 @@ axios@1.7.7:
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
-axios@^1.6.2:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.10.0.tgz#af320aee8632eaf2a400b6a1979fa75856f38d54"
-  integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
-  dependencies:
-    follow-redirects "^1.15.6"
-    form-data "^4.0.0"
-    proxy-from-env "^1.1.0"
-
 axobject-query@~3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-3.1.1.tgz#3b6e5c6d4e43ca7ba51c5babf99d22a9c68485e1"
@@ -1769,16 +1748,6 @@ bn.js@^4.11.8, bn.js@^4.11.9:
   version "4.12.1"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.12.1.tgz#215741fe3c9dba2d7e12c001d0cfdbae43975ba7"
   integrity sha512-k8TVBiPkPJT9uHLdOKfFpqcfprwBFOAAXXozRubr7R7PfIuKvQlzcI4M0pALeqXN09vdaMbUdUj+pass+uULAg==
-
-bns-v2-sdk@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/bns-v2-sdk/-/bns-v2-sdk-2.0.0.tgz#5175c9851053b520857e1803f2d7eda494ae0087"
-  integrity sha512-0zg8ZUbwBiFJFzUw0JJlA0GSWaXZZ5xqIOp7Iw10jBXDitDadSbsKf+w2fKmX8wEzEk3AnrD3FUupN1gqw+gLw==
-  dependencies:
-    "@stacks/common" "^6.0.0"
-    "@stacks/network" "^6.0.0"
-    "@stacks/transactions" "^7.0.2"
-    axios "^1.6.2"
 
 bowser@^2.11.0:
   version "2.11.0"
