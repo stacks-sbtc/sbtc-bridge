@@ -236,9 +236,11 @@ export const DepositForm = () => {
                     {values.addressType === "bns" && (
                       <>
                         {address && (
+                          <div className="px-3">
                           <span className="dark:text-white font-matter-mono tracking-wide break-all">
                             {address}
                           </span>
+                          </div>
                         )}
                         {touched.resolvedAddress &&
                         errors.resolvedAddress &&
