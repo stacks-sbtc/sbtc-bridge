@@ -1,0 +1,70 @@
+name: Build Docker Image for Environment Branch
+
+on:
+  push:
+    branches:
+      - 'environment/*'
+
+concurrency:
+  group: docker-build-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+  packages: write
+
+env:
+  docker_platforms: "linux/amd64"
+
+jobs:
+  image:
+    name: Build Image
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Configure AWS Credentials via OIDC
+        id: configure_aws
+        uses: stacks-sbtc/actions/aws/configure-aws-credentials@181f8c67da2707c66b5e31f24e7418c47adefdd1
+        with:
+          role-to-assume: ${{ secrets['AWS_ROLE_ARN'] }}
+          aws-region: ${{ vars['AWS_REGION'] }}
+
+      - name: Login to Amazon ECR
+        id: ecr_login
+        uses: stacks-sbtc/actions/aws/amazon-ecr-login@181f8c67da2707c66b5e31f24e7418c47adefdd1
+
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: stacks-sbtc/actions/checkout@181f8c67da2707c66b5e31f24e7418c47adefdd1
+
+      - name: Docker Metadata
+        id: docker_metadata
+        uses: stacks-sbtc/actions/docker/metadata-action@181f8c67da2707c66b5e31f24e7418c47adefdd1
+        with:
+          images: |
+            ${{ steps.ecr_login.outputs.registry }}/${{ vars['AWS_ECR'] }}
+          tags: |
+            type=raw,value=your-app-${{ github.ref_name }}
+            type=raw,value=your-app-${{ github.sha }}
+            type=raw,value=your-app-latest,enable=${{ github.ref_name == 'environment/mainnet' }}
+
+      - name: Build and Push
+        id: docker_build
+        uses: stacks-sbtc/actions/docker/build-push-action@181f8c67da2707c66b5e31f24e7418c47adefdd1
+        with:
+          file: ./Dockerfile
+          platforms: ${{ env.docker_platforms }}
+          tags: ${{ steps.docker_metadata.outputs.tags }}
+          labels: ${{ steps.docker_metadata.outputs.labels }}
+          push: true
+          build-args: |
+            GIT_COMMIT=${{ github.sha }}
+
+      - name: Generate artifact attestation
+        id: generate_attestation
+        uses: stacks-sbtc/actions/attest-build-provenance@181f8c67da2707c66b5e31f24e7418c47adefdd1
+        with:
+          subject-name: ${{ steps.ecr_login.outputs.registry }}/${{ vars['AWS_ECR'] }}
+          subject-digest: ${{ steps.docker_build.outputs.digest }}
