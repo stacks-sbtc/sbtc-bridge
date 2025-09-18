@@ -59,3 +59,37 @@ sbtc-bridge:
       args:
         GIT_COMMIT: ${GIT_COMMIT}
 ```
+
+## GitHub Actions CI/CD
+
+This project includes GitHub Actions workflows for automated building and publishing to AWS ECR.
+
+### Build Workflow (`.github/workflows/docker-build.yml`)
+
+Automatically builds and pushes Docker images to Amazon ECR on push to `environment/*`.
+Create environments for each environment branch (e.g. `environment/private-mainnet`, `environment/mainnet`)
+
+**Required GitHub Secrets:**
+- `AWS_ROLE_ARN`: ARN of the AWS role for ECR access
+
+**Required GitHub Variables:**
+- `AWS_REGION`: AWS region (e.g., `eu-west-1`)
+- `AWS_ECR`: ECR repository name (e.g., `sbtc-bridge`)
+
+### Setup Instructions
+
+1. **Configure AWS IAM Role:**
+   - Create an IAM role with ECR and ECS permissions
+   - Configure OIDC trust relationship for GitHub Actions
+   - Add the role ARN as `AWS_ROLE_ARN` secret
+
+2. **Set up GitHub Variables:**
+   - Go to repository Settings → Secrets and variables → Actions
+   - Add the required variables listed above
+
+### Image Tags
+
+The build workflow creates the following image tags:
+- `sbtc-bridge-{branch}`: Branch-specific tag
+- `sbtc-bridge-{commit-sha}`: Commit-specific tag
+- `sbtc-bridge-latest`: Latest tag (only on main branch)
