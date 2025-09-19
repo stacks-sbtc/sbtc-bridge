@@ -79,7 +79,7 @@ Create environments for each environment branch (e.g. `environment/private-mainn
 ### Setup Instructions
 
 1. **Configure AWS IAM Role:**
-   - Create an IAM role with ECR and ECS permissions
+   - Create an IAM role with ECR
    - Configure OIDC trust relationship for GitHub Actions
    - Add the role ARN as `AWS_ROLE_ARN` secret
 
