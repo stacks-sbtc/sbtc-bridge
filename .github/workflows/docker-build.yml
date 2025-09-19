@@ -46,9 +46,9 @@ jobs:
           images: |
             ${{ steps.ecr_login.outputs.registry }}/${{ vars['AWS_ECR'] }}
           tags: |
-            type=raw,value=your-app-${{ github.ref_name }}
-            type=raw,value=your-app-${{ github.sha }}
-            type=raw,value=your-app-latest,enable=${{ github.ref_name == 'environment/mainnet' }}
+            type=raw,value=sbtc-bridge-${{ github.ref_name }}
+            type=raw,value=sbtc-bridge-${{ github.sha }}
+            type=raw,value=sbtc-bridge-latest,enable=${{ github.ref_name == 'environment/mainnet' }}
 
       - name: Build and Push
         id: docker_build
