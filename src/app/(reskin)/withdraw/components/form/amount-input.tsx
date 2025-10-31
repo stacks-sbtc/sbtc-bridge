@@ -51,7 +51,7 @@ export const AmountInput = ({
                     }
                   }}
                   autoFocus
-                  className="text-black dark:text-white w-full bg-transparent break-all text-5xl tracking-tight h-8 placeholder:text-xl placeholder:tracking-normal text-center placeholder:text-left"
+                  className="text-black dark:text-white w-full bg-transparent break-all text-2xl tracking-tight h-8 placeholder:text-2xl placeholder:tracking-normal"
                   {...field}
                   placeholder="Enter sBTC amount to withdraw"
                 />
