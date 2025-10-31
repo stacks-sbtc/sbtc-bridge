@@ -6,17 +6,19 @@ type EmilyLimits = {
   pegCap: null | number;
   perDepositCap: null | number;
   perWithdrawalCap: null | number;
-  accountCaps: Record<string, unknown>;
+  accountCaps: AccountCaps;
   perDepositMinimum: null | number;
   availableToWithdraw: number | null;
 };
 
+type AccountCaps = {};
 let cachedValue: Awaited<ReturnType<typeof getEmilyLimitsInner>> | null = null;
 let lastFetchTime = 0; // in ms
 
 async function getEmilyLimitsInner() {
   const res = await fetch(`${env.EMILY_URL}/limits`);
   if (!res.ok) {
+    // exclude account caps
     return {
       pegCap: 0,
       perDepositCap: 0,
