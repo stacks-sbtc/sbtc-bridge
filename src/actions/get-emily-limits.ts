@@ -18,7 +18,6 @@ let lastFetchTime = 0; // in ms
 async function getEmilyLimitsInner() {
   const res = await fetch(`${env.EMILY_URL}/limits`);
   if (!res.ok) {
-    // exclude account caps
     return {
       pegCap: 0,
       perDepositCap: 0,
@@ -29,6 +28,7 @@ async function getEmilyLimitsInner() {
   }
 
   const json = (await res.json()) as EmilyLimits;
+  // exclude account caps
   return {
     pegCap: json.pegCap ?? Infinity,
     perDepositCap: json.perDepositCap ?? Infinity,
