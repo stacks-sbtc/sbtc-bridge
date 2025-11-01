@@ -40,7 +40,7 @@ export const DepositForm = () => {
 
   const { addresses } = useAtomValue(walletInfoAtom);
   const btcAddress = addresses.payment?.address;
-  const { data: btcBalance } = useQuery({
+  const { data: btcBalance, isError } = useQuery({
     queryKey: ["btcBalance", btcAddress],
     queryFn: async () => {
       if (!btcAddress) {
@@ -176,7 +176,7 @@ export const DepositForm = () => {
                     return touched.amount && handleEnter(errors.amount);
                   }}
                   error={touched.amount && errors.amount}
-                  balance={btcBalance}
+                  balance={isError ? undefined : btcBalance}
                 />
               )}
 
