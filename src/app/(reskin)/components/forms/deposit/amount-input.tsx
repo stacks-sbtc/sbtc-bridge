@@ -1,5 +1,6 @@
 import { Field, FieldProps } from "formik";
 import { InputContainer } from "../form-elements/input-container";
+import { ChangeEvent } from "react";
 
 import { Textarea } from "@/components/ui/textarea";
 
@@ -33,10 +34,30 @@ export const AmountInput = ({
           BTC
         </div>
         <Field name="amount" placeholder="Amount">
-          {({ field, meta }: FieldProps) => {
+          {({ field, meta, form }: FieldProps) => {
+            const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+              const rawValue = e.target.value;
+              const sanitizedValue = rawValue.replace(/[^0-9.]/g, "");
+
+              if (sanitizedValue === "") {
+                form.setFieldValue("amount", "");
+                return;
+              }
+
+              const parts = sanitizedValue.split(".");
+              const integerPart = parts[0].replace(/^0+/, '') || '0';
+              const decimalPart = parts.length > 1 ? parts[1] : "";
+
+              const finalValue = parts.length > 1 ? `${integerPart}.${decimalPart}` : integerPart;
+              form.setFieldValue("amount", finalValue);
+            };
+
+            const { onChange: _onChange, ...fieldProps } = field;
+
             return (
               <>
                 <Textarea
+                  onChange={handleChange}
                   onKeyUp={(e) => {
                     if (e.key === "Enter") {
                       onPressEnter?.();
@@ -49,7 +70,7 @@ export const AmountInput = ({
                   }}
                   autoFocus
                   className="text-black dark:text-white w-full bg-transparent break-all text-5xl tracking-tight h-8 placeholder:text-xl placeholder:tracking-normal text-center placeholder:text-left"
-                  {...field}
+                  {...fieldProps}
                   placeholder="Enter BTC amount to deposit"
                 />
                 {meta.touched && meta.error ? (
