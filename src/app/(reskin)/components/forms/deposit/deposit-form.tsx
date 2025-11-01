@@ -176,6 +176,7 @@ export const DepositForm = () => {
                     return touched.amount && handleEnter(errors.amount);
                   }}
                   error={touched.amount && errors.amount}
+                  balance={btcBalance}
                 />
               )}
 

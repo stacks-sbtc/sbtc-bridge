@@ -16,6 +16,7 @@ import { WithdrawTimeline } from "../withdraw-stepper";
 import { FormButton } from "@/app/(reskin)/components/form-button";
 import { useSubmitWithdraw } from "../../hooks/use-submit-withdraw";
 import { useWithdrawalValidation } from "../../hooks/withdrawal-validation";
+import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
 
 const { useStepper, utils } = withdrawStepper;
 
@@ -30,6 +31,10 @@ export const WithdrawForm = () => {
 
   const isConnected = !!stxAddress;
   const setShowConnectWallet = useSetAtom(showConnectWalletAtom);
+
+  const { data: satsBalance } = useSBTCBalance({
+    address: stxAddress,
+  });
 
   const { addressValidationSchema, amountValidationSchema } =
     useWithdrawalValidation();
@@ -125,6 +130,7 @@ export const WithdrawForm = () => {
                     return touched.amount && handleEnter(errors.amount);
                   }}
                   error={touched.amount && errors.amount}
+                  balance={satsBalance}
                 />
               )}
 

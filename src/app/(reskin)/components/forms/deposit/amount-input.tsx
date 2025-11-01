@@ -11,6 +11,7 @@ export const AmountInput = ({
   error,
   onPressEnter,
   isEditable,
+  balance,
 }: {
   isReadonly: boolean;
   onClickEdit?: () => void;
@@ -18,6 +19,7 @@ export const AmountInput = ({
   error?: string | boolean;
   onPressEnter?: () => void;
   isEditable?: boolean;
+  balance?: number;
 }) => {
   return (
     <InputContainer
@@ -28,7 +30,7 @@ export const AmountInput = ({
       readonlyValue={value}
     >
       <div
-        className={`md:ml-14 min-h-48 rounded-2xl bg-transparent border pt-6 pb-3 pr-3 pl-8 ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
+        className={`md:ml-14 min-h-48 rounded-2xl bg-transparent border pt-6 pb-3 pr-3 pl-8 relative ${error ? "border-red-500" : "border-black dark:border-white border-opacity-20 dark:border-opacity-20"}`}
       >
         <div className="uppercase text-xl tracking-normal text-gray-500 dark:text-gray-400 mb-2">
           Deposit BTC
@@ -79,6 +81,11 @@ export const AmountInput = ({
             );
           }}
         </Field>
+        {balance !== undefined && balance !== Infinity && (
+          <div className="absolute bottom-3 right-8 text-sm text-gray-500 dark:text-gray-400 font-matter-mono">
+            {(balance / 1e8).toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC in wallet
+          </div>
+        )}
       </div>
     </InputContainer>
   );
