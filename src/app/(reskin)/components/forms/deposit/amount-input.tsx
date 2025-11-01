@@ -83,7 +83,7 @@ export const AmountInput = ({
         </Field>
         {balance !== undefined && balance !== Infinity && (
           <div className="absolute top-6 right-8 text-xs text-gray-600 dark:text-gray-300 font-matter-mono">
-            {(balance / 1e8).toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC available
+            {balance.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC available
           </div>
         )}
       </div>
