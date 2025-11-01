@@ -64,5 +64,6 @@ export function useWithdrawalValidation() {
   return {
     amountValidationSchema,
     addressValidationSchema,
+    satsBalance,
   };
 }

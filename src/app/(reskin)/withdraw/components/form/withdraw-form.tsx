@@ -16,7 +16,6 @@ import { WithdrawTimeline } from "../withdraw-stepper";
 import { FormButton } from "@/app/(reskin)/components/form-button";
 import { useSubmitWithdraw } from "../../hooks/use-submit-withdraw";
 import { useWithdrawalValidation } from "../../hooks/withdrawal-validation";
-import { useSBTCBalance } from "@/hooks/use-sbtc-balance";
 
 const { useStepper, utils } = withdrawStepper;
 
@@ -32,11 +31,7 @@ export const WithdrawForm = () => {
   const isConnected = !!stxAddress;
   const setShowConnectWallet = useSetAtom(showConnectWalletAtom);
 
-  const { data: satsBalance } = useSBTCBalance({
-    address: stxAddress,
-  });
-
-  const { addressValidationSchema, amountValidationSchema } =
+  const { addressValidationSchema, amountValidationSchema, satsBalance } =
     useWithdrawalValidation();
   const withdrawalSchema = useMemo(() => {
     return yup.object().shape({
