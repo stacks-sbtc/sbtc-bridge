@@ -6,9 +6,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev:testnet": "bash ./scripts/dev-testnet.sh",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stacks-api:up": "bash ./scripts/stacks-api-up.sh",
+    "stacks-api:down": "bash ./scripts/stacks-api-down.sh",
+    "stacks-api:reset": "bash ./scripts/stacks-api-reset.sh"
   },
   "dependencies": {
     "@asigna/btc-connect": "0.0.25",

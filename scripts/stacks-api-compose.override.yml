@@ -1,0 +1,7 @@
+services:
+  postgres-1:
+    ports: null
+  postgres-2:
+    ports: null
+  postgres-3:
+    ports: null
