@@ -2,6 +2,8 @@ import { getTransactionHex } from "@/actions/bitcoinClient";
 import { env } from "@/env";
 import { NextRequest, NextResponse } from "next/server";
 
+/* eslint-disable no-console -- TODO: replace logging with structured reporting in follow-up */
+
 interface CreateDepositRequestBody {
   bitcoinTxid: string;
   bitcoinTxOutputIndex: number;

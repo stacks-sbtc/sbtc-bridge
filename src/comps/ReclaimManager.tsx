@@ -3,6 +3,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FlowContainer } from "./core/FlowContainer";
 import { Heading, SubText } from "./core/Heading";
+
+/* eslint-disable no-console -- TODO: remove console logging in follow-up */
 import { useShortAddress } from "@/hooks/use-short-address";
 import { InformationCircleIcon } from "@heroicons/react/16/solid";
 import { PrimaryButton } from "./core/FlowButtons";

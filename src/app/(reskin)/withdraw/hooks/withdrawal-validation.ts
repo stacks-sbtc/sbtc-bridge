@@ -13,7 +13,7 @@ import * as yup from "yup";
 export function useWithdrawalValidation() {
   const { addresses } = useAtomValue(walletInfoAtom);
 
-  const { data: satsBalance } = useSBTCBalance({
+  const { data: satsBalance, isError: isBalanceError } = useSBTCBalance({
     address: addresses.stacks?.address,
   });
   const { data: maxFee } = useQuery({
@@ -27,8 +27,11 @@ export function useWithdrawalValidation() {
   const config = useAtomValue(bridgeConfigAtom);
   const min = config.WITHDRAW_MIN_AMOUNT_SATS / 1e8;
   const amountValidationSchema = useMemo(() => {
-    const btcBalance = Number(satsBalance) / 1e8;
-    const fee = maxFee! / 1e8;
+    const btcBalance =
+      !isBalanceError && satsBalance !== undefined
+        ? Number(satsBalance) / 1e8
+        : 0;
+    const fee = maxFee ? maxFee / 1e8 : 0;
     return yup
       .number()
       .min(
@@ -47,7 +50,7 @@ export function useWithdrawalValidation() {
         );
       })
       .required();
-  }, [satsBalance, maxFee, min, emilyLimits]);
+  }, [satsBalance, maxFee, min, emilyLimits, isBalanceError]);
   const { WALLET_NETWORK: stacksNetwork } = useAtomValue(bridgeConfigAtom);
   const addressValidationSchema = useMemo(
     () =>
@@ -64,5 +67,7 @@ export function useWithdrawalValidation() {
   return {
     amountValidationSchema,
     addressValidationSchema,
+    satsBalance,
+    isBalanceError,
   };
 }

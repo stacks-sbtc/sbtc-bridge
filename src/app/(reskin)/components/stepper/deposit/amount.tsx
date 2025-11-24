@@ -11,13 +11,16 @@ export function AmountDescription({}) {
       return isUnlimited ? 0.00000001 : response.perDepositMinimum / 1e8;
     },
   });
+  const sats = minimumDeposit * 1e8;
+  const displayText = sats >= 10000
+    ? `${minimumDeposit.toLocaleString(undefined, { maximumFractionDigits: 8 })} BTC`
+    : `${sats.toLocaleString(undefined, { maximumFractionDigits: 0 })} sat${sats === 1 ? "" : "s"}`;
+
   return (
     minimumDeposit && (
       <span className="md:opacity-60 px-4 md:px-0">
-        How much BTC are you transferring over to sBTC? Enter an amount that’s
-        above the minimum (
-        {minimumDeposit.toLocaleString(undefined, { maximumFractionDigits: 8 })}{" "}
-        BTC)
+        How much BTC are you transferring over to sBTC? Enter an amount that is
+        above the minimum ({displayText})
       </span>
     )
   );
