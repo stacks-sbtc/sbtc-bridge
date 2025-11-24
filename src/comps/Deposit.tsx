@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { InformationCircleIcon } from "@heroicons/react/20/solid";
 
+/* eslint-disable no-console -- TODO: remove console logging in follow-up */
+
 import { FlowContainer } from "@/comps/core/FlowContainer";
 import { Heading, SubText } from "@/comps/core/Heading";
 import { FlowForm } from "@/comps/core/Form";

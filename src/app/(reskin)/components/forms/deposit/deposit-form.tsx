@@ -48,13 +48,22 @@ export const DepositForm = () => {
       }
       return getBtcBalance(btcAddress);
     },
-    initialData: btcAddress ? Infinity : 0,
+    initialData: btcAddress ? undefined : 0,
     enabled: !!btcAddress,
   });
 
+  const safeBtcBalanceForValidation =
+    btcAddress && !isError && Number.isFinite(btcBalance) ? btcBalance : 0;
+  const btcBalanceForDisplay =
+    btcAddress && !isError && Number.isFinite(btcBalance)
+      ? btcBalance
+      : btcAddress && isError
+        ? 0
+        : undefined;
+
   const amountValidationSchema = useValidateDepositAmount({
     maxDepositAmount,
-    btcBalance,
+    btcBalance: safeBtcBalanceForValidation,
     minDepositAmount,
   });
   const addressValidationSchema = useMemo(
@@ -176,7 +185,7 @@ export const DepositForm = () => {
                     return touched.amount && handleEnter(errors.amount);
                   }}
                   error={touched.amount && errors.amount}
-                  balance={isError ? undefined : btcBalance}
+                  balance={btcBalanceForDisplay}
                 />
               )}
 

@@ -1,6 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+/* eslint-disable no-console -- TODO: remove console logging in follow-up */
+
 const expBackoff = (attempt: number) => Math.min(2 ** attempt, 30) * 1000;
 export const useEmilyDeposit = () => {
   const { mutateAsync, failureCount, isPending } = useMutation({

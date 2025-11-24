@@ -3,6 +3,7 @@ import { ChangeEvent } from "react";
 
 import { Textarea } from "@/components/ui/textarea";
 import { InputContainer } from "@/app/(reskin)/components/forms/form-elements/input-container";
+import { sanitizeAmountInput } from "@/app/(reskin)/components/forms/utils/sanitize-amount";
 
 export const AmountInput = ({
   isReadonly,
@@ -21,7 +22,7 @@ export const AmountInput = ({
   onPressEnter?: () => void;
   isEditable?: boolean;
   isDisabled?: boolean;
-  balance?: number;
+  balance?: number | bigint;
 }) => {
   return (
     <InputContainer
@@ -38,28 +39,23 @@ export const AmountInput = ({
           <div className="uppercase text-xl tracking-normal text-gray-500 dark:text-gray-400">
             Withdraw sBTC
           </div>
-          {balance !== undefined && balance !== Infinity && (
-            <div className="text-xs text-gray-600 dark:text-gray-300 font-matter-mono italic opacity-50">
-              {(balance / 1e8).toLocaleString(undefined, { maximumFractionDigits: 8 })} sBTC available
-            </div>
-          )}
+          {(() => {
+            const showBalance =
+              balance !== undefined &&
+              (typeof balance === "bigint" || Number.isFinite(balance));
+            if (!showBalance) return null;
+            const numericBalance = typeof balance === "bigint" ? Number(balance) : balance;
+            return (
+              <div className="text-xs text-gray-600 dark:text-gray-300 font-matter-mono italic opacity-50">
+                {(numericBalance / 1e8).toLocaleString(undefined, { maximumFractionDigits: 8 })} sBTC available
+              </div>
+            );
+          })()}
         </div>
         <Field name="amount" placeholder="Amount">
           {({ field, meta, form }: FieldProps) => {
             const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-              const rawValue = e.target.value;
-              const sanitizedValue = rawValue.replace(/[^0-9.]/g, "");
-
-              if (sanitizedValue === "") {
-                form.setFieldValue("amount", "");
-                return;
-              }
-
-              const parts = sanitizedValue.split(".");
-              const integerPart = String(Number(parts[0]) || 0);
-              const decimalPart = parts.length > 1 ? parts[1] : "";
-
-              const finalValue = parts.length > 1 ? `${integerPart}.${decimalPart}` : integerPart;
+              const finalValue = sanitizeAmountInput(e.target.value);
               form.setFieldValue("amount", finalValue);
             };
 
