@@ -4,8 +4,9 @@
   "repository": "https://github.com/stacks-network/sbtc-bridge",
   "author": "<brgarciarivas@gmail.com>",
   "license": "MIT",
+  "packageManager": "yarn@1.22.22",
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
