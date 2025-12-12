@@ -4,6 +4,7 @@
 
 Clone sBTC and run the dev env, this runs a devnet deployment of stacks and a regtest deployment of bitcoin and installs and runs sBTC against them
 Must have [docker](https://docs.docker.com/get-started/get-docker/) installed
+
 ```
 git clone https://github.com/stacks-sbtc/sbtc.git
 cd sbtc
