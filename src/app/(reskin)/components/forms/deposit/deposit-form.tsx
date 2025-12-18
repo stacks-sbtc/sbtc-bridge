@@ -7,8 +7,6 @@ import { useMemo, useRef } from "react";
 import * as yup from "yup";
 import { FormButton } from "../../form-button";
 import { useValidateDepositAmount } from "@/hooks/use-validate-deposit-amount";
-import { useQuery } from "@tanstack/react-query";
-import getBtcBalance from "@/actions/get-btc-balance";
 
 import { depositStepper } from "../../stepper/deposit/util";
 import { AmountInput } from "./amount-input";
