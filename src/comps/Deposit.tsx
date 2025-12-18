@@ -98,7 +98,6 @@ const DepositFlowAmount = ({
   const isMintCapReached = currentCap <= 0;
 
   const validationSchema = useValidateDepositAmount({
-    btcBalance,
     maxDepositAmount,
     minDepositAmount,
   });

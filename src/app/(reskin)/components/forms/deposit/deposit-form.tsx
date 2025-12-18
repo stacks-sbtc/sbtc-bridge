@@ -39,22 +39,9 @@ export const DepositForm = () => {
   const { depositToAddress } = useSendDeposit();
 
   const { addresses } = useAtomValue(walletInfoAtom);
-  const btcAddress = addresses.payment?.address;
-  const { data: btcBalance } = useQuery({
-    queryKey: ["btcBalance", btcAddress],
-    queryFn: async () => {
-      if (!btcAddress) {
-        return 0;
-      }
-      return getBtcBalance(btcAddress);
-    },
-    initialData: btcAddress ? Infinity : 0,
-    enabled: !!btcAddress,
-  });
 
   const amountValidationSchema = useValidateDepositAmount({
     maxDepositAmount,
-    btcBalance,
     minDepositAmount,
   });
   const addressValidationSchema = useMemo(
