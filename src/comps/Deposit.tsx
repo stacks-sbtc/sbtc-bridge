@@ -41,7 +41,6 @@ import { getAggregateKey } from "@/actions/get-aggregate-key";
 import getBitcoinNetwork from "@/util/get-bitcoin-network";
 import { useAsignaConnect } from "@asigna/btc-connect";
 import { useQuery } from "@tanstack/react-query";
-import getBtcBalance from "@/actions/get-btc-balance";
 import { useDepositStatus } from "@/hooks/use-deposit-status";
 import { useEmilyDeposit } from "@/util/use-emily-deposit";
 import { sendBTCFordefi } from "../util/wallet-utils/src/sendBTC";
@@ -84,12 +83,10 @@ type DepositFlowStepProps = {
 
 type DepositFlowAmountProps = DepositFlowStepProps & {
   setAmount: (amount: number) => void;
-  btcBalance: number;
 };
 const DepositFlowAmount = ({
   setStep,
   setAmount,
-  btcBalance,
 }: DepositFlowAmountProps) => {
   const { currentCap, isWithinDepositLimits, isLoading, perDepositMinimum } =
     useMintCaps();
@@ -98,7 +95,6 @@ const DepositFlowAmount = ({
   const isMintCapReached = currentCap <= 0;
 
   const validationSchema = useValidateDepositAmount({
-    btcBalance,
     maxDepositAmount,
     minDepositAmount,
   });
@@ -620,24 +616,12 @@ const DepositFlow = () => {
     },
     [setTxId],
   );
-  const { addresses } = useAtomValue(walletInfoAtom);
-  const btcAddress = addresses.payment?.address;
-  const { data: btcBalance } = useQuery({
-    queryKey: ["btcBalance", btcAddress],
-    queryFn: async () => {
-      if (!btcAddress) {
-        return 0;
-      }
-      return await getBtcBalance(btcAddress);
-    },
-    enabled: !!btcAddress,
-  });
+
   const renderStep = () => {
     switch (step) {
       case DEPOSIT_STEP.AMOUNT:
         return (
           <DepositFlowAmount
-            btcBalance={btcBalance || Infinity}
             setAmount={setAmount}
             setStep={handleUpdateStep}
           />
