@@ -26,9 +26,10 @@ Some feature flags must be set at build time, so if you are building the image w
 
 Currently supported flags are:
 
-- `reskin`: is for the bridge reskin that can be accessed at /reskin
+- `reskin`: enables the bridge reskin that can be accessed at `/reskin`
 
-These flags can be enabled in the .env file comma separated values style like so:
+
+These flags can be enabled in the `.env` file as a comma‑separated list:
 
 ```bash
 FEATURE_FLAGS=reskin,feature1,feature2
