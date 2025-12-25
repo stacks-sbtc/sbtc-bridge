@@ -6,7 +6,7 @@ const DesktopFooter = () => {
     <div className="hidden md:flex shadow-[0_-4px_28px_0_rgba(0,0,0,0.13)] justify-center dark:bg-dark-reskin-border-gray">
       <div className="w-full max-w-7xl pt-11 pb-14 pl-14">
         <a
-          href="https://docs.stacks.co/concepts/sbtc"
+          href="https://docs.stacks.co/sbtc"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col gap-4"
