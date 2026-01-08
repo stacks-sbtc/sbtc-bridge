@@ -18,6 +18,8 @@ import { getStacksAddressInfo } from "@/util/get-stacks-address-info";
 import { getErrorMessage } from "@/util";
 import { toast } from "sonner";
 
+/* eslint-disable no-console -- TODO: remove console logging in follow-up */
+
 const WALLET_PROVIDERS = [
   {
     image: "/images/leather.svg",

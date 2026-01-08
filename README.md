@@ -19,31 +19,6 @@ yarn && yarn dev
 
 The development server will be running at [http://localhost:3000](http://localhost:3000)
 
-If you do not have the full sBTC DevNet stack running locally, you can point the bridge at the public Stacks testnet API instead:
-
-```bash
-npm run dev:testnet
-```
-
-This script logs the remote endpoints it uses (`https://api.testnet.hiro.so` for the Stacks API and the public mempool explorer) before starting `next dev`.
-
-## Stacks API helpers
-
-The scripts under `scripts/` wrap the sBTC dev environment so you can boot the Hiro Stacks API without pulling up every container. They require `docker`, `curl`, and `nc`. By default they expect the sBTC repository to live at `./sbtc`; override the location with `SBTC_DEVENV_PATH=/path/to/sbtc`.
-
-```bash
-# start the API plus its bitcoin miner helper and wait for readiness
-yarn stacks-api:up
-
-# stop the API (set STACKS_API_PRUNE_VOLUMES=1 to drop volumes)
-yarn stacks-api:down
-
-# convenience reset that does a down+up cycle
-yarn stacks-api:reset
-```
-
-If `docker compose` reports port `127.0.0.1:5432` is busy, the helper keeps running because it skips the signer profile that binds to that port. When you do need the signers, stop any host Postgres process or change the port mappings in the sBTC repo before launching the full `make devenv-up`.
-
 ## Feature flags
 
 Some feature flags must be set at build time, so if you are building the image with docker and you want some specific feature flags you must pass them also when building to ensure they are in effect

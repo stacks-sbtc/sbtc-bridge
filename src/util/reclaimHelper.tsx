@@ -9,6 +9,8 @@ import { hexToBytes as hexToUint8Array } from "@stacks/common";
 import { NUMS_X_COORDINATE } from "./depositRequest";
 import getBitcoinNetwork from "./get-bitcoin-network";
 
+/* eslint-disable no-console -- TODO: remove console logging in follow-up */
+
 export const finalizePsbt = (psbt: bitcoin.Psbt) => {
   try {
     psbt.finalizeAllInputs();

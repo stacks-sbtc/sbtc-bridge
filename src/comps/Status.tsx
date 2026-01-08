@@ -41,43 +41,37 @@ const Status = () => {
   const searchParams = useSearchParams();
 
   const { EMILY_URL: emilyUrl } = useAtomValue(bridgeConfigAtom);
-  const handleFetchFromEmily = useCallback(
-    async (txId: string, vout: number) => {
-      try {
-        // create a get request to emily to get the tx status
-        // call /deposit with body { bitcoinTxid: string, vout: number, url: string }
+  const handleFetchFromEmily = useCallback(async (txId: string, vout: number) => {
+    try {
+      // create a get request to emily to get the tx status
+      // call /deposit with body { bitcoinTxid: string, vout: number, url: string }
 
-        // make emily post request
-        const emilyGetPayload = {
-          bitcoinTxid: txId,
-          vout: vout,
-        };
-        // create search params for the url from the payload
-        const searchParams = new URLSearchParams(emilyGetPayload as any);
+      // make emily post request
+      const emilyGetPayload = {
+        bitcoinTxid: txId,
+        vout: vout,
+      };
+      // create search params for the url from the payload
+      const searchParams = new URLSearchParams(emilyGetPayload as any);
 
-        const response = await fetch(
-          `/api/emilyDeposit?${searchParams.toString()}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
+      const response = await fetch(`/api/emilyDeposit?${searchParams.toString()}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error("Error with the request");
-        }
-
-        const responseData = await response.json();
-
-        setEmilyDeposit(responseData);
-      } catch (err) {
-        window.alert("Error fetching transaction details");
+      if (!response.ok) {
+        throw new Error("Error with the request");
       }
-    },
-    [emilyUrl],
-  );
+
+      const responseData = await response.json();
+
+      setEmilyDeposit(responseData);
+    } catch (err) {
+      window.alert("Error fetching transaction details");
+    }
+  }, []);
   const handleDetermineIfSbtcDeposit = useCallback(
     (txInfo: BitcoinTransactionResponse) => {
       if (txInfo) {
