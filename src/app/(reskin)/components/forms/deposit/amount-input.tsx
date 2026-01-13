@@ -1,8 +1,6 @@
 import { Field, FieldProps } from "formik";
 import { InputContainer } from "../form-elements/input-container";
 
-import { Textarea } from "@/components/ui/textarea";
-
 export const AmountInput = ({
   isReadonly,
   onClickEdit,
@@ -36,19 +34,20 @@ export const AmountInput = ({
           {({ field, meta }: FieldProps) => {
             return (
               <>
-                <Textarea
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
                   onKeyUp={(e) => {
                     if (e.key === "Enter") {
                       onPressEnter?.();
                     }
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                    }
+                    if (e.key === "Enter") e.preventDefault();
                   }}
                   autoFocus
-                  className="text-black dark:text-white w-full bg-transparent break-all text-5xl tracking-tight h-8 placeholder:text-xl placeholder:tracking-normal text-center placeholder:text-left"
+                  className="text-black dark:text-white w-full bg-transparent text-5xl tracking-tight min-h-16 placeholder:text-xl placeholder:tracking-normal outline-none"
                   {...field}
                   placeholder="Enter BTC amount to deposit"
                 />

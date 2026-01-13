@@ -5,7 +5,7 @@
   "author": "<brgarciarivas@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev",
+    "dev": "cross-env NODE_OPTIONS=--inspect next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -52,6 +52,7 @@
     "@types/node": "^18",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
