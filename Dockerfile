@@ -1,4 +1,4 @@
-FROM node:18 AS builder
+FROM node:24.12.0-bookworm-slim AS builder
 
 WORKDIR /code
 
@@ -17,7 +17,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED="1"
 RUN npm run build
 
-FROM node:18
+FROM node:24.12.0-bookworm-slim
 
 WORKDIR /app
 
