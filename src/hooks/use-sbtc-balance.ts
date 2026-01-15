@@ -1,29 +1,41 @@
 "use client";
-import getSbtcTotalBalance from "@/actions/get-sbtc-balance";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import { bridgeConfigAtom } from "@/util/atoms";
+import { parseSbtcBalance } from "@/util/balance-utils";
 
 export function useSBTCBalance({ address }: { address?: string }) {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const query = useQuery({
-    queryKey: ["sbtc-balance", address],
-    queryFn: async () => {
-      const data = await getSbtcTotalBalance({
-        address: address!,
-      });
-      return data;
-    },
-    initialData: 0,
-    enabled: isEnabled,
-  });
+  const [data, setData] = useState<bigint>(BigInt(0));
+  const [isLoading, setIsLoading] = useState(false);
+  const { STACKS_API_URL, SBTC_CONTRACT_DEPLOYER } =
+    useAtomValue(bridgeConfigAtom);
 
   useEffect(() => {
-    setIsEnabled(!!address);
+    if (!address || !STACKS_API_URL || !SBTC_CONTRACT_DEPLOYER) return;
 
-    // actions are mutations that are not expected to run
-    // at initial render that's why this workaround exists
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address]);
+    const fetchBalance = async () => {
+      setIsLoading(true);
 
-  return query;
+      try {
+        const url = `${STACKS_API_URL}/extended/v2/addresses/${address}/balances/ft`;
+        const response = await fetch(url, { cache: "no-store" });
+
+        if (!response.ok) {
+          setData(BigInt(0));
+          return;
+        }
+
+        const result = await response.json();
+        setData(parseSbtcBalance(result, SBTC_CONTRACT_DEPLOYER));
+      } catch {
+        setData(BigInt(0));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBalance();
+  }, [address, STACKS_API_URL, SBTC_CONTRACT_DEPLOYER]);
+
+  return { data, isLoading };
 }
