@@ -17,11 +17,11 @@ jobs:
     steps:
       - name: Checkout Repository
         id: checkout_repository
-        uses: stacks-sbtc/actions/checkout@main
+        uses: stacks-sbtc/actions/checkout@505c42b153ba2ac261c276e96bc5dc7b68d61039
 
       - name: Install Node.js ${{ matrix.node-version }}
         id: install_node
-        uses: stacks-sbtc/actions/setup-node@main
+        uses: stacks-sbtc/actions/setup-node@505c42b153ba2ac261c276e96bc5dc7b68d61039
         with:
           node-version: ${{ matrix.node-version }}
 
