@@ -80,17 +80,7 @@ const TOS = () => {
             and risk.
           </p>
           <p>
-            <strong>2. Deposits and Withdrawals</strong>
-          </p>
-          <p>
-            At this time, the platform only supports deposits of BTC.
-            Withdrawals are not currently available and will be enabled in a
-            future update. By using this platform, you acknowledge and accept
-            that any BTC deposited cannot be withdrawn until withdrawal
-            functionality is introduced. Please plan your deposits accordingly.
-          </p>
-          <p>
-            <strong>3. Disclaimer of Liability</strong>
+            <strong>2. Disclaimer of Liability</strong>
           </p>
           <ul>
             <li>
@@ -121,7 +111,7 @@ const TOS = () => {
             </li>
           </ul>
           <p>
-            <strong>4. User Responsibilities</strong>
+            <strong>3. User Responsibilities</strong>
           </p>
           <ul>
             <li>
@@ -147,7 +137,7 @@ const TOS = () => {
             </li>
           </ul>
           <p>
-            <strong>5. Intellectual Property</strong>
+            <strong>4. Intellectual Property</strong>
           </p>
           <p>
             All intellectual property rights in the User Interface and its
@@ -156,7 +146,7 @@ const TOS = () => {
             prohibited.
           </p>
           <p>
-            <strong>6. Risks</strong>
+            <strong>5. Risks</strong>
           </p>
           <p>
             By using this platform, you acknowledge and accept the following
@@ -186,7 +176,7 @@ const TOS = () => {
             </li>
           </ul>
           <p>
-            <strong>7. Modifications and Termination</strong>
+            <strong>6. Modifications and Termination</strong>
           </p>
           <p>BitcoinL2 Labs reserves the right to:</p>
           <ul>
@@ -204,7 +194,7 @@ const TOS = () => {
             </li>
           </ul>
           <p>
-            <strong>8. Limitation of Liability</strong>
+            <strong>7. Limitation of Liability</strong>
           </p>
           <p>
             To the fullest extent permitted by law, BitcoinL2 Labs disclaims all
@@ -225,7 +215,7 @@ const TOS = () => {
             </li>
           </ul>
           <p>
-            <strong>9. Disclosure of Financial Incentives</strong>
+            <strong>8. Disclosure of Financial Incentives</strong>
           </p>
           <p>
             BitcoinL2 Labs provides financial incentives to certain
@@ -240,7 +230,7 @@ const TOS = () => {
             participating.
           </p>
           <p>
-            <strong>10. Governing Law</strong>
+            <strong>9. Governing Law</strong>
           </p>
           <p>
             These terms and any disputes arising under them are governed by the
@@ -249,7 +239,7 @@ const TOS = () => {
             Cayman Islands.
           </p>
           <p>
-            <strong>11. Contact and Support</strong>
+            <strong>10. Contact and Support</strong>
           </p>
           <p>
             For questions or support, please reach out to us via the contact
