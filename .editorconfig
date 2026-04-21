@@ -9,3 +9,5 @@ charset = utf-8
 indent_size = 2
 [*.ts]
 indent_size = 2
+[*.[jt]sx]
+indent_size = 2
