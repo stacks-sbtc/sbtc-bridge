@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import { PrimaryButton } from "./FlowButtons";
 import { useAtomValue, useSetAtom } from "jotai";
 import { showConnectWalletAtom, walletInfoAtom } from "@/util/atoms";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Schema as YupSchema } from "yup";
 import { SubText } from "./Heading";
 // this is supposed to be as reusable as possible given all the flows are very similar in order and action
@@ -65,7 +65,7 @@ export const FlowForm = ({
 
   const formik = useFormik({
     initialValues: {
-      [nameKey]: initialValue,
+      [nameKey]: initialValue ?? "",
     },
     onSubmit: async (values) => {
       const error = await handleSubmit(values[nameKey]);
@@ -83,6 +83,44 @@ export const FlowForm = ({
       setDirty(formik.dirty);
     }
   }, [dirty, formik.dirty]);
+
+  const inputValue = (formik.values[nameKey] as string | undefined) ?? "";
+  const hasEnteredValue = inputValue !== "";
+  const errorMessage = formik.errors[nameKey] as string | undefined;
+  const showError = Boolean(
+    errorMessage &&
+      (formik.submitCount > 0 ||
+        (formik.touched[nameKey] && hasEnteredValue)),
+  );
+
+  const handleInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (type !== "number") {
+        formik.handleChange(event);
+        return;
+      }
+
+      const rawValue = event.target.value;
+      if (/[eE]/.test(rawValue)) {
+        return;
+      }
+
+      let sanitizedValue = rawValue.replace(/[^0-9.]/g, "");
+
+      const [whole, ...decimalParts] = sanitizedValue.split(".");
+      sanitizedValue =
+        decimalParts.length > 0
+          ? `${whole}.${decimalParts.join("")}`
+          : whole;
+
+      if (sanitizedValue.startsWith(".")) {
+        sanitizedValue = `0${sanitizedValue}`;
+      }
+
+      formik.setFieldValue(nameKey, sanitizedValue);
+    },
+    [formik, nameKey, type],
+  );
 
   return (
     <form
@@ -102,15 +140,19 @@ export const FlowForm = ({
           type={type}
           name={nameKey}
           placeholder={placeholder}
-          value={formik.values[nameKey]}
-          onChange={formik.handleChange}
+          value={inputValue}
+          onChange={handleInputChange}
           onBlur={formik.handleBlur}
           disabled={disabled}
+          inputMode={type === "number" ? "decimal" : undefined}
+          pattern={type === "number" ? "[0-9]*[.]?[0-9]*" : undefined}
           className={`w-full py-2 border-b-2 bg-transparent text-xl text-black focus:outline-none placeholder-gray-300 ${
-            formik.isValid ? "border-orange" : "border-red-300"
+            showError ? "border-red-300" : "border-orange"
           } transition-colors duration-500 disabled:opacity-50 disabled:cursor-not-allowed`}
         />
-        <p className="text-red-500 text-sm h-4">{formik.errors[nameKey]}</p>
+        <p className="text-red-500 text-sm h-4">
+          {showError ? errorMessage : null}
+        </p>
       </div>
       <div className="w-full flex-row flex justify-between items-center">
         {children}
