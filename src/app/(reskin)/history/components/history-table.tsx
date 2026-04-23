@@ -32,13 +32,26 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getRawTransaction } from "@/actions/bitcoinClient";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
-function MobileStatus({ isConfirmed }: { isConfirmed: boolean }) {
+function getStatusDescription(status: string): string {
+  if (!status || status === "pending") return "pending";
+
+  if (status == "confirmed") return "complete";
+
+  return status; // return "accepted", "failed" as is
+}
+
+function MobileStatus({ status }: { status: string }) {
+  const statusDescription = getStatusDescription(status);
+  let statusColor = "text-confetti";
+  if (statusDescription == "complete") statusColor = "text-chateau-green";
+  else if (statusDescription == "failed") statusColor = "text-red-500";
+
   return (
     <TableCell className="dark:text-midGray">
       <div
-        className={`flex items-center font-medium ${isConfirmed ? "text-chateau-green" : "text-confetti"}`}
+        className={`flex items-center font-medium capitalize ${statusColor}`}
       >
-        {isConfirmed ? "Complete" : "Pending"}
+        {statusDescription}
         <ArrowUpRight className="h-6 w-6 ml-1" />
       </div>
     </TableCell>
@@ -47,6 +60,7 @@ function MobileStatus({ isConfirmed }: { isConfirmed: boolean }) {
 
 function DesktopStatus({ type, data }: HistoryItem) {
   const isConfirmed = data.status === "confirmed";
+  const statusDescription = getStatusDescription(data.status);
   const { data: timestamp } = useQuery({
     queryKey: [
       "blocktime",
@@ -77,7 +91,7 @@ function DesktopStatus({ type, data }: HistoryItem) {
           <Skeleton className="w-4 h-2" />
         )
       ) : (
-        "Pending"
+        statusDescription
       )}
     </TableCell>
   );
@@ -96,7 +110,6 @@ function HistoryEntry(props: HistoryItem) {
   const amountPostFix =
     type === HistoryType.DEPOSIT ? "BTC -> sBTC" : "sBTC -> BTC";
   const amount = formatBTC(data.amount / 1e8);
-  const isConfirmed = data.status === "confirmed";
 
   let link =
     type === HistoryType.DEPOSIT
@@ -113,7 +126,7 @@ function HistoryEntry(props: HistoryItem) {
           {type}
         </TableCell>
         {isMobile ? (
-          <MobileStatus isConfirmed={isConfirmed} />
+          <MobileStatus status={data.status} />
         ) : (
           <DesktopStatus {...props} />
         )}
