@@ -15,7 +15,7 @@ const getAvailableError = (available: number) => {
 };
 
 function convertBTCtoSats(btcValue: number) {
-  return btcValue * 1e8;
+  return Math.round(btcValue * 1e8);
 }
 
 function checkWithdrawalCap(
@@ -48,15 +48,15 @@ function checkAvailableToWithdraw(
 
 function checkWithdrawableBalance(
   this: yup.TestContext<yup.AnyObject>,
-  btcValue: number,
+  satsValue: number,
   btcBalance: number,
   fee: number,
 ) {
-  const maxWithdrawableBalance = btcBalance - fee;
-  if (btcValue > maxWithdrawableBalance) {
+  const maxWithdrawableSats = convertBTCtoSats(btcBalance) - convertBTCtoSats(fee);
+  if (satsValue > maxWithdrawableSats) {
     return this.createError({
       path: this.path,
-      message: formatBalanceError(btcValue, fee, btcBalance),
+      message: formatBalanceError(satsValue / 1e8, fee, btcBalance),
     });
   }
   return true;
@@ -99,7 +99,7 @@ export function validateWithdrawal(
 
   const balanceCheck = checkWithdrawableBalance.call(
     this,
-    btcValue,
+    satsValue,
     btcBalance,
     fee,
   );
