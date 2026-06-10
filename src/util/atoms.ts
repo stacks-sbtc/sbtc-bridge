@@ -20,6 +20,7 @@ export const bridgeConfigAtom = atom<BridgeConfig>({
   MEMPOOL_API_URL: "",
   FEATURE_FLAGS: [],
   WITHDRAW_MIN_AMOUNT_SATS: 0,
+  STACKS_API_URL: "",
 });
 export const DEPOSIT_MAX_FEE = 80000;
 export const RECLAIM_FEE = 5000;
