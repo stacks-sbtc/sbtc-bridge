@@ -39,6 +39,17 @@ export function useSendDeposit() {
     amount: number;
   }) => {
     try {
+      if (
+        walletInfo.selectedWallet !== WalletProvider.ASIGNA &&
+        (!walletInfo.addresses.payment?.publicKey)
+      ) {
+        toast.error(
+          "Wallet connection incomplete: We couldn't access your wallet keys to complete the deposit. If you're using a Ledger device, make sure both networks (Stacks and Bitcoin) are connected in your wallet, then try again.",
+          { duration: 10000 }
+        );
+        return;
+      }
+
       let reclaimPublicKeys = [walletInfo.addresses.payment!.publicKey];
       let signatureThreshold = 1;
 
